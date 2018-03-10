@@ -1,54 +1,82 @@
 #!/usr/bin/env python2
-import rospy
-import paho.mqtt.client as mqtt
-import json
-from std_msgs.msg import String
+"""
+Snips ROS integration
 
-#Snips settings
-SNIPS_HOST = "localhost"
-SNIPS_PORT = 1883
-SNIPS_TOPICS = ['hermes/intent/TSchmidty:YesNoResponse']
-mqttClient = mqtt.Client()
-
-'''
 ROS Topics
 snips_ask -> question as string input
 snips_answer -> answer as string output
-'''
-#ROS
-ROSPublisher = rospy.Publisher('snips_answer', String, queue_size=10)
+"""
+import json
+import paho.mqtt.client as mqtt
+import rospy
+from std_msgs.msg import String
 
-def snipsAskCallback(data):
+# Snips settings
+SNIPS_HOST = "localhost"
+SNIPS_PORT = 1883
+SNIPS_TOPICS = ['hermes/intent/TSchmidty:YesNoResponse']
+MQTT_CLIENT = mqtt.Client()
+
+# ROS
+ROS_PUBLISHER = rospy.Publisher('snips_answer', String, queue_size=10)
+
+
+def snips_ask_callback(data):
+    """
+    Callback executed when a question is received from ROS
+    """
     question = data.data
-    rospy.loginfo(rospy.get_name() + " received: %s", question)
+    rospy.loginfo("%s received: %s", rospy.get_name(), question)
     args = {'init': {'type': 'action', 'text': question, 'canBeEnqueued': True}}
-    mqttClient.publish('hermes/dialogueManager/startSession', json.dumps(args))
-    
-def onSnipsConnect(client, userdata, flags, rc):
+    MQTT_CLIENT.publish(
+        'hermes/dialogueManager/startSession', json.dumps(args))
+
+
+def on_snips_connect():
+    """
+    Callback executed when snips is connected
+    """
     rospy.loginfo("Connected to snips at %s:%i", SNIPS_HOST, SNIPS_PORT)
     for topic in SNIPS_TOPICS:
-        mqttClient.subscribe(topic)
+        MQTT_CLIENT.subscribe(topic)
 
-def onSnipsMessage(client, userdata, msg):
+
+def on_snips_message(client, userdata, msg):
+    """
+    Callback executed when snips receive an answer
+    """
     if msg.topic not in SNIPS_TOPICS:
         return
     data = json.loads(msg.payload)
-    ROSPublisher.publish(data['input'])
+    ROS_PUBLISHER.publish(data['input'])
 
-def createRosListener():
-    rospy.Subscriber('snips_ask', String, snipsAskCallback)
 
-def onSnipsDisconnect():
+def create_ros_listener():
+    """
+    Create the ROS listeners
+    """
+    rospy.Subscriber('snips_ask', String, snips_ask_callback)
+
+
+def on_snips_disconnect():
+    """
+    Callback executed when snips is disconnected
+    """
     rospy.loginfo("Disconnected from snips")
 
-def setupSnips():
-    mqttClient.on_connect = onSnipsConnect
-    mqttClient.on_message = onSnipsMessage
-    mqttClient.on_disconnect = onSnipsDisconnect
-    mqttClient.connect(SNIPS_HOST, SNIPS_PORT)
+
+def setup_snips():
+    """
+    Snips setup function
+    """
+    MQTT_CLIENT.on_connect = on_snips_connect
+    MQTT_CLIENT.on_message = on_snips_message
+    MQTT_CLIENT.on_disconnect = on_snips_disconnect
+    MQTT_CLIENT.connect(SNIPS_HOST, SNIPS_PORT)
+
 
 if __name__ == '__main__':
     rospy.init_node('snips')
-    setupSnips()
-    createRosListener()
+    setup_snips()
+    create_ros_listener()
     rospy.spin()

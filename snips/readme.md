@@ -13,5 +13,5 @@ Specialized ROS package for the integration
 roscore #start ROS master
 rosrun snips snips.py #run snips node
 rostopic echo /snips_answer #listen to the answers
-rostopic pub /snipsAsk std_msgs/String "Is the object blue ?" #ask away !
+rostopic pub /snips_ask std_msgs/String "Is the object blue ?" #ask away !
 ``` 
