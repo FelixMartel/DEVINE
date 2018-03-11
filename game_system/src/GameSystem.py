@@ -69,10 +69,10 @@ class GameSystem(object):
             2- (...)
         """)
 
-        answer = input("To start a game, please type 'start'")
+        answer = raw_input("To start a game, please type 'start'")
         while answer.strip() != 'start':
             print("'"+ answer + "'" + " is not a valid entry...")
-            answer = input("\nTo start a game, please type 'start'")
+            answer = raw_input("\nTo start a game, please type 'start'")
 
         print("Starting a new game!")
 
