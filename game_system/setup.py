@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(
-    name='gameSystem',
+    name='game_system',
     version='1.0.0',
     packages=[''],
     package_dir={'': 'src'},
@@ -9,5 +9,5 @@ setup(
     license='UNLICENSED',
     author='DEVINE',
     author_email='',
-    description='game system for DEVINE Guesswhat?!'
+    description='Game system for DEVINE Guesswhat?!'
 )
