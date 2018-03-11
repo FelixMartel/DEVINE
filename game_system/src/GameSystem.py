@@ -2,7 +2,7 @@ from transitions import Machine
 from enum import Enum
 
 
-class GameSystem:
+class GameSystem(object):
     states = []
     name = ''
 
@@ -134,6 +134,9 @@ class GameSystem:
 
 # the possibles states of the GameSystem's machine
 class States(Enum):
+    __order__ = 'INITIALISATION SHOWING_INSTRUCTIONS MOVING_TO_SCENE TAKING_PICTURE TURNING_HEAD ASKING_QUESTION ' \
+                'LISTENING ANALYSING GUESSING POINTING SAYING_GUESSED_OBJECT LISTENING_TO_FINAL_ANSWER SHOWING_EMOTION '\
+                'MOVE_BACK_TO_PLAYER'
     INITIALISATION = 'initialisation'
     SHOWING_INSTRUCTIONS = 'showingInstructions'
     MOVING_TO_SCENE = 'movingToScene'
