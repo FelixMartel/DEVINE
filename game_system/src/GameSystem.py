@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from transitions import Machine
 from enum import Enum
 
@@ -7,8 +9,6 @@ from std_msgs.msg import String
 class GameSystem(object):
     states = []
     name = ''
-    pub = rospy.Publisher('/listener', String, queue_size=10)
-    rospy.init_node('talker', anonymous=True)
 
     def __init__(self, name):
         self.name = name
@@ -57,16 +57,6 @@ class GameSystem(object):
                                     dest=States.SHOWING_EMOTION.value)
         self.machine.add_transition(trigger='moveBack', source=States.SHOWING_EMOTION.value,
                                     dest=States.MOVE_BACK_TO_PLAYER.value)
-
-    def printDiagnostic(text):
-
-        if not rospy.is_shutdown():
-         try:
-            message = text + " - " % rospy.get_time()
-            rospy.loginfo(message)
-            pub.publish(message)
-         except rospy.ROSInterruptException:
-          pass
 
     def initialisation(self):
         """ Initial state of the Machine, waiting everything is ready to go! """
@@ -162,6 +152,17 @@ class GameSystem(object):
         print("\nMoving back to player...")
         printDiagnostic("Moving back to player...")
 
+
+def printDiagnostic(text):
+    pub = rospy.Publisher('/listener', String, queue_size=10)
+    rospy.init_node('talker', anonymous=True)
+    if not rospy.is_shutdown():
+        try:
+            message = text + " -  %s" % rospy.get_time()
+            rospy.loginfo(message)
+            pub.publish(message)
+        except rospy.ROSInterruptException:
+            pass
 
 # the possibles states of the GameSystem's machine
 class States(Enum):
