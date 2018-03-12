@@ -29,7 +29,3 @@ gameSystem.emotion()
 gameSystem.moveBack()
 
 gameSystem.ready()
-
-
-
-
