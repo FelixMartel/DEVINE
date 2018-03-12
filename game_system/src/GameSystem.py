@@ -1,10 +1,14 @@
 from transitions import Machine
 from enum import Enum
 
+import rospy
+from std_msgs.msg import String
 
 class GameSystem(object):
     states = []
     name = ''
+    pub = rospy.Publisher('/listener', String, queue_size=10)
+    rospy.init_node('talker', anonymous=True)
 
     def __init__(self, name):
         self.name = name
@@ -54,6 +58,16 @@ class GameSystem(object):
         self.machine.add_transition(trigger='moveBack', source=States.SHOWING_EMOTION.value,
                                     dest=States.MOVE_BACK_TO_PLAYER.value)
 
+    def printDiagnostic(text):
+
+        if not rospy.is_shutdown():
+         try:
+            message = text + " - " % rospy.get_time()
+            rospy.loginfo(message)
+            pub.publish(message)
+         except rospy.ROSInterruptException:
+          pass
+
     def initialisation(self):
         """ Initial state of the Machine, waiting everything is ready to go! """
         print("Booting DEVINE state Machine...")
@@ -61,6 +75,7 @@ class GameSystem(object):
         # add stuff here to make sure everything is ready
 
         print("All systems are ready to go!")
+        printDiagnostic("All systems are ready to go!")
 
     def showInstructions(self, event):
         """ Showing instructions and waiting for trigger to start the game """
@@ -72,64 +87,80 @@ class GameSystem(object):
         answer = raw_input("To start a game, please type 'start'")
         while answer.strip() != 'start':
             print("'"+ answer + "'" + " is not a valid entry...")
+            printDiagnostic("'"+ answer + "'" + " is not a valid entry...")
             answer = raw_input("\nTo start a game, please type 'start'")
 
         print("Starting a new game!")
+        printDiagnostic("Starting a new game!")
 
 
     def moveRobotToScene(self, event):
         """ Prepares the robot to take a picture of the scene """
         print("\nMoving to scene...")
+        printDiagnostic("Moving to scene...")
 
     def takeThePicture(self, event):
         """ Takes a picture of the scene """
         print("\nTaking picture...")
+        printDiagnostic("Taking picture...")
 
     def turnHeadTowardsPlayer(self, event):
         """ Turns head towards player """
         print("\nTurning head to player...")
+        printDiagnostic("Turning head to player...")
 
     def askAQuestion(self, event):
         """ Asks a question """
         print("\nAsking a question to player...")
+        printDiagnostic("Asking a question to player...")
 
     def listenToAnswer(self, event):
         """ Waits for the answer """
         print("\nListening to player...")
+        printDiagnostic("Listening to player...")
 
     def analyseAnswer(self, event):
         """ Analysing the answers and take action depending if is ready or not to guess """
         print("\nAnalysing answer...")
+        printDiagnostic("Analysing answer...")
         ready = event.kwargs.get('readyToAnswer')
         print("Analysing done!")
+        printDiagnostic("Analysing done!")
 
         if ready:
             print("Ready to guess!")
+            printDiagnostic("Ready to guess!")
             self.machine.set_state('guessing')
         else:
             print("I want to ask another question!")
+            printDiagnostic("I want to ask another question!")
             self.machine.set_state('askingQuestion')
             self.askAQuestion(None)
 
     def pointObject(self, event):
         """ Points the guessed object"""
         print("\nPointing Object...")
+        printDiagnostic("Pointing Object...")
 
     def sayGuessedObject(self, event):
         """ Say the guessed object to played """
         print("\nI guess object X")
+        printDiagnostic("I guess object X")
 
     def listenToFinalAnswer(self, event):
         """ Listens to final answer """
         print("\nListening to final answer")
+        printDiagnostic("Listening to final answer")
 
     def showEmotion(self, event):
         """ Showing emotion depending on final answer """
         print("\nShowing happy face!")
+        printDiagnostic("Showing happy face!")
 
     def moveBackToPlayer(self, event):
         """ Moving back to robot to player """
         print("\nMoving back to player...")
+        printDiagnostic("Moving back to player...")
 
 
 # the possibles states of the GameSystem's machine
