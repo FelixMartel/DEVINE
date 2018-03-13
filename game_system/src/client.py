@@ -1,6 +1,12 @@
+import rospy
+from std_msgs.msg import String
+
 import GameSystem
 
-gameSystem = GameSystem.GameSystem("DEVINE State Machine")
+pub = rospy.Publisher('game_system_state', String, queue_size=10)
+rospy.init_node('game_system', anonymous=False)
+
+gameSystem = GameSystem.GameSystem("DEVINE State Machine", pub)
 
 gameSystem.initialisation()
 
@@ -29,3 +35,5 @@ gameSystem.emotion()
 gameSystem.moveBack()
 
 gameSystem.ready()
+
+rospy.signal_shutdown('BYE :(');
