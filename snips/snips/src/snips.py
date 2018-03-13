@@ -32,7 +32,7 @@ def snips_ask_callback(data):
         'hermes/dialogueManager/startSession', json.dumps(args))
 
 
-def on_snips_connect():
+def on_snips_connect(client, userdata, flags, rc):
     """
     Callback executed when snips is connected
     """
@@ -79,4 +79,5 @@ if __name__ == '__main__':
     rospy.init_node('snips')
     setup_snips()
     create_ros_listener()
+    MQTT_CLIENT.loop_start()
     rospy.spin()
