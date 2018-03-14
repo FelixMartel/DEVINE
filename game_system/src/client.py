@@ -3,7 +3,7 @@ from std_msgs.msg import String
 
 import GameSystem
 
-pub = rospy.Publisher('game_system_state', String, queue_size=10)
+pub = rospy.Publisher('/game_system_state', String, queue_size=10)
 rospy.init_node('game_system', anonymous=False)
 
 gameSystem = GameSystem.GameSystem("DEVINE State Machine", pub)
@@ -36,4 +36,4 @@ gameSystem.moveBack()
 
 gameSystem.ready()
 
-rospy.signal_shutdown('BYE :(');
+rospy.signal_shutdown('End of game');
