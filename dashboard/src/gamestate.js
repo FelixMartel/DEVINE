@@ -4,7 +4,7 @@ import $ from 'cash-dom';
 
 const listener = new ROSLIB.Topic({
     ros : ros,
-    name : 'game_system_state',
+    name : '/game_system_state',
     messageType : 'std_msgs/String'
 });
 
