@@ -1,3 +1,4 @@
+'''Setuptools for gamesystem'''
 from setuptools import setup
 
 setup(
@@ -9,5 +10,5 @@ setup(
     license='UNLICENSED',
     author='DEVINE',
     author_email='',
-    description='Game system for DEVINE Guesswhat?!'
+    description='Game system for DEVINE Guesswhat?!', install_requires=['transitions', 'enum34']
 )
