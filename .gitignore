@@ -1,2 +1,6 @@
 *.pyc
+<<<<<<< HEAD
 /dashboard/node_modules/*
+=======
+.idea/
+>>>>>>> origin/gameSystem-initial

@@ -1,39 +1,42 @@
+'''Example of how to trigger different states on the State Machine'''
 import rospy
 from std_msgs.msg import String
+import src.game_system as GameSystem
 
-import GameSystem
 
-pub = rospy.Publisher('/game_system_state', String, queue_size=10)
-rospy.init_node('game_system', anonymous=False)
+if __name__ == "__main__":
 
-gameSystem = GameSystem.GameSystem("DEVINE State Machine", pub)
+    pub = rospy.Publisher('/game_system_state', String, queue_size=10)
+    rospy.init_node('game_system', anonymous=False)
+    # pylint: disable=no-member
+    GAME_SYSTEM = GameSystem.GameSystem("DEVINE State Machine")
 
-gameSystem.initialisation()
+    GAME_SYSTEM.initialisation()
 
-gameSystem.ready()
+    GAME_SYSTEM.ready()
 
-gameSystem.moveToScene()
+    GAME_SYSTEM.moveToScene()
 
-gameSystem.takePicture()
+    GAME_SYSTEM.takePicture()
 
-gameSystem.turnHead()
+    GAME_SYSTEM.turnHead()
 
-gameSystem.askQuestion()
+    GAME_SYSTEM.askQuestion()
 
-gameSystem.listenAnswer()
+    GAME_SYSTEM.listenAnswer()
 
-gameSystem.analyse(readyToAnswer=True)
+    GAME_SYSTEM.analyse(readyToAnswer=True)
 
-gameSystem.point()
+    GAME_SYSTEM.point()
 
-gameSystem.sayObject()
+    GAME_SYSTEM.sayObject()
 
-gameSystem.listenFinalAnswer()
+    GAME_SYSTEM.listenFinalAnswer()
 
-gameSystem.emotion()
+    GAME_SYSTEM.emotion()
 
-gameSystem.moveBack()
+    GAME_SYSTEM.moveBack()
 
-gameSystem.ready()
+    GAME_SYSTEM.ready()
 
-rospy.signal_shutdown('End of game');
+    rospy.signal_shutdown('End of game');
