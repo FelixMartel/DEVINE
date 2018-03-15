@@ -18,7 +18,7 @@ SNIPS_TOPICS = ['hermes/intent/TSchmidty:YesNoResponse']
 MQTT_CLIENT = mqtt.Client()
 
 # ROS
-ROS_PUBLISHER = rospy.Publisher('snips_answer', String, queue_size=10)
+ROS_PUBLISHER = rospy.Publisher('/snips_answer', String, queue_size=10)
 
 
 def snips_ask_callback(data):
@@ -32,7 +32,7 @@ def snips_ask_callback(data):
         'hermes/dialogueManager/startSession', json.dumps(args))
 
 
-def on_snips_connect(client, userdata, flags, rc):
+def on_snips_connect(client, userdata, flags, connection_result): # pylint: disable=W0613
     """
     Callback executed when snips is connected
     """
@@ -41,21 +41,24 @@ def on_snips_connect(client, userdata, flags, rc):
         MQTT_CLIENT.subscribe(topic)
 
 
-def on_snips_message(client, userdata, msg):
+def on_snips_message(client, userdata, msg): # pylint: disable=W0613
     """
     Callback executed when snips receive an answer
     """
     if msg.topic not in SNIPS_TOPICS:
         return
     data = json.loads(msg.payload)
-    ROS_PUBLISHER.publish(data['input'])
+    if data['slots']:
+        rospy.loginfo("Received message %s, detected: %s", data['input'],
+                      data['slots'][0]['value']['value'].lower())
+        ROS_PUBLISHER.publish(data['slots'][0]['value']['value'].lower())
 
 
 def create_ros_listener():
     """
     Create the ROS listeners
     """
-    rospy.Subscriber('snips_ask', String, snips_ask_callback)
+    rospy.Subscriber('/snips_ask', String, snips_ask_callback)
 
 
 def on_snips_disconnect():
