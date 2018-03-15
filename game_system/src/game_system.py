@@ -105,13 +105,14 @@ class GameSystem(object):
             2- (...)
         """)
 
-        answer = raw_input("To start a game, please type 'start'")
         user_input = None
 
         try:
             user_input = raw_input
-        except NameError;
+        except NameError:
             user_input = input
+
+        answer = user_input("To start a game, please type 'start'")
 
         while answer.strip() != 'start':
             print("'"+ answer + "'" + " is not a valid entry...")
