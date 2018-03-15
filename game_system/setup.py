@@ -6,8 +6,9 @@ setup(
     packages=[''],
     package_dir={'': 'src'},
     url='',
-    license='UNLICENSED',
+    license='BSD License 2.0',
     author='DEVINE',
     author_email='',
+    scripts=['bin/client.py'],
     description='Game system for DEVINE Guesswhat?!', install_requires=['transitions', 'enum34']
 )
