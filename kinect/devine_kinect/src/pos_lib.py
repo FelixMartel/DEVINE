@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
 import math
 
-IMAGE_DEPTH_TOPIC = "/camera/depth_registered/points"
+IMAGE_DEPTH_TOPIC = "/camera/depth/points"
 OBJECT_POSITION_TOPIC = "/object_found"
 ROS_PUBLISHER = rospy.Publisher('/object_location', Float32MultiArray, queue_size=10)
 
@@ -25,7 +25,7 @@ class PosLib(object):
         self.subscription = rospy.Subscriber(depth_topic, 
                                             PointCloud2, self.openni_depth_callback)
         rospy.Subscriber(obj_pos_topic, Int32MultiArray, self.object_position_callback)
-        self.current_2d_position = [0, 0] #in pixel
+        self.current_2d_position = [320, 240] #in pixel
 
     def openni_depth_callback(self, data):
         """
@@ -37,7 +37,7 @@ class PosLib(object):
         rospy.loginfo("Image size: %i x %i", data.width, data.height)
         val = next(point_cloud2.read_points(data, field_names='z', skip_nans=False, uvs=[tuple(self.current_2d_position)]))
         position = self.calc_geometric_location(self.current_2d_position[0], self.current_2d_position[1], val[0], data.width)
-        rospy.loginfo("Object position found: (%f, %f, %f)", position[0], position[1], position[2])
+        rospy.loginfo("Object position found: (%.2f, %.2f, %.2f)", position[0], position[1], position[2])
         ros_packet = Float32MultiArray()
         ros_packet.data = position
         ROS_PUBLISHER.publish(ros_packet)
