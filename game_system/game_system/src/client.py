@@ -23,8 +23,6 @@ if __name__ == "__main__":
 
     gamesystem.ask_question()
 
-    gamesystem.listen_answer()
-
     gamesystem.analyse(ready_to_answer=True)
 
     gamesystem.point()
