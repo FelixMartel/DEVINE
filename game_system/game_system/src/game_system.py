@@ -1,3 +1,4 @@
+#!/usr/bin/env python2
 '''State Machine to be used for DEVINE Game System.'''
 import rospy
 

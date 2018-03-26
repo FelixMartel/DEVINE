@@ -1,3 +1,4 @@
+#!/usr/bin/env python2
 '''Example of how to trigger different states on the State Machine'''
 import rospy
 from std_msgs.msg import String
