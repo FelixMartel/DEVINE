@@ -85,19 +85,20 @@ class GameSystem(object):
                                     dest=States.SHOWING_EMOTION.value)
         self.machine.add_transition(trigger='move_back', source=States.SHOWING_EMOTION.value,
                                     dest=States.MOVING_BACK_TO_PLAYER.value)
-
+        
+        self.machine.add_ordered_transitions()
     def initialisation(self):
         """ Initial state of the Machine, waiting everything is ready to go! """
-        rospy.loginfo("Booting DEVINE state Machine...")
+        self.print_diagnostic("Booting DEVINE state Machine...")
         # add stuff here to make sure everything is ready
 
-        rospy.loginfo("All systems are ready to go!")
+        self.print_diagnostic("All systems are ready to go!")
 
     def show_instructions(self, event):
         # pylint: disable=no-self-use
         # pylint: disable=unused-argument
         """ Showing instructions and waiting for trigger to start the game """
-        rospy.loginfo("""\nWelcome to DEVINE GuessWhat?! Please follow the instructions above:
+        self.print_diagnostic("""\nWelcome to DEVINE GuessWhat?! Please follow the instructions above:
             1- Have fun
             2- (...)
         """)
@@ -111,53 +112,53 @@ class GameSystem(object):
         answer = user_input("To start a game, please type 'start'")
 
         while answer.strip() != 'start':
-            rospy.loginfo("'"+ answer + "'" + " is not a valid entry...")
+            self.print_diagnostic("'"+ answer + "'" + " is not a valid entry...")
             answer = user_input("\nTo start a game, please type 'start'")
 
-        rospy.loginfo("Starting a new game!")
+        self.print_diagnostic("Starting a new game!")
 
 
     def move_robot_to_scene(self, event):
         # pylint: disable=no-self-use
         # pylint: disable=unused-argument
         """ Prepares the robot to take a picture of the scene """
-        rospy.loginfo("Moving to scene...")
+        self.print_diagnostic("Moving to scene...")
 
     def take_the_picture(self, event):
         # pylint: disable=no-self-use
         # pylint: disable=unused-argument
         """ Takes a picture of the scene """
-        rospy.loginfo("Taking picture...")
+        self.print_diagnostic("Taking picture...")
 
     def turn_head_towards_player(self, event):
         # pylint: disable=no-self-use
         # pylint: disable=unused-argument
         """ Turns head towards player """
-        rospy.loginfo("Turning head to player...")
+        self.print_diagnostic("Turning head to player...")
 
     def ask_a_question(self, event):
         # pylint: disable=no-self-use
         # pylint: disable=unused-argument
         """ Asks a question """
-        rospy.loginfo("Asking a question to player...")
+        self.print_diagnostic("Asking a question to player...")
 
     def listen_to_answer(self, event):
         # pylint: disable=no-self-use
         # pylint: disable=unused-argument
         """ Waits for the answer """
-        rospy.loginfo("Listening to player...")
+        self.print_diagnostic("Listening to player...")
 
     def analyse_answer(self, event):
         """ Analysing the answers and take action depending if is ready or not to guess """
-        rospy.loginfo("Analysing answer...")
+        self.print_diagnostic("Analysing answer...")
         ready = event.kwargs.get('ready_to_answer', False)
-        rospy.loginfo("Analysing done!")
+        self.print_diagnostic("Analysing done!")
 
         if ready:
-            rospy.loginfo("Ready to guess!")
+            self.print_diagnostic("Ready to guess!")
             self.machine.set_state('guessing')
         else:
-            rospy.loginfo("I want to ask another question!")
+            self.print_diagnostic("I want to ask another question!")
             self.machine.set_state('asking_question')
             self.ask_a_question(None)
 
@@ -165,28 +166,37 @@ class GameSystem(object):
         # pylint: disable=no-self-use
         # pylint: disable=unused-argument
         """ Points the guessed object"""
-        rospy.loginfo("Pointing Object...")
+        self.print_diagnostic("Pointing Object...")
 
     def say_guessed_object(self, event):
         # pylint: disable=no-self-use
         # pylint: disable=unused-argument
         """ Say the guessed object to played """
-        rospy.loginfo("I guess object X")
+        self.print_diagnostic("I guess object X")
 
     def listen_to_final_answer(self, event):
         # pylint: disable=no-self-use
         # pylint: disable=unused-argument
         """ Listens to final answer """
-        rospy.loginfo("Listening to final answer")
+        self.print_diagnostic("Listening to final answer")
 
     def show_emotion(self, event):
         # pylint: disable=no-self-use
         # pylint: disable=unused-argument
         """ Showing emotion depending on final answer """
-        rospy.loginfo("Showing happy face!")
+        self.print_diagnostic("Showing happy face!")
 
     def move_back_to_player(self, event):
         # pylint: disable=no-self-use
         # pylint: disable=unused-argument
         """ Moving back to robot to player """
-        rospy.loginfo("Moving back to player...")
+        self.print_diagnostic("Moving back to player...")
+
+    def print_diagnostic(self, text):
+        if not rospy.is_shutdown():
+            try:
+                message = text + " - %s" % rospy.get_time()
+                rospy.loginfo(message)
+                self.pub.publish(message)
+            except rospy.ROSInterruptException:
+                pass
