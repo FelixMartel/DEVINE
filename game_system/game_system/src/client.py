@@ -37,6 +37,4 @@ if __name__ == "__main__":
 
     gamesystem.move_back()
 
-    gamesystem.ready()
-
-    rospy.signal_shutdown('End of game');
+    rospy.signal_shutdown('End of game')
