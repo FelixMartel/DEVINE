@@ -1,7 +1,6 @@
 #!/bin/sh
 
 cd guesswhat
-export PYTHONPATH=$(pwd)/src:$PYTHONPATH
 
 python src/guesswhat/eval/interactive_dialogue.py \
     -data_dir data \
