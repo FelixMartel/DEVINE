@@ -16,6 +16,11 @@ catkin_make
 ```bash
 roslaunch jn0_gazebo jn0_empty_world.launch
 ```
+Launch Gazebo
+```bash
+roslaunch jn0_gazebo jn0_empty_world.launch gui:=true
+```
+
 ### Load RVIZ configuration
 ```File -> Open Config -> irl_point.rviz```
 
