@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import argparse
 import math
 import rospy
 from visualization_msgs.msg import Marker
@@ -43,8 +44,10 @@ class Markers(object):
 
             self.marker_array.markers.append(marker)
 
-def main():
-    markers_position = [[1, 0.1, 0.5]]
+def main(args):
+    point = [float(i) for i in args.point.replace('[', '').replace(']', '').split(',')]
+    
+    markers_position = [point]
 
     rospy.init_node('makers_tf')
     print('Running node \'' + 'markers_tf' + '\' with: ' + str(markers_position))
@@ -67,4 +70,10 @@ def main():
         rate.sleep()
 
 if __name__ == '__main__':
-    main()
+    arg_fmt = argparse.RawDescriptionHelpFormatter
+    parser = argparse.ArgumentParser(formatter_class=arg_fmt, description=main.__doc__)
+    required = parser.add_argument_group('required arguments')
+    required.add_argument('-p', '--point', required=True, help='What 3D point to point?')
+    args = parser.parse_args(rospy.myargv()[1:])
+
+    main(args)
