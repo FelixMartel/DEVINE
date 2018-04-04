@@ -17,7 +17,7 @@ catkin_make
 roslaunch jn0_gazebo jn0_empty_world.launch
 ```
 ### Load RVIZ configuration
-```File -> Load config -> irl_point.rviz```
+```File -> Open Config -> irl_point.rviz```
 
 ### Point object with position [x, y, z]
  Position is referenced from base_link
