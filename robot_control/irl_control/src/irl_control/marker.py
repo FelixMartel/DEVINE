@@ -2,6 +2,7 @@
 
 import argparse
 import math
+import random
 import rospy
 from visualization_msgs.msg import Marker
 from visualization_msgs.msg import MarkerArray
@@ -31,9 +32,9 @@ class Markers(object):
             marker.scale.z = 0.1
 
             marker.color.a = 1.0
-            marker.color.r = 1.0
-            marker.color.g = 1.0
-            marker.color.b = 0.0
+            marker.color.r = random.random()
+            marker.color.g = random.random()
+            marker.color.b = random.random()
 
             marker.pose.position.x = marker_position[0]
             marker.pose.position.y = marker_position[1]

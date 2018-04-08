@@ -39,83 +39,88 @@ def main(args):
     except RuntimeError as err:
         rospy.logerr(err)
         rospy.signal_shutdown(err)
+        
+    if not rospy.is_shutdown():
 
-    # Init Gripper
-    gripper = Gripper(robot, arm)
+        # Init Gripper
+        gripper = Gripper(robot, arm)
 
-    # Calculate position
-    if point and arm:
-        # Get tf information
-        tf_listener = tf.TransformListener()
+        # Calculate position
+        if point and arm:
+            # Get tf information
+            tf_listener = tf.TransformListener()
 
-        trans_arm = None
-        i = 0
-        while not trans_arm:
-            try:
-                (trans_arm, rot) = tf_listener.lookupTransform('/' + arm[0].upper() + '_shoulder_fixed_link', '/obj', rospy.Time(0))
-            except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException) as err:
-                rospy.sleep(0.1)
-                i = i + 1
-                if i == 10:
-                    rospy.logerr(err)
-                    rospy.signal_shutdown(err)
-                else:
-                    continue
-        rospy.loginfo('Translation from shoulder_fixed_link to obj: %s', trans_arm)
+            trans_arm = None
+            i = 0
+            while not trans_arm and not rospy.is_shutdown():
+                try:
+                    (trans_arm, rot) = tf_listener.lookupTransform('/' + arm[0].upper() + '_shoulder_fixed_link', '/obj', rospy.Time(0))
+                except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException) as err:
+                    rospy.sleep(0.1)
+                    i = i + 1
+                    if i == 10:
+                        rospy.logerr(err)
+                        rospy.signal_shutdown(err)
+                    else:
+                        continue
 
-        trans_head = None
-        i = 0
-        while not trans_head:
-            try:
-                (trans_head, rot_head) = tf_listener.lookupTransform('/neck_pan_link', '/obj', rospy.Time(0))
-            except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException) as err:
-                rospy.sleep(0.1)
-                i = i + 1
-                if i == 10:
-                    rospy.logerr(err)
-                    rospy.signal_shutdown(err)
-                else:
-                    continue
-        rospy.loginfo('Translation from neck_pan_link to obj: %s', trans_head)
+            trans_head = None
+            i = 0
+            while not trans_head and not rospy.is_shutdown():
+                try:
+                    (trans_head, rot_head) = tf_listener.lookupTransform('/neck_pan_link', '/obj', rospy.Time(0))
+                except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException) as err:
+                    rospy.sleep(0.1)
+                    i = i + 1
+                    if i == 10:
+                        rospy.logerr(err)
+                        rospy.signal_shutdown(err)
+                    else:
+                        continue
 
-        # Calculate inverse kinematic
-        joints_position = ik.arm_pan_tilt(arm, trans_arm[0], trans_arm[1], trans_arm[2])
-        rospy.loginfo('Arm Joint Position: %s', joints_position)
+            if not rospy.is_shutdown():
+                rospy.loginfo('Translation from shoulder_fixed_link to obj: %s', trans_arm)
+                rospy.loginfo('Translation from neck_pan_link to obj: %s', trans_head)
 
-        head_joints_position = ik.head_pan_tilt(trans_head[0], trans_head[1], trans_head[2])
-        rospy.loginfo('Head Joint Position: %s', head_joints_position)
-    else:
-        joints_position = joints
+                # Calculate inverse kinematic
+                joints_position = ik.arm_pan_tilt(arm, trans_arm[0], trans_arm[1], trans_arm[2])
+                rospy.loginfo('Arm Joint Position: %s', joints_position)
 
-    # Accomplish trajectory
-    traj_arm.add_point(joints_position, time)
-    traj_head.add_point(head_joints_position, time)
+                head_joints_position = ik.head_pan_tilt(trans_head[0], trans_head[1], trans_head[2])
+                rospy.loginfo('Head Joint Position: %s', head_joints_position)
+        else:
+            joints_position = joints
 
-    traj_arm.start()
-    traj_head.start()
+        if not rospy.is_shutdown():
+            # Accomplish trajectory
+            traj_arm.add_point(joints_position, time)
+            traj_head.add_point(head_joints_position, time)
 
-    traj_arm.wait(time)
-    traj_head.wait(time)
+            traj_arm.start()
+            traj_head.start()
 
-    for i in range(3):
-        gripper.open(0.3)
-        rospy.sleep(0.5)
-        gripper.open(0.1)
-        rospy.sleep(0.5)
+            traj_arm.wait(time)
+            traj_head.wait(time)
 
-    traj_arm.clear()
-    traj_head.clear()
+            for i in range(3):
+                gripper.open(0.3)
+                rospy.sleep(0.5)
+                gripper.open(0.1)
+                rospy.sleep(0.5)
 
-    traj_arm.add_point([0, 0, 0, 0], time)
-    traj_head.add_point([0, 0], time)
+            traj_arm.clear()
+            traj_head.clear()
 
-    traj_arm.start()
-    traj_head.start()
+            traj_arm.add_point([0, 0, 0, 0], time)
+            traj_head.add_point([0, 0], time)
 
-    traj_arm.wait(time)
-    traj_head.wait(time)
+            traj_arm.start()
+            traj_head.start()
 
-    rospy.loginfo('Completed')
+            traj_arm.wait(time)
+            traj_head.wait(time)
+
+            rospy.loginfo('Completed')
 
 if __name__ == '__main__':
     arg_fmt = argparse.RawDescriptionHelpFormatter
