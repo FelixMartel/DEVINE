@@ -28,9 +28,9 @@ roslaunch jn0_gazebo jn0_empty_world.launch gui:=true
  Position is referenced from base_link
 
 ```bash
-rosrun irl_control marker.py -p 0.5,0.3,-0.5
+rosrun irl_control marker.py -p 0.6,0.3,0.5
 
-rosrun irl_control example.py -r jn0 -c right_arm_controller -p 0.5,0.3,-0.5 -t 5
+rosrun irl_control example.py -r jn0 -c right_arm_controller -p 0.6,0.3,0.5 -t 5
 ```
 
 ### Move controller with joints position

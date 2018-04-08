@@ -104,6 +104,7 @@ def main(args):
         rospy.sleep(0.5)
 
     traj_arm.clear()
+    traj_head.clear()
 
     traj_arm.add_point([0, 0, 0, 0], time)
     traj_head.add_point([0, 0], time)
