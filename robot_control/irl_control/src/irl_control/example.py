@@ -61,7 +61,7 @@ def main(args):
                     rospy.signal_shutdown(err)
                 else:
                     continue
-        rospy.loginfo('Translation from shoulder_fixed_link to obj:', trans_arm)
+        rospy.loginfo('Translation from shoulder_fixed_link to obj: %s', trans_arm)
 
         trans_head = None
         i = 0
@@ -76,14 +76,14 @@ def main(args):
                     rospy.signal_shutdown(err)
                 else:
                     continue
-        rospy.loginfo('Translation from neck_pan_link to obj:', trans_head)
+        rospy.loginfo('Translation from neck_pan_link to obj: %s', trans_head)
 
         # Calculate inverse kinematic
         joints_position = ik.arm_pan_tilt(arm, trans_arm[0], trans_arm[1], trans_arm[2])
-        rospy.loginfo('Arm Joint Position:', joints_position)
+        rospy.loginfo('Arm Joint Position: %s', joints_position)
 
         head_joints_position = ik.head_pan_tilt(trans_head[0], trans_head[1], trans_head[2])
-        rospy.loginfo('Head Joint Position:', head_joints_position)
+        rospy.loginfo('Head Joint Position: %s', head_joints_position)
     else:
         joints_position = joints
 

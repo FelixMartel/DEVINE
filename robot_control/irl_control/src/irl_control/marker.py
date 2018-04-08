@@ -46,7 +46,7 @@ class Markers(object):
 
 def main(args):
     point = [float(i) for i in args.point.split(',')]
-    
+
     markers_position = [point]
 
     rospy.init_node('makers_tf')
@@ -65,8 +65,8 @@ def main(args):
             (trans1, rot1) = tf_listener.lookupTransform('/R_frame_tool_link', '/obj', rospy.Time(0))
         except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
             continue
-        rospy.loginfo('Orientation from top:', math.floor(math.sin(trans1[1]/trans1[0]) * 180 / math.pi))
-        rospy.loginfo('Orientation from side:', math.floor(math.sin(trans1[2]/trans1[0]) * 180 / math.pi))
+        rospy.loginfo('Orientation from top: %s', math.floor(math.sin(trans1[1]/trans1[0]) * 180 / math.pi))
+        rospy.loginfo('Orientation from side: %s', math.floor(math.sin(trans1[2]/trans1[0]) * 180 / math.pi))
         rate.sleep()
 
 if __name__ == '__main__':
