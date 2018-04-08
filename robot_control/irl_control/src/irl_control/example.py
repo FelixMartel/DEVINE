@@ -6,7 +6,6 @@ import rospy
 from trajectory_client import TrajectoryClient
 from gripper import Gripper
 import ik
-from marker import Markers
 import tf
 
 def main(args):
@@ -21,21 +20,21 @@ def main(args):
 
     joints = args.joints
     if joints:
-        joints = [float(i) for i in args.joints.replace('[', '').replace(']', '').split(',')]
+        joints = [float(i) for i in args.joints.split(',')]
     point = args.point
     if point:
-        point = [float(i) for i in args.point.replace('[', '').replace(']', '').split(',')]
+        point = [float(i) for i in args.point.split(',')]
     time = float(args.time)
 
     # Start ROS node
-    print('Init node...')
+    rospy.loginfo('Init node...')
     node_name = 'irl_control' + '_' + controller
     rospy.init_node(node_name)
-    print('Running node \'' + node_name + '\'...')
+    rospy.loginfo('Running node \'' + node_name + '\'...')
 
     # Init TrajectoryClient
     try:
-        traj = TrajectoryClient(robot, controller)
+        traj_arm = TrajectoryClient(robot, controller)
         traj_head = TrajectoryClient(robot, 'head_controller')
     except RuntimeError as err:
         rospy.logerr(err)
@@ -54,7 +53,6 @@ def main(args):
         while not trans_arm:
             try:
                 (trans_arm, rot) = tf_listener.lookupTransform('/' + arm[0].upper() + '_shoulder_fixed_link', '/obj', rospy.Time(0))
-                (trans_neck, rot_neck) = tf_listener.lookupTransform('/neck_pan_link', '/obj', rospy.Time(0))
             except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException) as err:
                 rospy.sleep(0.1)
                 i = i + 1
@@ -63,32 +61,40 @@ def main(args):
                     rospy.signal_shutdown(err)
                 else:
                     continue
-        print('Translation from shoulder_fixed_link to obj:', trans_arm)
-        print('Translation from neck_pan_link to obj:', trans_neck)
+        rospy.loginfo('Translation from shoulder_fixed_link to obj:', trans_arm)
+
+        trans_head = None
+        i = 0
+        while not trans_head:
+            try:
+                (trans_head, rot_head) = tf_listener.lookupTransform('/neck_pan_link', '/obj', rospy.Time(0))
+            except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException) as err:
+                rospy.sleep(0.1)
+                i = i + 1
+                if i == 10:
+                    rospy.logerr(err)
+                    rospy.signal_shutdown(err)
+                else:
+                    continue
+        rospy.loginfo('Translation from neck_pan_link to obj:', trans_head)
 
         # Calculate inverse kinematic
         joints_position = ik.arm_pan_tilt(arm, trans_arm[0], trans_arm[1], trans_arm[2])
-        print('Arm Joint Position:', joints_position)
+        rospy.loginfo('Arm Joint Position:', joints_position)
 
-        neck_joints_position = ik.neck_pan_tilt(trans_neck[0], trans_neck[1], trans_neck[2])
-        print('Neck Joint Position:', neck_joints_position)
-
-        # Show markers TODO TEMP
-        markers = Markers([[point[0], point[1], point[2]]])
-        for i in range(0, 100):
-            markers.publish()
-            rospy.sleep(0.01)
+        head_joints_position = ik.head_pan_tilt(trans_head[0], trans_head[1], trans_head[2])
+        rospy.loginfo('Head Joint Position:', head_joints_position)
     else:
         joints_position = joints
 
     # Accomplish trajectory
-    traj.add_point(joints_position, time)
-    traj_head.add_point(neck_joints_position, time)
+    traj_arm.add_point(joints_position, time)
+    traj_head.add_point(head_joints_position, time)
 
-    traj.start()
+    traj_arm.start()
     traj_head.start()
 
-    traj.wait(time)
+    traj_arm.wait(time)
     traj_head.wait(time)
 
     for i in range(3):
@@ -97,18 +103,18 @@ def main(args):
         gripper.open(0.1)
         rospy.sleep(0.5)
 
-    traj.clear()
+    traj_arm.clear()
 
-    traj.add_point([0, 0, 0, 0], time)
+    traj_arm.add_point([0, 0, 0, 0], time)
     traj_head.add_point([0, 0], time)
 
-    traj.start()
+    traj_arm.start()
     traj_head.start()
 
-    traj.wait(time)
+    traj_arm.wait(time)
     traj_head.wait(time)
 
-    print('Completed')
+    rospy.loginfo('Completed')
 
 if __name__ == '__main__':
     arg_fmt = argparse.RawDescriptionHelpFormatter

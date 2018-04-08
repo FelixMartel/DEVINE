@@ -2,7 +2,7 @@
 Python ROS package to point position (x, y, z) by using:
 - `JointTrajectory` for right and left arms controllers
 - `JointTrajectory` for head controller
-- `Command` to left and right grippers
+- `Command` for left and right grippers
 
 ## Compiling
 ```bash
@@ -28,14 +28,14 @@ roslaunch jn0_gazebo jn0_empty_world.launch gui:=true
  Position is referenced from base_link
 
 ```bash
-rosrun irl_control marker.py -p [0.5,0.3,-0.5]
+rosrun irl_control marker.py -p 0.5,0.3,-0.5
 
-rosrun irl_control example.py -r jn0 -c right_arm_controller -p [0.5,0.3,-0.5] -t 5
+rosrun irl_control example.py -r jn0 -c right_arm_controller -p 0.5,0.3,-0.5 -t 5
 ```
 
 ### Move controller with joints position
 ```bash
-rosrun irl_control example.py -r jn0 -c left_arm_controller -j [-0.5,0,-1,-1] -t 5
+rosrun irl_control example.py -r jn0 -c left_arm_controller -j -0.5,0,-1,-1 -t 5
 ```
 
 ## Details

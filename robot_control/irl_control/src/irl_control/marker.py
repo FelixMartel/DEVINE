@@ -45,12 +45,12 @@ class Markers(object):
             self.marker_array.markers.append(marker)
 
 def main(args):
-    point = [float(i) for i in args.point.replace('[', '').replace(']', '').split(',')]
+    point = [float(i) for i in args.point.split(',')]
     
     markers_position = [point]
 
     rospy.init_node('makers_tf')
-    print('Running node \'' + 'markers_tf' + '\' with: ' + str(markers_position))
+    rospy.loginfo('Running node \'' + 'markers_tf' + '\' with: ' + str(markers_position))
 
     markers = Markers(markers_position)
     tf_broadcaster = tf.TransformBroadcaster()
@@ -65,8 +65,8 @@ def main(args):
             (trans1, rot1) = tf_listener.lookupTransform('/R_frame_tool_link', '/obj', rospy.Time(0))
         except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
             continue
-        print('Orientation from top:', math.floor(math.sin(trans1[1]/trans1[0]) * 180 / math.pi))
-        print('Orientation from side:', math.floor(math.sin(trans1[2]/trans1[0]) * 180 / math.pi))
+        rospy.loginfo('Orientation from top:', math.floor(math.sin(trans1[1]/trans1[0]) * 180 / math.pi))
+        rospy.loginfo('Orientation from side:', math.floor(math.sin(trans1[2]/trans1[0]) * 180 / math.pi))
         rate.sleep()
 
 if __name__ == '__main__':
