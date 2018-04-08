@@ -39,7 +39,7 @@ def main(args):
     except RuntimeError as err:
         rospy.logerr(err)
         rospy.signal_shutdown(err)
-        
+
     if not rospy.is_shutdown():
 
         # Init Gripper
@@ -54,7 +54,7 @@ def main(args):
             i = 0
             while not trans_arm and not rospy.is_shutdown():
                 try:
-                    (trans_arm, rot) = tf_listener.lookupTransform('/' + arm[0].upper() + '_shoulder_fixed_link', '/obj', rospy.Time(0))
+                    (trans_arm, rot_arm) = tf_listener.lookupTransform('/' + arm[0].upper() + '_shoulder_fixed_link', '/obj', rospy.Time(0))
                 except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException) as err:
                     rospy.sleep(0.1)
                     i = i + 1
