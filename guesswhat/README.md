@@ -4,7 +4,7 @@
 
 ### Installation
 
-1. Run the install script `. ./install_package.bash`
+1. Run the install script `. install_package.bash`
 2. Build the module using catkin\_make
 
 ```bash
