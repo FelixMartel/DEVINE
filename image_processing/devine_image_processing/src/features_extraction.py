@@ -22,7 +22,7 @@ FEATURES_TOPIC = '/vgg16_features'
 IMAGE_TOPIC = '/devine/image'
 
 IMAGE_SIZE = 224
-N_CHANNELS = 3
+CHANNEL_MEAN = np.array([123.68, 116.779, 103.939])
 
 if __name__ == '__main__':
     rospy.init_node('features_extraction')
@@ -39,9 +39,8 @@ if __name__ == '__main__':
 
     rospy.Subscriber(IMAGE_TOPIC, CompressedImage, image_callback)
 
-    channel = np.array([123.68, 116.779, 103.939])
     holder = tf.placeholder(tf.float32,
-                            [None, IMAGE_SIZE, IMAGE_SIZE, N_CHANNELS],
+                            [None, IMAGE_SIZE, IMAGE_SIZE, len(CHANNEL_MEAN)],
                             name='image')
     _, end_points = vgg.vgg_16(holder, is_training=False, dropout_keep_prob=1.0)
 
@@ -53,7 +52,7 @@ if __name__ == '__main__':
             try:
                 img = image_queue.get(timeout=1)
 
-                print('Processing frame')
+                rospy.loginfo('Processing frame')
                 img = Image.open(BytesIO(img))
                 img = img.resize((IMAGE_SIZE, IMAGE_SIZE), resample=Image.BILINEAR)
                 img = np.array(img, dtype=np.float32)
@@ -63,6 +62,6 @@ if __name__ == '__main__':
                 feat = sess.run(ft_output, feed_dict={holder: np.array([img])})
 
                 features.publish(Float64MultiArray(data=feat[0].tolist()))
-                print('Frame processed')
+                rospy.loginfo('Frame processed')
             except Empty:
                 pass

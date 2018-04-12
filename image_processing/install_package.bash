@@ -7,7 +7,8 @@ echo "export ROS_PACKAGE_PATH=$CURDIR:\$ROS_PACKAGE_PATH" >> ~/.bashrc
 sudo pip3 install Cython scikit-image bson pymongo pycocotools keras catkin_pkg rospkg
 wget https://github.com/matterport/Mask_RCNN/releases/download/v2.0/mask_rcnn_coco.h5
 wget http://download.tensorflow.org/models/vgg_16_2016_08_28.tar.gz
-tar xzvf vgg_16_2016_08_28.tar.gz
+tar xzf vgg_16_2016_08_28.tar.gz
+rm -f vgg_16_2016_08_28.tar.gz
 
 #Reload env
 exec bash
