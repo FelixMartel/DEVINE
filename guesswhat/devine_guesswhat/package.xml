@@ -3,7 +3,8 @@
   <name>devine_guesswhat</name>
   <version>0.0.1</version>
   <description>The devine_guesswhat package</description>
-  <maintainer email="devine.gegi@listes.usherbrooke.ca">devine</maintainer>
+  <maintainer email="devine.gegi@listes.usherbrooke.ca">DEVINE</maintainer>
+  <author email="devine.gegi@listes.usherbrooke.ca">DEVINE</author>
   <license>BSD License 2.0</license>
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>rospy</build_depend>

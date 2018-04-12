@@ -126,7 +126,7 @@ if __name__ == '__main__':
             except Empty:
                 continue
 
-            print('Starting new game')
+            rospy.loginfo('Starting new game')
             img = {'id': 0, 'width': 10, 'height': 10, 'coco_url': ''}
             game = Game(id=0,
                         object_id=0,
@@ -153,4 +153,4 @@ if __name__ == '__main__':
             choice_bbox = game.objects[choice_index].bbox
             object_found.publish(Int32MultiArray(data=[int(choice_bbox.x_center),
                                                        int(choice_bbox.y_center)]))
-            print('Game over')
+            rospy.loginfo('Game over')

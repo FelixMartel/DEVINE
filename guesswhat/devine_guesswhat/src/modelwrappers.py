@@ -13,7 +13,7 @@ CONFIDENCE_TOPIC = '/confidence'
 SELECTION_TOPIC = '/object_found'
 
 class GuesserROSWrapper(GuesserWrapper):
-    '''Wraps the guesser model to publishes confidence'''
+    '''Wraps the guesser model and publishes confidence levels'''
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.confidence = rospy.Publisher(CONFIDENCE_TOPIC, Float64MultiArray, queue_size=1)
@@ -28,7 +28,7 @@ class GuesserROSWrapper(GuesserWrapper):
         return found, softmax, selected_object
 
 class OracleROSWrapper(object):
-    '''Wraps the oracle model and forwards answers and questions to topics'''
+    '''Wraps the oracle model, publishes questions and waits for their answers'''
     def __init__(self, tokenizer):
         self.tokenizer = tokenizer
         self.answers = Queue(1)
@@ -66,7 +66,7 @@ class OracleROSWrapper(object):
             except Empty:
                 pass
         else:
-            exit(1)
+            exit()
 
         return [token]
 
