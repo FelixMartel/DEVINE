@@ -33,7 +33,7 @@ if __name__ == '__main__':
     def image_callback(data):
         '''Callback for image topic'''
         if image_queue.full():
-            rospy.logwarn('image_segmentation: image receiving rate is too high !')
+            rospy.logwarn('features_extraction: image receiving rate is too high !')
             image_queue.get()
         image_queue.put(data.data)
 
