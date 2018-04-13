@@ -4,12 +4,13 @@
   <arg name="gameSystem" default="true"/>
   <arg name="dashboard" default="true" />
   <arg name="guesswhat" default="true" />
+  <arg name="segmentation" default="true" />
   <group if="$(arg kinect)">
-    <include file="$(find openni_launch)/launch/openni.launch" />
-    <node name="img_throttle" pkg="topic_tools" type="throttle" args="messages /camera/rgb/image_color/compressed 0.03 /devine/image" />
+    <include file="$(find openni_launch)/launch/openni.launch">
+      <!-- <arg name="camera" value="openni"/> -->
+    </include>
+    <node name="img_throttle" pkg="topic_tools" type="throttle" args="messages /openni/rgb/image_color/compressed 0.03 /devine/image" />
     <node name="pos_lib" pkg="devine_kinect" type="pos_lib.py" respawn="true" />
-    <node name="features_extraction" pkg="devine_image_processing" type="features_extraction.py" respawn="true" />
-    <node name="segmentation" pkg="devine_image_processing" type="segmentation.py" respawn="true" />
   </group>
   <group if="$(arg snips)">
     <node name="snips" pkg="snips" type="snips.py" respawn="true" />
@@ -22,5 +23,9 @@
   </group>
   <group if="$(arg guesswhat)">
     <node name="guesswhat" pkg="devine_guesswhat" type="guesswhat_node.py" respawn="true" />
+  </group>
+  <group if="$(arg segmentation)">
+    <node name="features_extraction" pkg="devine_image_processing" type="features_extraction.py" respawn="true" />
+    <node name="segmentation" pkg="devine_image_processing" type="segmentation.py" respawn="true" />
   </group>
 </launch>

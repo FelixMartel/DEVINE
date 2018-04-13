@@ -97,12 +97,12 @@ const draw = throttle(function draw() {
   } 
 
   if (obj_pos_2d != undefined) {
-    objectPos2d.innerText = `(${obj_pos_2d[0]}, ${obj_pos_2d[1]})`;
+    objectPos2d[0].innerText = `(${obj_pos_2d[0]}, ${obj_pos_2d[1]})`;
   }
 
   if (obj_pos_3d != undefined) {
     let cleanFloat = number => number===null ? "N/A" : number.toFixed(2);
-    objectPos3d.innerText = `(${cleanFloat(obj_pos_3d[0])}, ` +
+    objectPos3d[0].innerText = `(${cleanFloat(obj_pos_3d[0])}, ` +
       `${cleanFloat(obj_pos_3d[1])}, ${cleanFloat(obj_pos_3d[2])})`;
   }
 
@@ -114,13 +114,18 @@ const draw = throttle(function draw() {
       image.beginPath();
       image.drawImage(imageObject, 0, 0);
       image.font = "12px arial";
+      image.strokeStyle = "#FF0000";
+      image.fillStyle = "#FF0000";
+      if (obj_pos_2d != undefined) {
+        image.fillRect(obj_pos_2d[0]-2+320, obj_pos_2d[1]-2+240, 4, 4);
+      } 
       if (seg != undefined) {
         let segmentedDataObj = JSON.parse(seg);
         let objs = segmentedDataObj.objects;
         if (objs) {
           objs.forEach(obj => {
             let [left, top, height, width] = obj.bbox;
-            image.rect(left, 480-top-height, width, height);
+            image.strokeRect(left, 480-top-height, width, height);
             image.fillText(obj.category, left, 480-top-height-1);
           });
         }
