@@ -1,12 +1,15 @@
 import ros from '../ros';
+import LogConsole from '../console'
 import ROSLIB from 'roslib';
-import $ from 'cash-dom';
+import $ from 'jquery';
 
-const subscribeCheckbox = $("#subscribe_checkbox");
+const cons = new LogConsole("Kinect", "#3498DB");
+const cameraCheckbox = $("#camera_checkbox");
 const segmentationCheckbox = $("#segmentation_checkbox");
 const objectPos2d = $("#kinect_pos_found");
 const objectPos3d = $("#kinect_pos_calc");
-const image = $("#kinect_image")[0].getContext("2d");
+const canvas = $("#kinect_image")[0];
+const image = canvas.getContext("2d");
 const history = $('#kinect_image_history');
 
 const topicListeners = {
@@ -46,7 +49,7 @@ const topicHistory = {
   position: 1
 };
 
-subscribeCheckbox.on("change", function() {
+cameraCheckbox.on("change", function() {
   if (this.checked) {
     topicListeners.image.subscribe(handleTopicData.bind(this, 'image'));
     topicListeners.object_position_2d.subscribe(handleTopicData.bind(this, 'object_position_2d'));
@@ -55,20 +58,25 @@ subscribeCheckbox.on("change", function() {
       topicListeners.segmentation.subscribe(handleTopicData.bind(this, 'segmentation'));
       topicListeners.segmentation_image.subscribe(handleTopicData.bind(this, 'segmentation_image'));
     }
+    cons.log("Camera subscribed");
   } else {
     for (let i in topicListeners) {
-      topicListeners[i].unsubscribe();
+      topicListeners[i].removeAllListeners();
     }
+    cons.log("Camera unsubscribed");
+    setTimeout(() => drawNoFeed(), 200);
   }
 });
 
 segmentationCheckbox.on("change", function() {
-  if (this.checked && subscribeCheckbox.is(":checked")) {
+  if (this.checked && cameraCheckbox.is(":checked")) {
     topicListeners.segmentation.subscribe(handleTopicData.bind(this, 'segmentation'));
     topicListeners.segmentation_image.subscribe(handleTopicData.bind(this, 'segmentation_image'));
+    cons.log("Segmentation subscribed");
   } else {
-    topicListeners.segmentation.unsubscribe();
-    topicListeners.segmentation_image.unsubscribe();
+    topicListeners.segmentation.removeAllListeners();
+    topicListeners.segmentation_image.removeAllListeners();
+    cons.log("Segmentation unsubscribed");
   }
 });
 
@@ -80,6 +88,14 @@ history.on("change", function() {
   topicHistory.position = Math.max(this.value, 1);
   draw();
 });
+
+function drawNoFeed() {
+  image.fillStyle = "red";
+  image.font = "bold 20pt Arial";
+  image.fillText("< No Camera Feed />", 190, (canvas.height / 2));
+}
+
+drawNoFeed(); // No feed at startup
 
 //We want to limit drawing for performance, yet we might want to keep all data
 const draw = throttle(function draw() {
@@ -97,12 +113,12 @@ const draw = throttle(function draw() {
   } 
 
   if (obj_pos_2d != undefined) {
-    objectPos2d[0].innerText = `(${obj_pos_2d[0]}, ${obj_pos_2d[1]})`;
+    objectPos2d.innerText = `(${obj_pos_2d[0]}, ${obj_pos_2d[1]})`;
   }
 
   if (obj_pos_3d != undefined) {
     let cleanFloat = number => number===null ? "N/A" : number.toFixed(2);
-    objectPos3d[0].innerText = `(${cleanFloat(obj_pos_3d[0])}, ` +
+    objectPos3d.innerText = `(${cleanFloat(obj_pos_3d[0])}, ` +
       `${cleanFloat(obj_pos_3d[1])}, ${cleanFloat(obj_pos_3d[2])})`;
   }
 
@@ -113,20 +129,14 @@ const draw = throttle(function draw() {
       image.clearRect(0, 0, 640, 480);
       image.beginPath();
       image.drawImage(imageObject, 0, 0);
-      image.font = "12px arial";
-      image.strokeStyle = "#FF0000";
-      image.fillStyle = "#FF0000";
-      if (obj_pos_2d != undefined) {
-        image.fillRect(obj_pos_2d[0]-2, 480-obj_pos_2d[1]-2, 4, 4);
-      } 
       if (seg != undefined) {
         let segmentedDataObj = JSON.parse(seg);
         let objs = segmentedDataObj.objects;
         if (objs) {
           objs.forEach(obj => {
-            let [left, top, width, height] = obj.bbox;
-            image.strokeRect(left, top, width, height);
-            image.fillText(obj.category, left, top-1);
+            let [left, top, height, width] = obj.bbox;
+            image.rect(left, 480-top-height, width, height);
+            image.fillText(obj.category, left, 480-top-height-1);
           });
         }
       }
