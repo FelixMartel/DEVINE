@@ -34,8 +34,8 @@ SEGMENTATION_TOPIC = '/rcnn_segmentation'
 FEATURES_TOPIC = '/vgg16_features'
 OBJECT_TOPIC = '/object_found'
 
-segmentations = Queue(2)
-features = Queue(2)
+segmentations = Queue(1)
+features = Queue(1)
 
 class ImgFeaturesLoader():
     '''Loads image from memory'''
@@ -74,6 +74,9 @@ def open_config(path):
 
 def segmentation_callback(data):
     '''Callback for the segmantion topic'''
+    if segmentations.full():
+        segmentations.get()
+
     try:
         segmentations.put(json.loads(data.data))
     except json.JSONDecodeError:
@@ -81,6 +84,9 @@ def segmentation_callback(data):
 
 def features_callback(data):
     '''Callback for the features topic'''
+    if features.full():
+        features.get()
+
     features.put(np.array(data.data))
 
 if __name__ == '__main__':
@@ -127,7 +133,7 @@ if __name__ == '__main__':
                 continue
 
             rospy.loginfo('Starting new game')
-            img = {'id': 0, 'width': 10, 'height': 10, 'coco_url': ''}
+            img = {'id': 0, 'width': 640, 'height': 480, 'coco_url': ''}
             game = Game(id=0,
                         object_id=0,
                         objects=seg['objects'],

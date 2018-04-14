@@ -117,16 +117,16 @@ const draw = throttle(function draw() {
       image.strokeStyle = "#FF0000";
       image.fillStyle = "#FF0000";
       if (obj_pos_2d != undefined) {
-        image.fillRect(obj_pos_2d[0]-2+320, obj_pos_2d[1]-2+240, 4, 4);
+        image.fillRect(obj_pos_2d[0]-2, 480-obj_pos_2d[1]-2, 4, 4);
       } 
       if (seg != undefined) {
         let segmentedDataObj = JSON.parse(seg);
         let objs = segmentedDataObj.objects;
         if (objs) {
           objs.forEach(obj => {
-            let [left, top, height, width] = obj.bbox;
-            image.strokeRect(left, 480-top-height, width, height);
-            image.fillText(obj.category, left, 480-top-height-1);
+            let [left, top, width, height] = obj.bbox;
+            image.strokeRect(left, top, width, height);
+            image.fillText(obj.category, left, top-1);
           });
         }
       }
