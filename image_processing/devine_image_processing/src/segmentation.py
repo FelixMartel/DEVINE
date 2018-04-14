@@ -132,7 +132,7 @@ class ROSRCNNSegmentation(RCNNSegmentation):
         rospy.init_node('image_segmentation')
         rospy.Subscriber(IMAGE_TOPIC, CompressedImage,
                          self.image_received_callback, queue_size=1)
-        self.publisher = rospy.Publisher(SEGMENTATION_TOPIC, String, queue_size=10)
+        self.publisher = rospy.Publisher(SEGMENTATION_TOPIC, String, queue_size=10, latch=True)
 
     def image_received_callback(self, data):
         '''Callback when a new image is received from the topic'''
