@@ -33,6 +33,8 @@ TOKENS_PATH = os.path.join(ROOT_DIR, '../data/tokens.json')
 SEGMENTATION_TOPIC = '/rcnn_segmentation'
 FEATURES_TOPIC = '/vgg16_features'
 OBJECT_TOPIC = '/object_found'
+CATEGORY_TOPIC = '/found_category'
+STATE_TOPIC = '/guesswhat_state'
 
 segmentations = Queue(1)
 features = Queue(1)
@@ -94,6 +96,8 @@ if __name__ == '__main__':
     rospy.Subscriber(SEGMENTATION_TOPIC, String, segmentation_callback)
     rospy.Subscriber(FEATURES_TOPIC, Float64MultiArray, features_callback)
     object_found = rospy.Publisher(OBJECT_TOPIC, Int32MultiArray, queue_size=1)
+    category = rospy.Publisher(CATEGORY_TOPIC, String, queue_size=1)
+    state = rospy.Publisher(STATE_TOPIC, String, queue_size=1, latch=True)
 
     eval_config = open_config(EVAL_CONF_PATH)
     guesser_config = open_config(GUESS_CONF_PATH)
@@ -125,6 +129,7 @@ if __name__ == '__main__':
 
         batchifier = LooperBatchifier(tokenizer, generate_new_games=False)
 
+        state.publish('Waiting for image processing')
         while not rospy.is_shutdown():
             try:
                 seg = segmentations.get(timeout=1)
@@ -160,3 +165,6 @@ if __name__ == '__main__':
             object_found.publish(Int32MultiArray(data=[int(choice_bbox.x_center),
                                                        int(choice_bbox.y_center)]))
             rospy.loginfo('Game over')
+            category.publish(seg['objects'][choice_index]['category'])
+
+            state.publish('Waiting for image processing')

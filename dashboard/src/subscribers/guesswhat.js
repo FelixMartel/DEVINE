@@ -18,6 +18,18 @@ const answer_listener = new ROSLIB.Topic({
   messageType: 'std_msgs/String'
 });
 
+const category_listener = new ROSLIB.Topic({
+  ros: ros,
+  name: '/found_category',
+  messageType: 'std_msgs/String'
+});
+
+const state_listener = new ROSLIB.Topic({
+  ros: ros,
+  name: '/guesswhat_state',
+  messageType: 'std_msgs/String'
+});
+
 guesswhatCheckbox.on("change", function () {
   $('#guesswhat_ask_btn').prop('disabled', !this.checked);
   if (this.checked) {
@@ -27,10 +39,18 @@ guesswhatCheckbox.on("change", function () {
     question_listener.subscribe(function (message) {
       cons.log(`Question: ${message.data}`)
     });
+    category_listener.subscribe(function (message) {
+      cons.log(`<b>Game ended!</b> Found: ${message.data}`)
+    });
+    state_listener.subscribe(function (message) {
+      cons.log(`State: ${message.data}`)
+    });
     cons.log("Subscribed");
   } else {
     answer_listener.removeAllListeners();
     question_listener.removeAllListeners();
+    category_listener.removeAllListeners();
+    state_listener.removeAllListeners();
     cons.log("Unsubscribed");
   }
 });
