@@ -144,8 +144,8 @@ catkin_make
 ```bash
 roscore #start ROS master
 rosrun snips snips.py #run snips node
-rostopic echo /snips_answer #listen to the answers
-rostopic pub /snips_ask std_msgs/String "Is the object blue ?" #ask away !
+rostopic echo /answer #listen to the answers
+rostopic pub /question std_msgs/String "Is the object blue ?" #ask away !
 ``` 
 
 # Troubleshooting
