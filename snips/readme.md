@@ -3,8 +3,8 @@ Snips ROS Package
 
 Specialized ROS package for the integration 
 
-## Installation
-# 1.Installing Snips Voice Platform
+# Installation
+## 1.Installing Snips Voice Platform
 
 Run the following commands in the terminal to install Snips Voice Platform
 
@@ -18,7 +18,7 @@ sudo apt-get update
 sudo apt-get install -y snips-platform-voice
 ```
 
-# 2.Configuration
+## 2.Configuration
 This section shows you how to configure the audio input and output used by Snips.
 
 Step 1. List your devices
@@ -112,7 +112,7 @@ Don't forget to restart the audio server:
 sudo systemctl start snips-audio-server
 ```
 
-# 3.Assistant
+## 3.Assistant
 Go to snips.ai and download a premade or custom Assistant. Once downloaded, extract the assistant folder to /usr/share/snips/assistant via the following command:
 
 ```
@@ -122,7 +122,7 @@ sudo mv ./assistant /usr/share/snips/assistant
 You will also need to restart Snips to take the new assistant into account, which is achieved by issuing the command
 sudo systemctl restart "snips*"
 
-# 4.Install Snips-Watch
+## 4.Install Snips-Watch
 You can install snips-watch to monitor the bus:
 
 ```
@@ -131,16 +131,16 @@ sudo apt-get install snips-watch
 
 Then you can start snips-watch to know about the successful interactions. You also use one or more -v (snips-watch -vvv) to see more details during the various stages of the conversation.
 
-## Run the install script `./install_package.bash` 
+# Run the install script `./install_package.bash` 
 
-## Build the module using catkin_make:
+# Build the module using catkin_make:
 ```bash
 roscd
 cd ..
 catkin_make
 ```
 
-## Usage
+# Usage
 ```bash
 roscore #start ROS master
 rosrun snips snips.py #run snips node
@@ -148,8 +148,8 @@ rostopic echo /snips_answer #listen to the answers
 rostopic pub /snips_ask std_msgs/String "Is the object blue ?" #ask away !
 ``` 
 
-## Troubleshooting
-# Snips not firing responses
+# Troubleshooting
+## Snips not firing responses
 
 If Snips is receiving data correctly but is having trouble mapping it to its Intent, try redownloading the correct assistant (or see the folder assistant on the drive).
 
