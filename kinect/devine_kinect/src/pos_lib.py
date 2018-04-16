@@ -65,9 +65,9 @@ class PosLib(object):
                 [x, y] = self.position_to_transform
                 print(x, y)
                 pc = self.current_point_cloud
-                upper_left_point = self.zero_center_to_upper_left(x, y, pc.width, pc.height)
-                [z] = next(point_cloud2.read_points(pc, field_names='z', skip_nans=False, uvs=[upper_left_point]))
-                position = self.calc_geometric_location(x, y, z, pc.width, pc.height)
+                center_point = self.upper_left_to_zero_center(x, y, pc.width, pc.height)
+                [z] = next(point_cloud2.read_points(pc, field_names='z', skip_nans=False, uvs=[(x,y)]))
+                position = self.calc_geometric_location(center_point[0], center_point[1], z, pc.width, pc.height)
                 ros_packet = Float32MultiArray()
                 ros_packet.data = position
                 ROS_PUBLISHER.publish(ros_packet)
@@ -77,9 +77,9 @@ class PosLib(object):
         finally:
             self.mutex.release()
 
-    def zero_center_to_upper_left(self, x, y, width, height):
+    def upper_left_to_zero_center(self, x, y, width, height):
         '''Change referential from center to upper left'''
-        return (x + int(width/2), y + int(height/2))
+        return (x - int(width/2), y - int(height/2))
 
     def calc_geometric_location(self, x_pixel, y_pixel, kinect_z, width, height):
         f = width / (2 * math.tan(math.radians(57/2))) #57 = fov angle in kinect spects
