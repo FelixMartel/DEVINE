@@ -23,7 +23,11 @@ class Controller(object):
 
         try:
             self.traj_arm = TrajectoryClient(ROBOT, 'right_arm_controller')
+<<<<<<< HEAD
+            self.traj_head = TrajectoryClient(ROBOT, 'head_controller')
+=======
             #self.traj_head = TrajectoryClient(ROBOT, 'head_controller')
+>>>>>>> dc7bc81b9260aca90201f6a9d7224f31c972f13a
         except RuntimeError as err:
             rospy.logerr(err)
             rospy.signal_shutdown(err)
@@ -83,6 +87,18 @@ class Controller(object):
         rospy.loginfo('move_init')
         time = 10
         self.traj_arm.clear()
+<<<<<<< HEAD
+        self.traj_head.clear()
+
+        self.traj_arm.add_point([0, 0, 0, 0], time)
+        self.traj_head.add_point([0, 0], time)
+
+        self.traj_arm.start()
+        self.traj_head.start()
+
+        self.traj_arm.wait(time)
+        self.traj_head.wait(time)
+=======
         #self.traj_head.clear()
 
         self.traj_arm.add_point([0, 0, 0, 0], time)
@@ -93,12 +109,24 @@ class Controller(object):
 
         self.traj_arm.wait(time)
         #self.traj_head.wait(time)
+>>>>>>> dc7bc81b9260aca90201f6a9d7224f31c972f13a
 
         rospy.loginfo('Completed')
 
     def move(self):
         time = 10
         self.traj_arm.clear()
+<<<<<<< HEAD
+        self.traj_head.clear()
+
+        self.traj_arm.add_point(self.joints_position, time)
+        self.traj_head.add_point(self.head_joints_position, time)
+        self.traj_arm.start()
+        self.traj_head.start()
+
+        self.traj_arm.wait(time)
+        self.traj_head.wait(time)
+=======
         #self.traj_head.clear()
 
         self.traj_arm.add_point(self.joints_position, time)
@@ -108,6 +136,7 @@ class Controller(object):
 
         self.traj_arm.wait(time)
         #self.traj_head.wait(time)
+>>>>>>> dc7bc81b9260aca90201f6a9d7224f31c972f13a
 
         i = 0
         while i < 3:

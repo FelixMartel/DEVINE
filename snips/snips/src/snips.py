@@ -45,6 +45,7 @@ def on_snips_message(client, userdata, msg): # pylint: disable=W0613
     """
     Callback executed when snips receive an answer
     """
+    rospy.loginfo("Callback executed when snips receive an answer")
     if msg.topic not in SNIPS_TOPICS:
         return
     data = json.loads(msg.payload)
