@@ -89,7 +89,6 @@ class RCNNSegmentation(object):
             },
             "objects": []
         }
-        #corrected_bounding_box = self.correct_array(result['rois'], height)
         object_array = []
 
         # Debug file dump
