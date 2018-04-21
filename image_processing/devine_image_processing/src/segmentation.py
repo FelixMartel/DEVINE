@@ -89,7 +89,7 @@ class RCNNSegmentation(object):
             },
             "objects": []
         }
-        corrected_bounding_box = self.correct_array(result['rois'], height)
+        #corrected_bounding_box = self.correct_array(result['rois'], height)
         object_array = []
 
         # Debug file dump
@@ -102,10 +102,8 @@ class RCNNSegmentation(object):
         # with open('rois.pkl','wb') as pickle_file:
         #     result['rois'].dump(pickle_file)
 
-        for current_id, (class_id, bounding_box) in enumerate(zip(result['class_ids'], corrected_bounding_box)):
-            object_area = 0 # figure out if we ever use the area
-            # According the MsCoco api this seems to be the mask area
-            # (check if maskrcnn can produce this)
+        for current_id, (class_id, bounding_box) in enumerate(zip(result['class_ids'], result['rois'])):
+            object_area = 0
             current_object = {
                 "category_id": int(class_id),
                 "bbox": bounding_box.tolist(),
@@ -116,9 +114,6 @@ class RCNNSegmentation(object):
             }
             object_array.append(current_object)
 
-            # Currently there is an issue with Numpy integers
-            # (probably orginating from the bounding box)
-            # Also make sure the bounding box being created is correct
 
         result_obj['objects'] = object_array
         return json_util.dumps(result_obj)

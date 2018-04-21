@@ -1,11 +1,11 @@
 <launch>
-  <arg name="robot_control" default="true"/>
-  <arg name="kinect" default="true"/>
-  <arg name="snips" default="true"/>
-  <arg name="gameSystem" default="true"/>
+  <arg name="robot_control" default="false"/>
+  <arg name="kinect" default="false"/>
+  <arg name="snips" default="false"/>
+  <arg name="gameSystem" default="false"/>
   <arg name="dashboard" default="true" />
-  <arg name="guesswhat" default="true" />
-  <arg name="image_processing" default="true" />
+  <arg name="guesswhat" default="false" />
+  <arg name="image_processing" default="false" />
 
   <group if="$(arg robot_control)">
     <include file="$(find jn0_gazebo)/launch/jn0_empty_world.launch" />

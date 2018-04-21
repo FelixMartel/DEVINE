@@ -1,11 +1,13 @@
-import ros from '../ros';
+import { RosTopic } from '../ros';
+import devineTopics from '../vars/devine_topics.json'
 import LogConsole from '../console'
 import ROSLIB from 'roslib';
 import $ from 'jquery';
 
 const cons = new LogConsole("GuessWhat", "#00bc8c");
-const guesswhatCheckbox = $("#guesswhat_checkbox");
+const subscriber = $("#guesswhat_checkbox");
 
+<<<<<<< HEAD
 const state_listener = new ROSLIB.Topic({
   ros: ros,
   name: '/guesswhat_state',
@@ -29,10 +31,17 @@ const answer_listener = new ROSLIB.Topic({
   name: '/answer',
   messageType: 'std_msgs/String'
 });
+=======
+const topics = {
+  state:    new RosTopic(devineTopics.guesswhat_state),
+  question: new RosTopic(devineTopics.question),
+};
+>>>>>>> dc7bc81b9260aca90201f6a9d7224f31c972f13a
 
-guesswhatCheckbox.on("change", function () {
+subscriber.on("change", function () {
   $('#guesswhat_ask_btn').prop('disabled', !this.checked);
   if (this.checked) {
+<<<<<<< HEAD
     state_listener.subscribe(function (message) {
       cons.log(`State: ${message.data}`)
     });
@@ -51,6 +60,17 @@ guesswhatCheckbox.on("change", function () {
     question_listener.removeAllListeners();
     category_listener.removeAllListeners();
     state_listener.removeAllListeners();
+=======
+    topics.state.subscribe(message => cons.log(`State: ${message.data}`));
+    topics.question.subscribe(message => cons.log(`Question: ${message.data}`));
+
+    cons.log("Subscribed");
+  } else {
+    for (let i in topics) {
+      topics[i].removeAllListeners();
+    }
+
+>>>>>>> dc7bc81b9260aca90201f6a9d7224f31c972f13a
     cons.log("Unsubscribed");
   }
 });
