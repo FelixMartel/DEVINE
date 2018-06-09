@@ -1,0 +1,52 @@
+{
+  "name" : "My Assistant",
+  "intents" : [ {
+    "id" : "TSchmidty:YesNoResponse",
+    "type" : "registry",
+    "version" : "0.0.4",
+    "language" : "en",
+    "slots" : [ {
+      "name" : "answer",
+      "id" : "HysPY_I4G",
+      "entity" : "",
+      "entityId" : "entity_zl0VZO21pP5",
+      "missingQuestion" : "I didn't understand, yes or no?",
+      "required" : true
+    } ],
+    "name" : "YesNoResponse"
+  }, {
+    "id" : "Picnic8:YesNoAnswer",
+    "type" : "registry",
+    "version" : "0.0.2",
+    "language" : "en",
+    "slots" : [ {
+      "name" : "Yes",
+      "id" : "HJwOS_N_G",
+      "entity" : "",
+      "entityId" : "entity_4r7DDq2XmXo",
+      "missingQuestion" : "",
+      "required" : false
+    }, {
+      "name" : "No",
+      "id" : "ryNo8ONuz",
+      "entity" : "",
+      "entityId" : "entity_oNxVp1yDGDn",
+      "missingQuestion" : "",
+      "required" : false
+    } ],
+    "name" : "YesNoAnswer"
+  } ],
+  "createdAt" : "2018-02-28T14:43:36.291Z",
+  "language" : "en",
+  "nluEngine" : {
+    "version" : "0.13.0"
+  },
+  "platform" : {
+    "type" : "raspberrypi"
+  },
+  "asr" : {
+    "type" : "snips"
+  },
+  "analyticsEnabled" : true,
+  "hotword" : "hey_snips"
+}
