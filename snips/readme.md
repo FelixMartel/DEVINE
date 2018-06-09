@@ -5,7 +5,6 @@ Specialized ROS package for the integration
 
 ## Dependenies
 
-1. [ROS](https://github.com/FelixMartel/IRL-1/blob/devine_install/INSTALL.md)
 2. paho-mqtt -> `sudo -H pip install paho-mqtt`
 
 ## Installation
