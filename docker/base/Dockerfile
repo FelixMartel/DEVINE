@@ -9,10 +9,11 @@ RUN sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main"
     && sh -c 'echo "deb http://debian.snips.ai/jessie stable main" > /etc/apt/sources.list.d/snips.list' \
     && apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-keys F727C778CCB0A455 \
     && apt update \
+    && apt install -y python3-tk \
     && apt install -y ros-kinetic-desktop-full \
     && apt install -y snips-platform-voice \
+    && apt install -y python-pip \
+    && pip2 install --upgrade pip \
     && apt install -y git \
     && curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash \
-    && . ~/.bashrc \
-    && nvm install --lts
-
+    && bash -ci 'nvm install --lts'
