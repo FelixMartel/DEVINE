@@ -20,6 +20,15 @@ RUN \
     && ln -s /data/mask_rcnn_coco.h5 mask_rcnn_coco.h5 \
     && tar xzf /data/vgg_16_2016_08_28.tar.gz \
     && rm -f /data/vgg_16_2016_08_28.tar.gz \
+    && git clone https://github.com/ildoonet/tf-pose-estimation.git \
+    && cd tf-pose-estimation \
+# hack remove this once body tracking is updated to a python3 node
+    && sed -i 's/matplotlib >= 2.2.2/matplotlib == 2.2.2/' setup.py \
+    && python2 setup.py install \
+    && pip2 install tensorflow --ignore-installed enum34 \
+    && cd .. \
+    && rm -rf tf-pose-estimation \
+    && ln -s $(find /usr/local/lib/python2.7/dist-packages/ -name mobilenet_thin)/graph_opt.pb mobilenet_thin.pb \
 # game_system
     && cd ../game_system \
     && pip2 install transitions \

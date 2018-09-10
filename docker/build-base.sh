@@ -1,5 +1,7 @@
 #!/bin/bash
 
+ROOT=$(dirname "$(readlink -f "$0")")/..
+
 tmp=$(mktemp -d)
 cd $tmp
 git clone --recursive git@github.com:projetdevine/guesswhat.git $tmp
@@ -8,5 +10,5 @@ rm -rf $tmp
 
 tmp=$(mktemp -d)
 cd $tmp
-sudo docker build -f docker/base/Dockerfile -t devine-base .
+sudo docker build -f $ROOT/docker/base/Dockerfile -t devine-base .
 rm -rf $tmp

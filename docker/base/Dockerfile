@@ -15,8 +15,8 @@ RUN apt-get install apt-transport-https \
     && apt-get install -y ros-kinetic-rosbridge-server \
     && apt-get install -y snips-platform-voice \
     && apt-get install -y python-pip \
-    && pip2 install --upgrade pip \
-    && pip3 install --upgrade pip \
+    && pip2 install --upgrade pip setuptools wheel \
+    && pip3 install --upgrade pip setuptools wheel \
     && pip2 install opencv-contrib-python \
     && pip3 install opencv-contrib-python \
     && mkdir /data \
