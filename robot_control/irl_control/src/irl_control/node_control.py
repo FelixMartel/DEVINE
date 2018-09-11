@@ -27,15 +27,17 @@ class Controller(object):
             rospy.loginfo('Waiting for Arm and Head controllers')
             self.traj_arm_right = TrajectoryClient(ROBOT, 'right_arm_controller')
             self.traj_arm_left = TrajectoryClient(ROBOT, 'left_arm_controller')
-            self.traj_head = TrajectoryClient(ROBOT, 'head_controller')
+            self.traj_head = TrajectoryClient(ROBOT, 'neck_controller')
         except RuntimeError as err:
             rospy.logerr(err)
             rospy.signal_shutdown(err)
 
         try:
+            #TODO now = rospy.Time() OR GETLATEST TRANSFORM
             rospy.loginfo('Waiting for /object_frame and /base_link...')
             self.tf_listener.waitForTransform(TOPIC_ROBOT_R_SHOULDER_FIXED_FRAME,
-                                              TOPIC_OBJECT_FRAME, rospy.Time(),
+                                              TOPIC_OBJECT_FRAME,
+                                              rospy.Time(),
                                               rospy.Duration(4))
             self.tf_listener.waitForTransform(TOPIC_ROBOT_R_SHOULDER_FIXED_FRAME,
                                               TOPIC_ROBOT_BASE,
