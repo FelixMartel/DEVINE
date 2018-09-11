@@ -74,7 +74,8 @@ class Controller(object):
         try:
             self.tf_listener.waitForTransform(TOPIC_ROBOT_R_SHOULDER_FIXED_FRAME,
                                               TOPIC_OBJECT_FRAME,
-                                              self.now, rospy.Duration(4))
+                                              self.now,
+                                              rospy.Duration(4))
             (trans_r_arm, rot_r_arm) = self.tf_listener.lookupTransform(
                 TOPIC_ROBOT_R_SHOULDER_FIXED_FRAME,
                 TOPIC_OBJECT_FRAME,
