@@ -17,11 +17,13 @@ def main(args):
     # Start ROS node
     node_name = 'irl_control_emotion_example'
     rospy.init_node(node_name)
-    rospy.loginfo('Running node \'' + node_name + '\'with\n\tconfidence: ' + str(confidence_array) + '\n\tsucceed: ' + str(is_guesswhat_succeed))
+    rospy.loginfo('Running node \'' + node_name + '\'with\n\tconfidence: ' +
+                  str(confidence_array) + '\n\tsucceed: ' + str(is_guesswhat_succeed))
 
-    rate = rospy.Rate(1)
     while not rospy.is_shutdown():
-        pub_confidence = rospy.Publisher(TOPIC_GUESSWHAT_CONFIDENCE, Float32MultiArray, queue_size=10)
+        pub_confidence = rospy.Publisher(TOPIC_GUESSWHAT_CONFIDENCE,
+                                         Float32MultiArray,
+                                         queue_size=10)
         ros_packet = Float32MultiArray()
         ros_packet.data = confidence_array
         pub_confidence.publish(ros_packet)
