@@ -51,6 +51,8 @@ while True:
 
     hsv[:, :, 0] = hue
     cv2.imshow("Filtered HSV", hsv)
+    test = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
+    cv2.imshow("Filtered HSV 2", hsv)
 
     found_colors = {}
 
