@@ -22,12 +22,13 @@ class Controller(object):
         self.object_location = None
         self.tf = tf.TransformListener()
         self.gripper = Gripper(ROBOT, 'right')
+        self.time = 3
 
         try:
             rospy.loginfo('Waiting for Arm and Head controllers')
-            self.traj_arm_right = TrajectoryClient(ROBOT, 'right_arm_controller')
-            self.traj_arm_left = TrajectoryClient(ROBOT, 'left_arm_controller')
-            self.traj_head = TrajectoryClient(ROBOT, 'neck_controller')
+            self.arm_right = TrajectoryClient(ROBOT, 'right_arm_controller')
+            self.arm_left = TrajectoryClient(ROBOT, 'left_arm_controller')
+            self.head = TrajectoryClient(ROBOT, 'neck_controller')
         except RuntimeError as err:
             rospy.logerr(err)
             rospy.signal_shutdown(err)
@@ -56,7 +57,11 @@ class Controller(object):
             self.now = rospy.Time().now()
             if msg.data != (0, 0, 0):
                 self.calcul()
-                self.move()
+                self.move({'head': self.head_joints_position,
+                   #'arm_left': self.left_joints_position,
+                   #'arm_right': self.right_joints_position
+                  },
+                  self.time)
             else:
                 self.move_init(10)
 
@@ -125,51 +130,26 @@ class Controller(object):
 
     def move_init(self, time):
         rospy.loginfo('move_init')
-        self.traj_arm_right.clear()
-        self.traj_arm_left.clear()
-        self.traj_head.clear()
-
-        self.traj_arm_right.add_point([0, 0, 0, 0], time)
-        self.traj_arm_left.add_point([0, 0, 0, 0], time)
-        self.traj_head.add_point([0, 0], time)
-
-        self.traj_arm_right.start()
-        self.traj_arm_left.start()
-        self.traj_head.start()
-
-        self.traj_arm_right.wait(time)
-        self.traj_arm_left.wait(time)
-        self.traj_head.wait(time)
+        self.move({'head': [0, 0],
+                   'arm_left':  [0, 0, 0, 0],
+                   'arm_right':  [0, 0, 0, 0]
+                  },
+                  self.time)
 
         rospy.loginfo('Completed')
 
-    def move(self):
-        time = 10
+    def move(self, controller_joints_positions, time):
 
-        point_with_head = True
-        point_with_right = False
-        point_with_left = False
         move_gripper = False
 
-        if point_with_head:
-            self.traj_head.clear()
-            self.traj_head.add_point(self.head_joints_position, time)
-            self.traj_head.start()
-        if point_with_right:
-            self.traj_arm_right.clear()
-            self.traj_arm_right.add_point(self.right_joints_position, time)
-            self.traj_arm_right.start()
-        if point_with_left:
-            self.traj_arm_left.clear()
-            self.traj_arm_left.add_point(self.left_joints_position, time)
-            self.traj_arm_left.start()
+        times = self.getTimesForJoints(controller_joints_positions, time)
 
-        if point_with_head:
-            self.traj_head.wait(time)
-        if point_with_right:
-            self.traj_arm_right.wait(time)
-        if point_with_left:
-            self.traj_arm_left.wait(time)
+        for key in controller_joints_positions:
+            getattr(self, key).clear()
+            getattr(self, key).add_point(controller_joints_positions[key], times[key])
+            getattr(self, key).start()
+        for key in controller_joints_positions:
+            getattr(self, key).wait(times[key])
 
         if move_gripper:
             i = 0
@@ -181,6 +161,15 @@ class Controller(object):
                 i = i + 1
 
         rospy.loginfo('Completed')
+
+    def getTimesForJoints(self, controller_joints, time):
+        if isinstance(time, int) or isinstance(time, float):
+            times = {}
+            for key in controller_joints:
+                times[key] = time
+        else:
+            times = time
+        return times
 
 def main():
     node_name = 'irl_control_control'

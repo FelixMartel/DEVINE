@@ -36,17 +36,14 @@ class Movement(object):
             rospy.loginfo('Sad')
             self.head_down_shoulder_in()
             rospy.sleep(1)
-            self.controller.move_init(5)
 
         elif not self.is_guesswhat_succeed and self.confidence_max < seuil:
             rospy.loginfo('Disappointed')
             self.head_shake_hand_up()
-            self.controller.move_init(5)
 
         elif self.is_guesswhat_succeed and self.confidence_max < seuil:
             rospy.loginfo('Satisfied')
             self.head_up_arm_up()
-            self.controller.move_init(5)
 
         elif self.is_guesswhat_succeed and self.confidence_max >= seuil:
             rospy.loginfo('Happy')
@@ -54,7 +51,8 @@ class Movement(object):
             rospy.sleep(3)
             self.dab_right()
             rospy.sleep(3)
-            self.controller.move_init(5)
+
+        self.controller.move_init(5)
 
 
     def head_down_shoulder_in(self):
@@ -63,32 +61,27 @@ class Movement(object):
         head_joints_position = [-0.15, 0.79]
         time = 4
 
-        self.move(time, left_joints_position, right_joints_position, head_joints_position)
+        self.controller.move({'head': head_joints_position,
+                   'arm_left': left_joints_position,
+                   'arm_right': right_joints_position
+                  },
+                  time)
 
         rospy.sleep(1)
 
         time = 2
         left_joints_position = self.ui_to_traj([-0.35, -0.62, -0.31, -0.67])
-        self.controller.traj_arm_left.clear()
-        self.controller.traj_arm_left.add_point(left_joints_position, time)
-        self.controller.traj_arm_left.start()
-        self.controller.traj_arm_left.wait(time)
+        self.controller.move({'arm_left': left_joints_position}, time)
 
         rospy.sleep(0.1)
 
         left_joints_position = self.ui_to_traj([-0.70, -0.62, -0.31, -0.67])
-        self.controller.traj_arm_left.clear()
-        self.controller.traj_arm_left.add_point(left_joints_position, time)
-        self.controller.traj_arm_left.start()
-        self.controller.traj_arm_left.wait(time)
+        self.controller.move({'arm_left': left_joints_position}, time)
 
         rospy.sleep(0.1)
 
         left_joints_position = self.ui_to_traj([-0.35, -0.62, -0.31, -0.67])
-        self.controller.traj_arm_left.clear()
-        self.controller.traj_arm_left.add_point(left_joints_position, time)
-        self.controller.traj_arm_left.start()
-        self.controller.traj_arm_left.wait(time)
+        self.controller.move({'arm_left': left_joints_position}, time)
 
         rospy.sleep(0.1)
 
@@ -99,30 +92,25 @@ class Movement(object):
         head_joints_position = [0.4, 0.47]
         time = 3
 
-        self.move(time, left_joints_position, right_joints_position, head_joints_position)
+        self.controller.move({'head': head_joints_position,
+                   'arm_left': left_joints_position,
+                   'arm_right': right_joints_position
+                  },
+                  time)
 
         time = 2
         head_joints_position = [-0.4, 0.47]
-        self.controller.traj_head.clear()
-        self.controller.traj_head.add_point(head_joints_position, time)
-        self.controller.traj_head.start()
-        self.controller.traj_head.wait(time)
+        self.controller.move({'head': head_joints_position}, time)
 
         rospy.sleep(0.1)
 
         head_joints_position = [0.4, 0.47]
-        self.controller.traj_head.clear()
-        self.controller.traj_head.add_point(head_joints_position, time)
-        self.controller.traj_head.start()
-        self.controller.traj_head.wait(time)
+        self.controller.move({'head': head_joints_position}, time)
 
         rospy.sleep(0.1)
 
         head_joints_position = [-0.4, 0.47]
-        self.controller.traj_head.clear()
-        self.controller.traj_head.add_point(head_joints_position, time)
-        self.controller.traj_head.start()
-        self.controller.traj_head.wait(time)
+        self.controller.move({'head': head_joints_position}, time)
 
         rospy.sleep(0.1)
 
@@ -133,31 +121,25 @@ class Movement(object):
         head_joints_position = [-0.5, -0.17]
         time = 5
 
-        self.move(time, left_joints_position, right_joints_position, head_joints_position)
-
+        self.controller.move({'head': head_joints_position,
+                   'arm_left': left_joints_position,
+                   'arm_right': right_joints_position
+                  },
+                  time)
         time = 2
 
         head_joints_position = [0.5, -0.17]
-        self.controller.traj_head.clear()
-        self.controller.traj_head.add_point(head_joints_position, time)
-        self.controller.traj_head.start()
-        self.controller.traj_head.wait(time)
+        self.controller.move({'head': head_joints_position}, time)
 
         rospy.sleep(0.5)
 
         head_joints_position = [-0.5, -0.17]
-        self.controller.traj_head.clear()
-        self.controller.traj_head.add_point(head_joints_position, time)
-        self.controller.traj_head.start()
-        self.controller.traj_head.wait(time)
+        self.controller.move({'head': head_joints_position}, time)
 
         rospy.sleep(0.5)
 
         head_joints_position = [0.5, -0.17]
-        self.controller.traj_head.clear()
-        self.controller.traj_head.add_point(head_joints_position, time)
-        self.controller.traj_head.start()
-        self.controller.traj_head.wait(time)
+        self.controller.move({'head': head_joints_position}, time)
 
         rospy.sleep(0.5)
 
@@ -168,8 +150,11 @@ class Movement(object):
         head_joints_position = [0.31, 0.79]
         time = 3
 
-        self.move(time, left_joints_position, right_joints_position, head_joints_position)
-
+        self.controller.move({'head': head_joints_position,
+                   'arm_left': left_joints_position,
+                   'arm_right': right_joints_position
+                  },
+                  time)
 
     def dab_right(self):
         left_joints_position = [1.57, -1.87, 0, -0.16]
@@ -177,26 +162,11 @@ class Movement(object):
         head_joints_position = [-0.31, 0.79]
         time = 3
 
-        self.move(time, left_joints_position, right_joints_position, head_joints_position)
-
-
-    def move(self, time, left_joints_position, right_joints_position, head_joints_position):
-        self.controller.traj_arm_right.clear()
-        self.controller.traj_arm_left.clear()
-        self.controller.traj_head.clear()
-
-        self.controller.traj_arm_right.add_point(right_joints_position, time)
-        self.controller.traj_arm_left.add_point(left_joints_position, time)
-        self.controller.traj_head.add_point(head_joints_position, time)
-
-        self.controller.traj_arm_right.start()
-        self.controller.traj_arm_left.start()
-        self.controller.traj_head.start()
-
-        self.controller.traj_arm_right.wait(time)
-        self.controller.traj_arm_left.wait(time)
-        self.controller.traj_head.wait(time)
-
+        self.controller.move({'head': head_joints_position,
+                   'arm_left': left_joints_position,
+                   'arm_right': right_joints_position
+                  },
+                  time)
 
     def ui_to_traj(self, joints_position):
         # in: UI Joints Position
