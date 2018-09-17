@@ -1,5 +1,11 @@
 #!/usr/bin/env python2
-'''Zone detection using bright colored squares'''
+'''
+    Zone detection using bright colored squares
+    Created by DEVINE
+    Based on: https://www.sciencedirect.com/science/article/pii/S0898122112002787
+'''
+
+from __future__ import division
 
 import rospy
 from std_msgs.msg import String
@@ -10,90 +16,131 @@ import cv2
 import numpy as np
 from enum import Enum
 
+# sudo pip install shapely
+from shapely.geometry import Point
+from shapely.geometry.polygon import Polygon
+
+from bson import json_util
+
 IMAGE_TOPIC = '/camera/rgb/image_color/compressed' #'/devine/image/zone_detection'
 ZONE_DETECTION_TOPIC = '/zone_detection'
 
 # Tracked colors
 class TrackingColor(Enum):
     FUCHSIA = 1
-    #GREEN = 2
+    GREEN = 2
 
-#Hue range of tracked colors
-TRACKED_COLORS_HUE = {
-   # TrackingColor.GREEN: [25, 85],
-    TrackingColor.FUCHSIA: [150, 180]
+#Polygon data extracted from the COLOR_PICKER_MODE using parse_hls_dump.py
+
+#Hue-saturation polygon of tracked colors
+SATURATION_HUE_POLYGONS = {
+    TrackingColor.FUCHSIA: Polygon([(162, 100), (175, 100), (178, 180), (178, 260), (162, 260)]),
+    TrackingColor.GREEN: Polygon([(10, 100), (33, 100), (33, 150), (30, 200), (26, 254), (16, 254), (10, 225)])
 }
 
-f = open('HSVDump.txt', 'w')
+#Hue-Lightness polygon of tracked colors
+LIGHTNESS_HUE_POLYGONS = {
+    TrackingColor.FUCHSIA: Polygon([(163, 100), (172, 100), (178, 152), (178, 161), (168, 200), (163, 180)]),
+    TrackingColor.GREEN: Polygon([(15, 100), (32, 100), (32, 120), (29, 193), (10, 193), (10, 120)])
+}
+
+TOP_LEFT_CORNER = [TrackingColor.FUCHSIA, TrackingColor.GREEN]
+BOTTOM_RIGHT_CORNER = [TrackingColor.GREEN, TrackingColor.FUCHSIA]
+
+COLOR_DEBUG_MODE = False
+
+# Collect new data 
+COLOR_PICKER_MODE = False
+HLSFILE = open('HLSDump.txt', 'a') if COLOR_PICKER_MODE else None
+if COLOR_PICKER_MODE:
+    np.set_printoptions(threshold=np.inf)
 
 class ZoneDetection(ImageProcessor):
     '''Zone detection'''
+
+    def detect_corner(self, corner_array, color_positions, image_width, image_height):
+        '''Detect a corner based of the colors of the corner_array'''
+        [color1, color2] = corner_array
+        if color_positions.get(color1) and color_positions.get(color2):
+            for (c1x, c1y) in color_positions[color1]:
+                for (c2x, c2y) in color_positions[color2]:
+                    if c1x < c2x and c1x + 0.2 * image_width > c2x: # validity in X
+                        if abs(c1y - c2y) < 0.1 * image_height:     # validity in Y
+                            return [c1x, (c1y + c2y) / 2]
+        return [-1, -1]
+
+    def filter_valid_shapes(self, image):
+        '''Get bounding rects of quadrilateral shapes in the image'''
+        _, contours, _ = cv2.findContours(
+            image,
+            cv2.RETR_LIST,
+            cv2.CHAIN_APPROX_SIMPLE
+        )
+
+        def filter_contour(contour):
+            perimeter = cv2.arcLength(contour, True)
+            approx = cv2.approxPolyDP(contour, 0.04 * perimeter, True)
+            return len(approx) == 4
+
+        filtered_contours = filter(filter_contour, contours)
+        return map(cv2.boundingRect, filtered_contours)
     
     def process(self, image):
-        bgr = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+        '''Process a new image by detecting possible zones'''
+        bgr = cv2.cvtColor(image, cv2.COLOR_RGB2BGR) if COLOR_DEBUG_MODE or COLOR_PICKER_MODE else None
+        hls = cv2.cvtColor(image, cv2.COLOR_RGB2HLS)
 
-        hsv = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
+        [width, height, _] = hls.shape
 
-        r = cv2.selectROI(bgr)
-
-        important = hsv[int(r[1]):int(r[1]+r[3]), int(r[0]):int(r[0]+r[2])]
-
-        f.write("\n\n")
-        for item in important:
-            print >> f, item
-
-        # # Blur
-        # hsv = cv2.blur(hsv, (3, 3), (-1, -1))
-
-        # # Filter out low saturation pixels
-        # mask = cv2.inRange(hsv, (0, 40, 0), (255, 255, 255))
-        # hsv = cv2.bitwise_and(image, image, mask=mask)
-
-        # hue = hsv[:, :, 0] # Convert to single channel hue representation
-
-        # cv2.imshow("Hue representation", hue)
-
-        # # Noise reduction equivalent to erosion + dilatation filters
-        # hue = cv2.morphologyEx(hue, cv2.MORPH_OPEN, None, iterations=2)
-
-        # hsv[:, :, 0] = hue
-        # cv2.imshow("Filtered HSV", hsv)
-
-        # found_colors = {}
-
-        # for tracked_color in TrackingColor:
-        #     [color_min, color_max] = TRACKED_COLORS_HUE[tracked_color]
-        #     masked_image=cv2.inRange(hue, color_min, color_max)
-        #     cv2.imshow("Masked image", masked_image)
-        #     _, contours, _ = cv2.findContours(
-        #         masked_image,
-        #         cv2.RETR_LIST,
-        #         cv2.CHAIN_APPROX_SIMPLE
-        #     )
-
-        #     def filter_contour(contour):
-        #         perimeter = cv2.arcLength(contour, True)
-        #         approx = cv2.approxPolyDP(contour, 0.04 * perimeter, True)
-        #         return len(approx) == 4
-
-        #     filtered_contours = filter(filter_contour, contours)
+        if COLOR_PICKER_MODE:
+            zone = cv2.selectROI(bgr)
+            zone_color = hls[int(zone[1]):int(zone[1]+zone[3]), int(zone[0]):int(zone[0]+zone[2])]
+            HLSFILE.write(str(zone_color))
+        else:
+            # Blur
+            hls = cv2.blur(hls, (3, 3), (-1, -1))
             
-        #     found_colors[tracked_color] = map(cv2.boundingRect, filtered_contours)
+            # Creation of the mask 
+            masked_image = np.zeros((width, height, 1), dtype=np.uint8)
 
-        # (image_width, image_height) = hue.shape
-        # for found_color in found_colors:
-        #     for (x, y, w, h) in found_colors[found_color]:
-        #         if w > 20 and h > 20 and w < 0.4*image_width and h < 0.4*image_height: #todo, find appropriate thresholds for the area
-        #             cv2.rectangle(bgr, (x,y), (x+w,y+h), (255, 0, 0), 2)
-        
-        
-        # cv2.imshow("Original image", bgr)
+            # Resulting positions of the colors
+            color_positions = {}
 
+            for tracked_color in TrackingColor:
+                saturation_polygon = SATURATION_HUE_POLYGONS[tracked_color]
+                lightness_polygon = LIGHTNESS_HUE_POLYGONS[tracked_color]
+                for x in range(width):
+                    for y in range(height):
+                        [h, l, s] = hls[x, y]
+                        if saturation_polygon.contains(Point(h, s)) and lightness_polygon.contains(Point(h, l)):
+                            masked_image[x, y] = 255 #(255, 255, 255)
 
-        if cv2.waitKey(0) & 0xFF == ord('q'):
-            exit()
+                # Noise reduction equivalent to erosion + dilatation filters
+                masked_image = cv2.morphologyEx(masked_image, cv2.MORPH_OPEN, None, iterations=2)
 
-        return "Hello, World !"
+                bounding_rects = self.filter_valid_shapes(masked_image)
+
+                positions_detected = []
+                for (x, y, w, h) in bounding_rects:
+                    if w > 10 and h > 10:
+                        positions_detected.append((x + w/2, y + h/2))
+                        if COLOR_DEBUG_MODE:
+                            cv2.rectangle(bgr, (x, y), (x+w, y+h), (255, 0, 0), 2)
+                        
+                color_positions[tracked_color] = positions_detected
+            
+                if COLOR_DEBUG_MODE:
+                    cv2.imshow("Mask", masked_image)
+                    cv2.imshow("Image", bgr)
+                    cv2.waitKey(1)
+                    break #Only the first color in debug mode, so we can show the results properly
+
+            result = {
+                "top_left_corner": self.detect_corner(TOP_LEFT_CORNER, color_positions, width, height),
+                "bottom_right_corner": self.detect_corner(BOTTOM_RIGHT_CORNER, color_positions, width, height)
+            }
+
+        return json_util.dumps(result)
 
 
 def main():
