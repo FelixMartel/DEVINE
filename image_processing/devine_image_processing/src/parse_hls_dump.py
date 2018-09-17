@@ -1,3 +1,5 @@
+#!/usr/bin/env python2
+'''Simple parser of HLSDump.txt + graph of the results'''
 import numpy as np
 
 import matplotlib.pyplot as plt
