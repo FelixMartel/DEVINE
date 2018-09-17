@@ -27,10 +27,10 @@ class Movement(object):
         rospy.loginfo(msg.data)
         if msg.data != None:
             self.is_guesswhat_succeed = msg.data
-            self.chooseMove()
+            self.choose_move()
 
 
-    def chooseMove(self):
+    def choose_move(self):
         seuil = 0.75
         if not self.is_guesswhat_succeed and self.confidence_max >= seuil:
             rospy.loginfo('Sad')
@@ -56,47 +56,47 @@ class Movement(object):
 
 
     def head_down_shoulder_in(self):
-        right_joints_position = self.ui_to_traj([-0.22, 0.47, 0.18, -0.4])
-        left_joints_position = self.ui_to_traj([-0.70, -0.62, -0.31, -0.67])
+        right_joints_position = ui_to_traj([-0.22, 0.47, 0.18, -0.4])
+        left_joints_position = ui_to_traj([-0.70, -0.62, -0.31, -0.67])
         head_joints_position = [-0.15, 0.79]
         time = 4
 
         self.controller.move({'head': head_joints_position,
-                   'arm_left': left_joints_position,
-                   'arm_right': right_joints_position
-                  },
-                  time)
+                              'arm_left': left_joints_position,
+                              'arm_right': right_joints_position
+                             },
+                             time)
 
         rospy.sleep(1)
 
         time = 2
-        left_joints_position = self.ui_to_traj([-0.35, -0.62, -0.31, -0.67])
+        left_joints_position = ui_to_traj([-0.35, -0.62, -0.31, -0.67])
         self.controller.move({'arm_left': left_joints_position}, time)
 
         rospy.sleep(0.1)
 
-        left_joints_position = self.ui_to_traj([-0.70, -0.62, -0.31, -0.67])
+        left_joints_position = ui_to_traj([-0.70, -0.62, -0.31, -0.67])
         self.controller.move({'arm_left': left_joints_position}, time)
 
         rospy.sleep(0.1)
 
-        left_joints_position = self.ui_to_traj([-0.35, -0.62, -0.31, -0.67])
+        left_joints_position = ui_to_traj([-0.35, -0.62, -0.31, -0.67])
         self.controller.move({'arm_left': left_joints_position}, time)
 
         rospy.sleep(0.1)
 
 
     def head_shake_hand_up(self):
-        right_joints_position = self.ui_to_traj([-0.75, -0.31, 0.31, -1.07])
-        left_joints_position = self.ui_to_traj([-0.75, 0.31, -0.31, -1.07])
+        right_joints_position = ui_to_traj([-0.75, -0.31, 0.31, -1.07])
+        left_joints_position = ui_to_traj([-0.75, 0.31, -0.31, -1.07])
         head_joints_position = [0.4, 0.47]
         time = 3
 
         self.controller.move({'head': head_joints_position,
-                   'arm_left': left_joints_position,
-                   'arm_right': right_joints_position
-                  },
-                  time)
+                              'arm_left': left_joints_position,
+                              'arm_right': right_joints_position
+                             },
+                             time)
 
         time = 2
         head_joints_position = [-0.4, 0.47]
@@ -116,16 +116,16 @@ class Movement(object):
 
 
     def head_up_arm_up(self):
-        right_joints_position = self.ui_to_traj([-0.34, -0.22, 0, -2.48])
-        left_joints_position = self.ui_to_traj([-0.34, 0.22, 0, -2.48])
+        right_joints_position = ui_to_traj([-0.34, -0.22, 0, -2.48])
+        left_joints_position = ui_to_traj([-0.34, 0.22, 0, -2.48])
         head_joints_position = [-0.5, -0.17]
         time = 5
 
         self.controller.move({'head': head_joints_position,
-                   'arm_left': left_joints_position,
-                   'arm_right': right_joints_position
-                  },
-                  time)
+                              'arm_left': left_joints_position,
+                              'arm_right': right_joints_position
+                             },
+                             time)
         time = 2
 
         head_joints_position = [0.5, -0.17]
@@ -151,10 +151,10 @@ class Movement(object):
         time = 3
 
         self.controller.move({'head': head_joints_position,
-                   'arm_left': left_joints_position,
-                   'arm_right': right_joints_position
-                  },
-                  time)
+                              'arm_left': left_joints_position,
+                              'arm_right': right_joints_position
+                             },
+                             time)
 
     def dab_right(self):
         left_joints_position = [1.57, -1.87, 0, -0.16]
@@ -163,22 +163,20 @@ class Movement(object):
         time = 3
 
         self.controller.move({'head': head_joints_position,
-                   'arm_left': left_joints_position,
-                   'arm_right': right_joints_position
-                  },
-                  time)
+                              'arm_left': left_joints_position,
+                              'arm_right': right_joints_position
+                             },
+                             time)
 
-    def ui_to_traj(self, joints_position):
-        # in: UI Joints Position
-        # L_elbow_tilt_joint, L_shoulder_pan_joint, L_shoulder_roll_joint, L_shoulder_tilt_joint
-        # out: Trajectory Client
-        # L_shoulder_pan_joint, L_shoulder_tilt_joint, L_shoulder_roll_joint, L_elbow_tilt_joint
+def ui_to_traj(joints_position):
+    # in: UI Joints Position
+    # L_elbow_tilt_joint, L_shoulder_pan_joint, L_shoulder_roll_joint, L_shoulder_tilt_joint
+    # out: Trajectory Client
+    # L_shoulder_pan_joint, L_shoulder_tilt_joint, L_shoulder_roll_joint, L_elbow_tilt_joint
+    joints_position_out = [0, 0, 0, 0]
+    joints_position_out[0] = joints_position[1]
+    joints_position_out[1] = joints_position[3]
+    joints_position_out[2] = joints_position[2]
+    joints_position_out[3] = joints_position[0]
 
-        joints_position_out = [0, 0, 0, 0]
-
-        joints_position_out[0] = joints_position[1]
-        joints_position_out[1] = joints_position[3]
-        joints_position_out[2] = joints_position[2]
-        joints_position_out[3] = joints_position[0]
-
-        return joints_position_out
+    return joints_position_out

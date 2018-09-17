@@ -20,7 +20,7 @@ TOPIC_GUESSWHAT_SUCCEED = '/is_guesswhat_succeed'
 class Controller(object):
     def __init__(self):
         self.object_location = None
-        self.tf = tf.TransformListener()
+        self.tf_listener = tf.TransformListener()
         self.gripper = Gripper(ROBOT, 'right')
         self.time = 3
 
@@ -45,10 +45,10 @@ class Controller(object):
             rospy.signal_shutdown(err)
 
         rospy.Subscriber(TOPIC_OBJECT_LOCATION, Float32MultiArray, self.object_location_callback)
-    
+
     def init_tf(self, target_frame, source_frame):
-        t = self.tf.getLatestCommonTime(target_frame, source_frame)
-        self.tf.lookupTransform(target_frame, source_frame, t)
+        time = self.tf_listener.getLatestCommonTime(target_frame, source_frame)
+        self.tf_listener.lookupTransform(target_frame, source_frame, time)
 
     def object_location_callback(self, msg):
         if self.object_location != msg.data:
@@ -58,10 +58,10 @@ class Controller(object):
             if msg.data != (0, 0, 0):
                 self.calcul()
                 self.move({'head': self.head_joints_position,
-                   #'arm_left': self.left_joints_position,
-                   #'arm_right': self.right_joints_position
-                  },
-                  self.time)
+                           # 'arm_left': self.left_joints_position,
+                           # 'arm_right': self.right_joints_position
+                          },
+                          self.time)
             else:
                 self.move_init(10)
 
@@ -70,20 +70,20 @@ class Controller(object):
         trans_l_arm = None
         timeout = rospy.Duration(4)
         try:
-            self.tf.waitForTransform(TOPIC_ROBOT_R_SHOULDER_FIXED_FRAME,
+            self.tf_listener.waitForTransform(TOPIC_ROBOT_R_SHOULDER_FIXED_FRAME,
                                               TOPIC_OBJECT_FRAME,
                                               self.now,
                                               timeout)
-            (trans_r_arm, rot_r_arm) = self.tf.lookupTransform(
+            (trans_r_arm, rot_r_arm) = self.tf_listener.lookupTransform(
                 TOPIC_ROBOT_R_SHOULDER_FIXED_FRAME,
                 TOPIC_OBJECT_FRAME,
                 self.now)
 
-            self.tf.waitForTransform(TOPIC_ROBOT_L_SHOULDER_FIXED_FRAME,
+            self.tf_listener.waitForTransform(TOPIC_ROBOT_L_SHOULDER_FIXED_FRAME,
                                               TOPIC_OBJECT_FRAME,
                                               self.now,
                                               timeout)
-            (trans_l_arm, rot_l_arm) = self.tf.lookupTransform(
+            (trans_l_arm, rot_l_arm) = self.tf_listener.lookupTransform(
                 TOPIC_ROBOT_L_SHOULDER_FIXED_FRAME,
                 TOPIC_OBJECT_FRAME,
                 self.now)
@@ -94,10 +94,10 @@ class Controller(object):
         if not rospy.is_shutdown():
             trans_head = None
             try:
-                self.tf.waitForTransform(TOPIC_ROBOT_NECK_PAN_FRAME,
+                self.tf_listener.waitForTransform(TOPIC_ROBOT_NECK_PAN_FRAME,
                                                   TOPIC_OBJECT_FRAME,
                                                   self.now, rospy.Duration(4))
-                (trans_head, rot_head) = self.tf.lookupTransform(
+                (trans_head, rot_head) = self.tf_listener.lookupTransform(
                     TOPIC_ROBOT_NECK_PAN_FRAME,
                     TOPIC_OBJECT_FRAME,
                     self.now)
@@ -134,7 +134,7 @@ class Controller(object):
                    'arm_left':  [0, 0, 0, 0],
                    'arm_right':  [0, 0, 0, 0]
                   },
-                  self.time)
+                  time)
 
         rospy.loginfo('Completed')
 
@@ -142,7 +142,7 @@ class Controller(object):
 
         move_gripper = False
 
-        times = self.getTimesForJoints(controller_joints_positions, time)
+        times = get_joints_time(controller_joints_positions, time)
 
         for key in controller_joints_positions:
             getattr(self, key).clear()
@@ -162,14 +162,14 @@ class Controller(object):
 
         rospy.loginfo('Completed')
 
-    def getTimesForJoints(self, controller_joints, time):
-        if isinstance(time, int) or isinstance(time, float):
-            times = {}
-            for key in controller_joints:
-                times[key] = time
-        else:
-            times = time
-        return times
+def get_joints_time(controller_joints, time):
+    if isinstance(time, int) or isinstance(time, float):
+        times = {}
+        for key in controller_joints:
+            times[key] = time
+    else:
+        times = time
+    return times
 
 def main():
     node_name = 'irl_control_control'
