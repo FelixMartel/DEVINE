@@ -20,7 +20,7 @@ TOPIC_GUESSWHAT_SUCCEED = '/is_guesswhat_succeed'
 class Controller(object):
     def __init__(self):
         self.object_location = None
-        self.tf_listener = tf.TransformListener()
+        self.tf = tf.TransformListener()
         self.gripper = Gripper(ROBOT, 'right')
 
         try:
@@ -33,29 +33,21 @@ class Controller(object):
             rospy.signal_shutdown(err)
 
         try:
-            #TODO now = rospy.Time() OR GETLATEST TRANSFORM
-            rospy.loginfo('Waiting for /object_frame and /base_link...')
-            self.tf_listener.waitForTransform(TOPIC_ROBOT_R_SHOULDER_FIXED_FRAME,
-                                              TOPIC_OBJECT_FRAME,
-                                              rospy.Time(),
-                                              rospy.Duration(4))
-            self.tf_listener.waitForTransform(TOPIC_ROBOT_R_SHOULDER_FIXED_FRAME,
-                                              TOPIC_ROBOT_BASE,
-                                              rospy.Time(),
-                                              rospy.Duration(4))
-            self.tf_listener.waitForTransform(TOPIC_ROBOT_L_SHOULDER_FIXED_FRAME,
-                                              TOPIC_OBJECT_FRAME,
-                                              rospy.Time(),
-                                              rospy.Duration(4))
-            self.tf_listener.waitForTransform(TOPIC_ROBOT_L_SHOULDER_FIXED_FRAME,
-                                              TOPIC_ROBOT_BASE,
-                                              rospy.Time(),
-                                              rospy.Duration(4))
+            self.init_tf(TOPIC_ROBOT_R_SHOULDER_FIXED_FRAME, TOPIC_OBJECT_FRAME)
+            self.init_tf(TOPIC_ROBOT_R_SHOULDER_FIXED_FRAME, TOPIC_ROBOT_BASE)
+
+            self.init_tf(TOPIC_ROBOT_L_SHOULDER_FIXED_FRAME, TOPIC_OBJECT_FRAME)
+            self.init_tf(TOPIC_ROBOT_L_SHOULDER_FIXED_FRAME, TOPIC_ROBOT_BASE)
+
         except tf.Exception as err:
             rospy.logerr(err)
-            # rospy.signal_shutdown(err)
+            rospy.signal_shutdown(err)
 
         rospy.Subscriber(TOPIC_OBJECT_LOCATION, Float32MultiArray, self.object_location_callback)
+    
+    def init_tf(self, target_frame, source_frame):
+        t = self.tf.getLatestCommonTime(target_frame, source_frame)
+        self.tf.lookupTransform(target_frame, source_frame, t)
 
     def object_location_callback(self, msg):
         if self.object_location != msg.data:
@@ -71,21 +63,22 @@ class Controller(object):
     def calcul(self):
         trans_r_arm = None
         trans_l_arm = None
+        timeout = rospy.Duration(4)
         try:
-            self.tf_listener.waitForTransform(TOPIC_ROBOT_R_SHOULDER_FIXED_FRAME,
+            self.tf.waitForTransform(TOPIC_ROBOT_R_SHOULDER_FIXED_FRAME,
                                               TOPIC_OBJECT_FRAME,
                                               self.now,
-                                              rospy.Duration(4))
-            (trans_r_arm, rot_r_arm) = self.tf_listener.lookupTransform(
+                                              timeout)
+            (trans_r_arm, rot_r_arm) = self.tf.lookupTransform(
                 TOPIC_ROBOT_R_SHOULDER_FIXED_FRAME,
                 TOPIC_OBJECT_FRAME,
                 self.now)
 
-            self.tf_listener.waitForTransform(TOPIC_ROBOT_L_SHOULDER_FIXED_FRAME,
+            self.tf.waitForTransform(TOPIC_ROBOT_L_SHOULDER_FIXED_FRAME,
                                               TOPIC_OBJECT_FRAME,
                                               self.now,
-                                              rospy.Duration(4))
-            (trans_l_arm, rot_l_arm) = self.tf_listener.lookupTransform(
+                                              timeout)
+            (trans_l_arm, rot_l_arm) = self.tf.lookupTransform(
                 TOPIC_ROBOT_L_SHOULDER_FIXED_FRAME,
                 TOPIC_OBJECT_FRAME,
                 self.now)
@@ -96,10 +89,10 @@ class Controller(object):
         if not rospy.is_shutdown():
             trans_head = None
             try:
-                self.tf_listener.waitForTransform(TOPIC_ROBOT_NECK_PAN_FRAME,
+                self.tf.waitForTransform(TOPIC_ROBOT_NECK_PAN_FRAME,
                                                   TOPIC_OBJECT_FRAME,
                                                   self.now, rospy.Duration(4))
-                (trans_head, rot_head) = self.tf_listener.lookupTransform(
+                (trans_head, rot_head) = self.tf.lookupTransform(
                     TOPIC_ROBOT_NECK_PAN_FRAME,
                     TOPIC_OBJECT_FRAME,
                     self.now)

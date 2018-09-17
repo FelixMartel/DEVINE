@@ -16,7 +16,7 @@ def arm_pan_tilt(controller, obj_x, obj_y, obj_z):
     elif controller == 'left':
         D_2 = D_2_L
     else:
-        raise Exception('arm controller "left" and "right" only')
+        raise Exception('The specified controller is not supported.')
 
     pan = math.acos(D_2 / (math.sqrt(math.pow(obj_x, 2) + math.pow(obj_y, 2)))) - math.atan2(obj_x, obj_y)
     tilt = -math.atan2(obj_z, (math.pow(obj_x, 2) + math.pow(obj_y, 2) - math.pow(D_2, 2))) - (math.pi / 2)
