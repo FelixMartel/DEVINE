@@ -9,7 +9,7 @@ ROOT_DIR = sys.path[0]
 FILE_DIR = os.path.join(ROOT_DIR, "Parameters.ini")
 
 Config = ConfigParser.RawConfigParser()
-Config.optionxform=str
+Config.optionxform = str
 Config.read(FILE_DIR)
 
 #ConfigSectionMap("Section")['name'] 
