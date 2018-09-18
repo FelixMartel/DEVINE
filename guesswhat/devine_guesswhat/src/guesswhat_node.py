@@ -22,6 +22,8 @@ from guesswhat.data_provider.looper_batchifier import LooperBatchifier
 
 from modelwrappers import GuesserROSWrapper, OracleROSWrapper
 
+from DEVINEParameters import ConfigSectionMap
+
 ROOT_DIR = sys.path[0]
 EVAL_CONF_PATH = os.path.join(ROOT_DIR, '../config/eval.json')
 GUESS_CONF_PATH = os.path.join(ROOT_DIR, '../config/guesser.json')
@@ -30,14 +32,13 @@ GUESS_NTW_PATH = os.path.join(ROOT_DIR, '../data/guesser.ckpt')
 QGEN_NTW_PATH = os.path.join(ROOT_DIR, '../data/qgen.ckpt')
 TOKENS_PATH = os.path.join(ROOT_DIR, '../data/tokens.json')
 
-SEGMENTATION_TOPIC = '/rcnn_segmentation'
-FEATURES_TOPIC = '/vgg16_features'
-OBJECT_TOPIC = '/object_found'
-CATEGORY_TOPIC = '/found_category'
-STATE_TOPIC = '/guesswhat_state'
+#topics
+SEGMENTATION_TOPIC = ConfidSectionMap("TOPICS")['RCNNSegmentation']
+FEATURES_TOPIC = ConfigSectionMap("TOPICS")['VGG16Features']
+OBJECT_TOPIC = ConfigSectionMap("TOPCIS")['ObjectFound']
 
-segmentations = Queue(1)
-features = Queue(1)
+segmentations = Queue(2)
+features = Queue(2)
 
 class ImgFeaturesLoader():
     '''Loads image from memory'''
@@ -76,9 +77,6 @@ def open_config(path):
 
 def segmentation_callback(data):
     '''Callback for the segmantion topic'''
-    if segmentations.full():
-        segmentations.get()
-
     try:
         segmentations.put(json.loads(data.data))
     except json.JSONDecodeError:
@@ -86,9 +84,6 @@ def segmentation_callback(data):
 
 def features_callback(data):
     '''Callback for the features topic'''
-    if features.full():
-        features.get()
-
     features.put(np.array(data.data))
 
 if __name__ == '__main__':
@@ -96,8 +91,6 @@ if __name__ == '__main__':
     rospy.Subscriber(SEGMENTATION_TOPIC, String, segmentation_callback)
     rospy.Subscriber(FEATURES_TOPIC, Float64MultiArray, features_callback)
     object_found = rospy.Publisher(OBJECT_TOPIC, Int32MultiArray, queue_size=1)
-    category = rospy.Publisher(CATEGORY_TOPIC, String, queue_size=1)
-    state = rospy.Publisher(STATE_TOPIC, String, queue_size=1, latch=True)
 
     eval_config = open_config(EVAL_CONF_PATH)
     guesser_config = open_config(GUESS_CONF_PATH)
@@ -129,7 +122,6 @@ if __name__ == '__main__':
 
         batchifier = LooperBatchifier(tokenizer, generate_new_games=False)
 
-        state.publish('Waiting for image processing')
         while not rospy.is_shutdown():
             try:
                 seg = segmentations.get(timeout=1)
@@ -138,7 +130,7 @@ if __name__ == '__main__':
                 continue
 
             rospy.loginfo('Starting new game')
-            img = {'id': 0, 'width': 640, 'height': 480, 'coco_url': ''}
+            img = {'id': 0, 'width': 10, 'height': 10, 'coco_url': ''}
             game = Game(id=0,
                         object_id=0,
                         objects=seg['objects'],
@@ -165,6 +157,3 @@ if __name__ == '__main__':
             object_found.publish(Int32MultiArray(data=[int(choice_bbox.x_center),
                                                        int(choice_bbox.y_center)]))
             rospy.loginfo('Game over')
-            category.publish(seg['objects'][choice_index]['category'])
-
-            state.publish('Waiting for image processing')

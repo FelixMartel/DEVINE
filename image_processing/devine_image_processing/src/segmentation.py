@@ -19,6 +19,7 @@ from bson import json_util
 sys.path.append(os.path.join(sys.path[0], '../../Mask_RCNN'))
 import coco
 import model as modellib
+from DEVINEParameters import ConfigSectionMap
 
 #paths
 ROOT_DIR = sys.path[0]
@@ -26,8 +27,8 @@ COCO_MODEL_PATH = os.path.join(ROOT_DIR, "../../mask_rcnn_coco.h5")
 MODEL_DIR = os.path.join(ROOT_DIR, "logs")
 
 #topics
-IMAGE_TOPIC = '/devine/image' # or directly from openni: '/camera/rgb/image_color/compressed'
-SEGMENTATION_TOPIC = '/rcnn_segmentation'
+IMAGE_TOPIC = ConfigSectionMap("TOPICS")['ValidatedImage']
+SEGMENTATION_TOPIC = ConfigSectionMap("TOPICS")['RCNNSegmentation']
 
 class RCNNSegmentation(object):
     '''RCNN segmentation wrapper of Mask_RCNN for use in guesswhat'''
@@ -58,6 +59,17 @@ class RCNNSegmentation(object):
         self.model = modellib.MaskRCNN(mode="inference", model_dir=MODEL_DIR, config=self.config)
         self.model.load_weights(COCO_MODEL_PATH, by_name=True) #blocking I/O in constructor!
 
+    def correct_array(self, bbox, im_height):
+        '''Correct the bounding box position for usage in guesswhat'''
+        correct_boxes = np.zeros(bbox.shape)
+        for counter, (original_array, _) in enumerate(zip(bbox, correct_boxes)):
+            width = original_array[3] - original_array[1]
+            height = original_array[2] - original_array[0]
+            left = original_array[1]
+            top = im_height - original_array[2]
+            correct_boxes[counter] = np.array([left, top, height, width])
+        return correct_boxes
+
     def segment(self, img):
         '''Actual segmentation of the image'''
         rospy.logdebug("Starting segmentation")
@@ -78,6 +90,7 @@ class RCNNSegmentation(object):
             },
             "objects": []
         }
+        corrected_bounding_box = self.correct_array(result['rois'], height)
         object_array = []
 
         # Debug file dump
@@ -90,7 +103,7 @@ class RCNNSegmentation(object):
         # with open('rois.pkl','wb') as pickle_file:
         #     result['rois'].dump(pickle_file)
 
-        for current_id, (class_id, bounding_box) in enumerate(zip(result['class_ids'], result['rois'])):
+        for current_id, (class_id, bounding_box) in enumerate(zip(result['class_ids'], corrected_bounding_box)):
             object_area = 0 # figure out if we ever use the area
             # According the MsCoco api this seems to be the mask area
             # (check if maskrcnn can produce this)
@@ -104,6 +117,10 @@ class RCNNSegmentation(object):
             }
             object_array.append(current_object)
 
+            # Currently there is an issue with Numpy integers
+            # (probably orginating from the bounding box)
+            # Also make sure the bounding box being created is correct
+
         result_obj['objects'] = object_array
         return json_util.dumps(result_obj)
 
@@ -116,7 +133,7 @@ class ROSRCNNSegmentation(RCNNSegmentation):
         rospy.init_node('image_segmentation')
         rospy.Subscriber(IMAGE_TOPIC, CompressedImage,
                          self.image_received_callback, queue_size=1)
-        self.publisher = rospy.Publisher(SEGMENTATION_TOPIC, String, queue_size=10, latch=True)
+        self.publisher = rospy.Publisher(SEGMENTATION_TOPIC, String, queue_size=10)
 
     def image_received_callback(self, data):
         '''Callback when a new image is received from the topic'''
