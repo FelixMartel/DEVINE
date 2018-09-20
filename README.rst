@@ -27,8 +27,8 @@ Accessing the documentation
 If you are on linux with Docker installed, you directly run this command to launch the DEVINE's documentation:
 
 .. code-block:: bash
+    
     ./load-documentation.sh
-
 
 Please follow the following link for all the documentation goodness:
 
