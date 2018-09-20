@@ -1,14 +1,16 @@
 Environment Setup
 =================
 
-sudo pip install sphinx
-sudo pip install sphinx-rtd-theme
+.. code-block:: bash
+
+    sudo pip install sphinx
+    sudo pip install sphinx-rtd-theme
 
 build
 =====
 
 * navigate to /docs;
-* make html;
+* `make html`
 * verify build succeeded;
-* open /build/html/index.html in your favorite browser;
+* open `/build/html/index.html` in your favorite browser;
 * profit!
