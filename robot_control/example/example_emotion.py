@@ -1,5 +1,7 @@
 #! /usr/bin/env python
 
+''' Example to emote robot emotion with command line '''
+
 import argparse
 import rospy
 
@@ -9,10 +11,12 @@ from std_msgs.msg import Float32MultiArray
 TOPIC_GUESSWHAT_CONFIDENCE = '/confidence'
 TOPIC_GUESSWHAT_SUCCEED = '/is_guesswhat_succeed'
 
-def main(args):
+def main(arguments):
+    ''' Publish on GuessWhat?! confidence and success topic '''
+
     # Parse arguments
-    confidence_array = [float(i) for i in args.confidence.split(',')]
-    is_guesswhat_succeed = bool(int(args.succeed))
+    confidence_array = [float(i) for i in arguments.confidence.split(',')]
+    is_guesswhat_succeed = bool(int(arguments.succeed))
 
     # Start ROS node
     node_name = 'irl_control_emotion_example'
@@ -38,12 +42,16 @@ def main(args):
         rospy.sleep(10)
         rospy.loginfo('SHOULD BE DONE')
 
-if __name__ == '__main__':
+def parser():
+    ''' Command Line Parser'''
+
     arg_fmt = argparse.RawDescriptionHelpFormatter
-    parser = argparse.ArgumentParser(formatter_class=arg_fmt, description=main.__doc__)
-    required = parser.add_argument_group('required arguments')
+    arg_parser = argparse.ArgumentParser(formatter_class=arg_fmt, description=main.__doc__)
+    required = arg_parser.add_argument_group('required arguments')
     required.add_argument('-c', '--confidence', required=True, help='GuessWhat?! confidence array')
     required.add_argument('-s', '--succeed', required=True, help='Is GuessWhat?! succeed')
-    args = parser.parse_args(rospy.myargv()[1:])
+    arguments = arg_parser.parse_args(rospy.myargv()[1:])
+    return arguments
 
-    main(args)
+if __name__ == '__main__':
+    main(parser())

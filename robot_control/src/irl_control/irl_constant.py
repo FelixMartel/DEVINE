@@ -1,3 +1,5 @@
+''' IRL-1 Constant: controllers name with joints name and joints limites'''
+
 ROBOT_NAME = 'jn0'
 ROBOT_CONTROLLER = {
     'neck_controller':  {
