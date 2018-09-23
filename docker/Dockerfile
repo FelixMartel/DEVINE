@@ -37,7 +37,7 @@ RUN \
 # robot sim
     && cd ../robot_control \
     && mkdir /root/.rviz \
-    && cp irl_control/irl_point.rviz /root/.rviz/default.rviz 
+    && cp irl_control/launch/irl_point.rviz /root/.rviz/default.rviz 
 
 # catkin
 RUN cd /usr \
