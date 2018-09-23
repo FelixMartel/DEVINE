@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 
-''' Node to compute real-time error between '''
+''' Calculates the error in real-time '''
 
 import math
 import rospy
@@ -46,7 +46,7 @@ def main():
         # TODO Add Publisher for error
 
 def angle(pos_x, pos_y):
-    ''' Degree angle of 2D point '''
+    ''' Angle in degrees of 2D point '''
     return math.floor(math.sin(pos_y/pos_x) * 180 / math.pi)
 
 

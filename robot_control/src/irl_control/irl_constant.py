@@ -1,4 +1,4 @@
-''' IRL-1 Constant: controllers name with joints name and joints limites'''
+''' IRL-1 Constants: Contains the controller names, joint names and joint limits '''
 
 ROBOT_NAME = 'jn0'
 ROBOT_CONTROLLER = {

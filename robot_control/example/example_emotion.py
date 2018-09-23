@@ -48,8 +48,8 @@ def parser():
     arg_fmt = argparse.RawDescriptionHelpFormatter
     arg_parser = argparse.ArgumentParser(formatter_class=arg_fmt, description=main.__doc__)
     required = arg_parser.add_argument_group('required arguments')
-    required.add_argument('-c', '--confidence', required=True, help='GuessWhat?! confidence array')
-    required.add_argument('-s', '--succeed', required=True, help='Is GuessWhat?! succeed')
+    required.add_argument('-c', '--confidence', required=True, help='GuessWhat?! confidence')
+    required.add_argument('-s', '--succeed', required=True, help='Did GuessWhat?! succeed')
     arguments = arg_parser.parse_args(rospy.myargv()[1:])
     return arguments
 

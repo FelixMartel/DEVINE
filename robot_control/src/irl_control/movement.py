@@ -1,4 +1,4 @@
-''' Robot complex movement '''
+''' Hardcoded movements to display emotions '''
 
 import rospy
 

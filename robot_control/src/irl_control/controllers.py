@@ -49,7 +49,7 @@ class TrajectoryClient(object):
         rospy.on_shutdown(self.stop)
 
     def add_point(self, positions, time):
-        ''' Add points to trajectory going at goal '''
+        ''' Adds points to trajectory '''
 
         point = JointTrajectoryPoint(positions=positions, time_from_start=rospy.Duration(time))
         self._goal.trajectory.points.append(point)
@@ -61,13 +61,13 @@ class TrajectoryClient(object):
         self._client.send_goal(self._goal)
 
     def stop(self):
-        ''' Stop movement going to goal '''
+        ''' Stop movement towards goal '''
 
         self._client.cancel_goal()
 
     def wait(self, timeout=15.0):
         '''
-        Controllers starts moving towards the goal.
+        Controller begins moving towards the goal.
         It blocks other trajectories to run simultaneously
         '''
 
