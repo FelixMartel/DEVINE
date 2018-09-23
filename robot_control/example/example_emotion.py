@@ -28,16 +28,16 @@ def main(arguments):
         pub_confidence = rospy.Publisher(TOPIC_GUESSWHAT_CONFIDENCE,
                                          Float32MultiArray,
                                          queue_size=10)
-        ros_packet = Float32MultiArray()
-        ros_packet.data = confidence_array
-        pub_confidence.publish(ros_packet)
+        ros_packet_float = Float32MultiArray()
+        ros_packet_float.data = confidence_array
+        pub_confidence.publish(ros_packet_float)
 
         rospy.sleep(1)
 
         pub_is_guesswhat_succeed = rospy.Publisher(TOPIC_GUESSWHAT_SUCCEED, Bool, queue_size=10)
-        ros_packet = Bool()
-        ros_packet.data = is_guesswhat_succeed
-        pub_is_guesswhat_succeed.publish(ros_packet)
+        ros_packet_bool = Bool()
+        ros_packet_bool.data = is_guesswhat_succeed
+        pub_is_guesswhat_succeed.publish(ros_packet_bool)
 
         rospy.sleep(10)
         rospy.loginfo('SHOULD BE DONE')
