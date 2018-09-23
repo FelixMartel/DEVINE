@@ -1,12 +1,12 @@
 #! /usr/bin/env python2
 
-''' Node to visualize in RViz and broadcast object_frame '''
+''' Node to visualize object in RViz and broadcast object_frame '''
 
 import rospy
 from irl_control.objects import ObjectMaker, ObjectTf
 
-TOPIC_OBJECT_LOCATION = "/object_location"
-TOPIC_OBJECT_FRAME = "/object_frame"
+TOPIC_OBJECT_LOCATION = '/object_location'
+TOPIC_OBJECT_FRAME = '/object_frame'
 TOPIC_ROBOT_BASE_FRAME = 'base_link'
 
 

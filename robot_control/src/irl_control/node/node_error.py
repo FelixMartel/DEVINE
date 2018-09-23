@@ -6,8 +6,8 @@ import math
 import rospy
 import tf
 
-TOPIC_ROBOT_POINT_RIGHT_FRAME = "/R_frame_tool_link"
-TOPIC_OBJECT_FRAME = "/object_frame"
+TOPIC_ROBOT_POINT_RIGHT_FRAME = '/R_frame_tool_link'
+TOPIC_OBJECT_FRAME = '/object_frame'
 
 def main():
     ''' Compute error when pointing with arms '''

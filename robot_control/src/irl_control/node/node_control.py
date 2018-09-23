@@ -11,12 +11,12 @@ from irl_control.gripper import Gripper
 import irl_control.ik as ik
 
 ROBOT = 'jn0'
-TOPIC_OBJECT_LOCATION = "/object_location"
-TOPIC_OBJECT_FRAME = "/object_frame"
-TOPIC_ROBOT_BASE = "/base_link"
-TOPIC_ROBOT_R_SHOULDER_FIXED_FRAME = "/R_shoulder_fixed_link"
-TOPIC_ROBOT_L_SHOULDER_FIXED_FRAME = "/L_shoulder_fixed_link"
-TOPIC_ROBOT_NECK_PAN_FRAME = "/neck_pan_link"
+TOPIC_OBJECT_LOCATION = '/object_location'
+TOPIC_OBJECT_FRAME = '/object_frame'
+TOPIC_ROBOT_BASE = '/base_link'
+TOPIC_ROBOT_R_SHOULDER_FIXED_FRAME = '/R_shoulder_fixed_link'
+TOPIC_ROBOT_L_SHOULDER_FIXED_FRAME = '/L_shoulder_fixed_link'
+TOPIC_ROBOT_NECK_PAN_FRAME = '/neck_pan_link'
 TOPIC_GUESSWHAT_SUCCEED = '/is_guesswhat_succeed'
 
 class Controller(object):
@@ -69,7 +69,7 @@ class Controller(object):
             self.object_location = msg.data
             self.now = rospy.Time().now()
             if msg.data != (0, 0, 0):
-                # if send joints: do it.
+                # TODO if send joints: do it.
                 self.calcul()
                 self.move({'head': self.head_joints_position,
                            # 'arm_left': self.left_joints_position,

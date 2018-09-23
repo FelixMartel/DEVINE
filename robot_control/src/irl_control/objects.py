@@ -10,7 +10,7 @@ from visualization_msgs.msg import MarkerArray
 
 
 class ObjectTf(object):
-    ''' TF Object '''
+    ''' Object TF '''
 
     def __init__(self, topic_object_pos, topic_object_frame, topic_from_ref):
         self.object_location = [0, 0, 0]
@@ -76,7 +76,7 @@ class Markers(object):
         marker_id = 0
         for marker_position in markers_position:
             marker = Marker()
-            marker.header.frame_id = "/base_link"
+            marker.header.frame_id = '/base_link'
             marker.type = marker.SPHERE
             marker.action = marker.ADD
 
