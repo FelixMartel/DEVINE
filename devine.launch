@@ -11,11 +11,15 @@
     <include file="$(find irl_control)/launch/irl_control.launch">
       <arg name="jn0" value="$(arg jn0)"/>
     </include>
-    <node name="pos_lib" pkg="devine_kinect" type="pos_lib.py" respawn="true" />
+    <!-- <node name="pos_lib" pkg="devine_kinect" type="pos_lib.py" respawn="true" /> -->
   </group>
   <group if="$(arg kinect)">
     <include file="$(find openni_launch)/launch/openni.launch" />
-    <node name="img_throttle" pkg="topic_tools" type="throttle" args="messages /camera/rgb/image_color/compressed 0.008 /devine/image" />
+    <node name="img_throttle_zone" pkg="topic_tools" type="throttle" args="messages /camera/rgb/image_color/compressed 0.008 /devine/image/zone_detection" />
+    <node name="img_throttle_seg" pkg="topic_tools" type="throttle" args="messages /camera/rgb/image_color/compressed 0.008 /devine/image/segmentation" />
+    <node name="img_throttle_features" pkg="topic_tools" type="throttle" args="messages /camera/rgb/image_color/compressed 0.008 /devine/image/features_extraction" />
+    <node name="img_throttle_blur" pkg="topic_tools" type="throttle" args="messages /camera/rgb/image_color/compressed 0.008 /devine/image/blur_detection" />
+    <node name="img_throttle_bodytracking" pkg="topic_tools" type="throttle" args="messages /camera/rgb/image_color/compressed 0.008 /devine/image/body_tracking" />  
   </group>
   <group if="$(arg snips)">
     <node name="snips" pkg="snips" type="snips.py" respawn="true" />
