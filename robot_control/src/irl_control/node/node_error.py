@@ -11,6 +11,7 @@ TOPIC_OBJECT_FRAME = '/object_frame'
 
 def main():
     ''' Compute error when pointing with arms '''
+
     node_name = 'irl_control_error'
     rospy.init_node(node_name)
     rospy.loginfo('Running node \'' + node_name + '\'')
@@ -47,6 +48,7 @@ def main():
 
 def angle(pos_x, pos_y):
     ''' Angle in degrees of 2D point '''
+
     return math.floor(math.sin(pos_y/pos_x) * 180 / math.pi)
 
 

@@ -23,6 +23,7 @@ class Movement(object):
 
     def confidence_callback(self, msg):
         ''' GuessWhat confidence level '''
+
         rospy.loginfo(msg.data)
         if msg.data:
             self.confidence_max = max(msg.data)
@@ -30,6 +31,7 @@ class Movement(object):
 
     def is_guesswhat_succeed_callback(self, msg):
         ''' GuessWhat succeeded or not '''
+
         rospy.loginfo(msg.data)
         if msg.data != None:
             self.is_guesswhat_succeed = msg.data
@@ -179,6 +181,7 @@ class Movement(object):
 
 def ui_to_traj(joints_position):
     ''' Convert position from rqt_joint_trajectory_controller UI to JointTrajectoryController'''
+
     # in: UI Joints Position
     # L_elbow_tilt_joint, L_shoulder_pan_joint, L_shoulder_roll_joint, L_shoulder_tilt_joint
     # out: Trajectory Client

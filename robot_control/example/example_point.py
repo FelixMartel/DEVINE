@@ -9,6 +9,7 @@ from std_msgs.msg import Float32MultiArray
 
 def main(args):
     ''' Publish on the 3D position from /base_link to point '''
+
     # Parse arguments
     point = [float(i) for i in args.point.split(',')]
 

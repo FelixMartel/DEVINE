@@ -67,6 +67,7 @@ class Markers(object):
 
     def publish(self):
         ''' Publisher for MarkerArray '''
+
         self._pub.publish(self.marker_array)
 
     def set_marker_array(self, markers_position):
