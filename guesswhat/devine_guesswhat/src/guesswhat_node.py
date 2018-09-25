@@ -33,7 +33,7 @@ QGEN_NTW_PATH = os.path.join(ROOT_DIR, '../data/qgen.ckpt')
 TOKENS_PATH = os.path.join(ROOT_DIR, '../data/tokens.json')
 
 #topics
-SEGMENTATION_TOPIC = ConfidSectionMap("TOPICS")['RCNNSegmentation']
+SEGMENTATION_TOPIC = ConfigSectionMap("TOPICS")['RCNNSegmentation']
 FEATURES_TOPIC = ConfigSectionMap("TOPICS")['VGG16Features']
 OBJECT_TOPIC = ConfigSectionMap("TOPCIS")['ObjectFound']
 
