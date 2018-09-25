@@ -4,22 +4,19 @@
 import sys
 import os
 import datetime
-import queue
-from io import BytesIO
 #import pickle
 
 import rospy
-from sensor_msgs.msg import CompressedImage
 from std_msgs.msg import String
 
-import numpy as np
-from PIL import Image
 from bson import json_util
 
 sys.path.append(os.path.join(sys.path[0], '../../Mask_RCNN'))
 import coco
 import model as modellib
 from DEVINEParameters import ConfigSectionMap
+
+from ros_image_processor import ImageProcessor, ROSImageProcessingWrapper
 
 #paths
 ROOT_DIR = sys.path[0]
@@ -30,7 +27,7 @@ MODEL_DIR = os.path.join(ROOT_DIR, "logs")
 IMAGE_TOPIC = ConfigSectionMap("TOPICS")['ValidatedImage']
 SEGMENTATION_TOPIC = ConfigSectionMap("TOPICS")['RCNNSegmentation']
 
-class RCNNSegmentation(object):
+class RCNNSegmentation(ImageProcessor):
     '''RCNN segmentation wrapper of Mask_RCNN for use in guesswhat'''
     class_names = ['BG', 'person', 'bicycle', 'car', 'motorcycle', 'airplane',
                    'bus', 'train', 'truck', 'boat', 'traffic light',
@@ -59,21 +56,9 @@ class RCNNSegmentation(object):
         self.model = modellib.MaskRCNN(mode="inference", model_dir=MODEL_DIR, config=self.config)
         self.model.load_weights(COCO_MODEL_PATH, by_name=True) #blocking I/O in constructor!
 
-    def correct_array(self, bbox, im_height):
-        '''Correct the bounding box position for usage in guesswhat'''
-        correct_boxes = np.zeros(bbox.shape)
-        for counter, (original_array, _) in enumerate(zip(bbox, correct_boxes)):
-            width = original_array[3] - original_array[1]
-            height = original_array[2] - original_array[0]
-            left = original_array[1]
-            top = im_height - original_array[2]
-            correct_boxes[counter] = np.array([left, top, height, width])
-        return correct_boxes
-
-    def segment(self, img):
+    def process(self, image):
         '''Actual segmentation of the image'''
         rospy.logdebug("Starting segmentation")
-        image = np.array(Image.open(BytesIO(img)))
         height, width, _ = image.shape
         timestamp = '{:%Y-%b-%d %H:%M:%S}'.format(datetime.datetime.now())
         results = self.model.detect([image])
@@ -124,35 +109,11 @@ class RCNNSegmentation(object):
         result_obj['objects'] = object_array
         return json_util.dumps(result_obj)
 
-class ROSRCNNSegmentation(RCNNSegmentation):
-    '''ROS Wrapper of RCNN Segmentation'''
-    image_queue = queue.Queue(2) #Images must be segmented on the main thread
-
-    def __init__(self):
-        super(ROSRCNNSegmentation, self).__init__()
-        rospy.init_node('image_segmentation')
-        rospy.Subscriber(IMAGE_TOPIC, CompressedImage,
-                         self.image_received_callback, queue_size=1)
-        self.publisher = rospy.Publisher(SEGMENTATION_TOPIC, String, queue_size=10)
-
-    def image_received_callback(self, data):
-        '''Callback when a new image is received from the topic'''
-        if self.image_queue.full():
-            rospy.logwarn("image_segmentation: image receiving rate is too high !")
-            self.image_queue.get()
-        self.image_queue.put(data.data)
-
-    def loop(self):
-        '''Looping method to segment every image'''
-        while True:
-            img = self.image_queue.get() #blocking
-            json = self.segment(img)
-            self.publisher.publish(json)
-
 def main():
     '''Entry point of this file'''
-    ros_segmentation = ROSRCNNSegmentation()
-    ros_segmentation.loop()
+    processor = ROSImageProcessingWrapper(RCNNSegmentation, IMAGE_TOPIC)
+    publisher = rospy.Publisher(SEGMENTATION_TOPIC, String, queue_size=10, latch=True)
+    processor.loop(lambda processor_output : publisher.publish(processor_output))
 
 if __name__ == '__main__':
     main()
