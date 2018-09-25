@@ -14,12 +14,14 @@ import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
 import math
 import tf
+from DEVINEParameters import ConfigSectionMap
 
+#Topics
+IMAGE_DEPTH_TOPIC = ConfigSectionMap("TOPICS")['ImageDepth']
+OBJECT_POSITION_TOPIC = ConfigSectionMap("TOPICS")['ObjectFound']
+OBJECT_LOCATION_TOPIC = ConfigSectionMap("TOPICS")['ObjectLocation']
 
-IMAGE_DEPTH_TOPIC = "/camera/depth/points"
-OBJECT_POSITION_TOPIC = "/object_found"
-
-ROS_PUBLISHER = rospy.Publisher('/object_location', Float32MultiArray, queue_size=10)
+ROS_PUBLISHER = rospy.Publisher(OBJECT_LOCATION_TOPIC, Float32MultiArray, queue_size=10)
 
 (trans, rot) = (0, 0)
 

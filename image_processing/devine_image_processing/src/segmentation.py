@@ -14,6 +14,7 @@ from bson import json_util
 sys.path.append(os.path.join(sys.path[0], '../../Mask_RCNN'))
 import coco
 import model as modellib
+from DEVINEParameters import ConfigSectionMap
 
 from ros_image_processor import ImageProcessor, ROSImageProcessingWrapper
 
@@ -23,8 +24,8 @@ COCO_MODEL_PATH = os.path.join(ROOT_DIR, "../../mask_rcnn_coco.h5")
 MODEL_DIR = os.path.join(ROOT_DIR, "logs")
 
 #topics
-IMAGE_TOPIC = '/devine/image/segmentation' # or directly from openni: '/camera/rgb/image_color/compressed'
-SEGMENTATION_TOPIC = '/rcnn_segmentation'
+IMAGE_TOPIC = ConfigSectionMap("TOPICS")['ValidatedImage']
+SEGMENTATION_TOPIC = ConfigSectionMap("TOPICS")['RCNNSegmentation']
 
 class RCNNSegmentation(ImageProcessor):
     '''RCNN segmentation wrapper of Mask_RCNN for use in guesswhat'''
@@ -74,6 +75,7 @@ class RCNNSegmentation(ImageProcessor):
             },
             "objects": []
         }
+        corrected_bounding_box = self.correct_array(result['rois'], height)
         object_array = []
 
         # Debug file dump
@@ -86,7 +88,7 @@ class RCNNSegmentation(ImageProcessor):
         # with open('rois.pkl','wb') as pickle_file:
         #     result['rois'].dump(pickle_file)
 
-        for current_id, (class_id, bounding_box) in enumerate(zip(result['class_ids'], result['rois'])):
+        for current_id, (class_id, bounding_box) in enumerate(zip(result['class_ids'], corrected_bounding_box)):
             object_area = 0 # figure out if we ever use the area
             # According the MsCoco api this seems to be the mask area
             # (check if maskrcnn can produce this)
@@ -99,6 +101,10 @@ class RCNNSegmentation(ImageProcessor):
                 "area": object_area
             }
             object_array.append(current_object)
+
+            # Currently there is an issue with Numpy integers
+            # (probably orginating from the bounding box)
+            # Also make sure the bounding box being created is correct
 
         result_obj['objects'] = object_array
         return json_util.dumps(result_obj)

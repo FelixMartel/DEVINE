@@ -6,11 +6,12 @@ import rospy
 from std_msgs.msg import String, Float64MultiArray
 
 from guesswhat.models.guesser.guesser_wrapper import GuesserWrapper
+from DEVINEParameters import ConfigSectionMap
 
-ANSWER_TOPIC = '/answer'
-QUESTION_TOPIC = '/question'
-CONFIDENCE_TOPIC = '/confidence'
-SELECTION_TOPIC = '/object_found'
+ANSWER_TOPIC = ConfigSectionMap("TOPICS")['GuessWhatAnswer']
+QUESTION_TOPIC = ConfigSectionMap("TOPICS")['GuessWhatQuestion']
+CONFIDENCE_TOPIC = ConfigSectionMap("TOPICS")['GuessWhatConfidence']
+SELECTION_TOPIC = ConfigSectionMap("TOPICS")['ObjectFound']
 
 class GuesserROSWrapper(GuesserWrapper):
     '''Wraps the guesser model and publishes confidence levels'''
