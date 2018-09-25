@@ -49,9 +49,15 @@ def on_snips_message(_client, _userdata, msg):
     rospy.loginfo("Received intent from snips: %s", msg.payload)
     data = json.loads(msg.payload)
     if data['slots']:
+        detected_intent = data['slots'][0]['value']['value'].lower()
+        output = detected_intent
         rospy.loginfo("Received message %s, detected: %s", data['input'],
-                      data['slots'][0]['value']['value'].lower())
-        ROS_PUBLISHER.publish(data['slots'][0]['value']['value'].lower())
+                      detected_intent)
+
+        if (detected_intent == "na"):
+            output = "N/A"
+
+        ROS_PUBLISHER.publish(output)
 
 
 def create_ros_listener():
