@@ -11,7 +11,7 @@ from std_msgs.msg import String
 
 from bson import json_util
 
-sys.path.append(os.path.join(sys.path[0], '../../Mask_RCNN'))
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../../Mask_RCNN'))
 import coco
 import model as modellib
 from devine_config import ConfigSectionMap
@@ -19,7 +19,7 @@ from devine_config import ConfigSectionMap
 from ros_image_processor import ImageProcessor, ROSImageProcessingWrapper
 
 #paths
-ROOT_DIR = sys.path[0]
+ROOT_DIR = os.path.dirname(os.path.realpath(__file__))
 COCO_MODEL_PATH = os.path.join(ROOT_DIR, "../../mask_rcnn_coco.h5")
 MODEL_DIR = os.path.join(ROOT_DIR, "logs")
 

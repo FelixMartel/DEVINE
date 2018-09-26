@@ -24,7 +24,7 @@ from modelwrappers import GuesserROSWrapper, OracleROSWrapper
 
 from devine_config import ConfigSectionMap
 
-ROOT_DIR = sys.path[0]
+ROOT_DIR = os.path.dirname(os.path.realpath(__file__))
 EVAL_CONF_PATH = os.path.join(ROOT_DIR, '../config/eval.json')
 GUESS_CONF_PATH = os.path.join(ROOT_DIR, '../config/guesser.json')
 QGEN_CONF_PATH = os.path.join(ROOT_DIR, '../config/qgen.json')
@@ -35,7 +35,7 @@ TOKENS_PATH = os.path.join(ROOT_DIR, '../data/tokens.json')
 #topics
 SEGMENTATION_TOPIC = ConfigSectionMap("TOPICS")['RCNNSegmentation']
 FEATURES_TOPIC = ConfigSectionMap("TOPICS")['VGG16Features']
-OBJECT_TOPIC = ConfigSectionMap("TOPCIS")['ObjectFound']
+OBJECT_TOPIC = ConfigSectionMap("TOPICS")['ObjectFound']
 
 segmentations = Queue(2)
 features = Queue(2)

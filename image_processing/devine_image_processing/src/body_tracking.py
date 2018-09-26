@@ -17,7 +17,7 @@ import cv2
 from ros_image_processor import ImageProcessor, ROSImageProcessingWrapper
 
 #paths
-ROOT_DIR = sys.path[0]
+ROOT_DIR = os.path.dirname(os.path.realpath(__file__))
 MODEL_DIR = os.path.join(ROOT_DIR, "../../mobilenet_thin.pb") # originally in './models/graph/mobilenet_thin/graph_opt.pb'
 
 #topics
