@@ -1,4 +1,0 @@
-include src/static/*
-include src/*
-include *.ini
-recursive-include static *.ini

@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 
-import ConfigParser
+try:
+    import ConfigParser
+except:
+    import configparser as ConfigParser
+
 import sys
 import os
 

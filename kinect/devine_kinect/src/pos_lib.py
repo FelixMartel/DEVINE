@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
 import math
 import tf
-from DEVINEParameters import ConfigSectionMap
+from devine_config import ConfigSectionMap
 
 #Topics
 IMAGE_DEPTH_TOPIC = ConfigSectionMap("TOPICS")['ImageDepth']

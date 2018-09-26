@@ -10,7 +10,7 @@ import json
 import paho.mqtt.client as mqtt
 import rospy
 from std_msgs.msg import String
-from DEVINEParameters import ConfigSectionMap
+from devine_config import ConfigSectionMap
 
 # Snips settings
 SNIPS_HOST = "localhost"

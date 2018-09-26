@@ -6,7 +6,7 @@ import rospy
 from std_msgs.msg import String, Float64MultiArray
 
 from guesswhat.models.guesser.guesser_wrapper import GuesserWrapper
-from DEVINEParameters import ConfigSectionMap
+from devine_config import ConfigSectionMap
 
 ANSWER_TOPIC = ConfigSectionMap("TOPICS")['GuessWhatAnswer']
 QUESTION_TOPIC = ConfigSectionMap("TOPICS")['GuessWhatQuestion']

@@ -1,16 +1,11 @@
 #!/usr/bin/env python
 
-from setuptools import setup, find_packages, extension
+from distutils.core import setup
+from catkin_pkg.python_setup import generate_distutils_setup
 
+setup_args = generate_distutils_setup()
+setup_args['packages'] = ['devine_config']
+setup_args['package_dir'] = {'': 'src'}
+setup_args['package_data'] = {'': ['static/*.ini']}
 
-setup(
-    name = "DEVINE_config_package",    
-    version = "0.0.1",
-    license = "BSD",
-    keywords = "DEVINE",
-    author = "DEVINE team",
-    packages = find_packages('src'),
-    package_dir = {'':'src'},
-    py_modules = ['DEVINEParameters'],
-    include_package_data = True,
-)
+setup(**setup_args)

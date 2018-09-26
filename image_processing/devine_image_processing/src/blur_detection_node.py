@@ -9,7 +9,7 @@ from io import BytesIO
 import rospy
 from std_msgs.msg import Bool 
 from sensor_msgs.msg import CompressedImage
-from DEVINEParameters import ConfigSectionMap
+from devine_config import ConfigSectionMap
 
 BLUR_DETECTION_TOPIC = ConfigSectionMap("TOPICS")['BlurDetection']
 IMAGE_TOPIC = ConfigSectionMap("TOPICS")['RawImage']

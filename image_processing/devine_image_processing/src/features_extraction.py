@@ -14,7 +14,7 @@ import numpy as np
 import rospy
 from std_msgs.msg import Float64MultiArray
 from sensor_msgs.msg import CompressedImage
-from DEVINEParameters import ConfigSectionMap
+from devine_config import ConfigSectionMap
 
 ROOT_DIR = sys.path[0]
 VGG16_NTW_PATH = os.path.join(ROOT_DIR, '../../vgg_16.ckpt')

@@ -22,7 +22,7 @@ from guesswhat.data_provider.looper_batchifier import LooperBatchifier
 
 from modelwrappers import GuesserROSWrapper, OracleROSWrapper
 
-from DEVINEParameters import ConfigSectionMap
+from devine_config import ConfigSectionMap
 
 ROOT_DIR = sys.path[0]
 EVAL_CONF_PATH = os.path.join(ROOT_DIR, '../config/eval.json')
@@ -130,7 +130,7 @@ if __name__ == '__main__':
                 continue
 
             rospy.loginfo('Starting new game')
-            img = {'id': 0, 'width': 10, 'height': 10, 'coco_url': ''}
+            img = {'id': 0, 'width': 640, 'height': 480, 'coco_url': ''}
             game = Game(id=0,
                         object_id=0,
                         objects=seg['objects'],
