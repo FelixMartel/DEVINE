@@ -19,8 +19,8 @@ from devine_config import ConfigSectionMap
 ROOT_DIR = os.path.dirname(os.path.realpath(__file__))
 VGG16_NTW_PATH = os.path.join(ROOT_DIR, '../../vgg_16.ckpt')
 
-FEATURES_TOPIC = ConfigSectionMap("TOPICS")['VGG16Features']
-IMAGE_TOPIC = ConfigSectionMap("TOPICS")['ValidatedImage']
+FEATURES_TOPIC = ConfigSectionMap("TOPICS")['ImageFeatures']
+IMAGE_TOPIC = ConfigSectionMap("TOPICS")['ImageToFeaturesExtraction']
 
 IMAGE_SIZE = ConfigSectionMap("CONSTANTS")['ImageSize']
 CHANNEL_MEAN = np.array([123.68, 116.779, 103.939])

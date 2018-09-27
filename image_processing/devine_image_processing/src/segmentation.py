@@ -24,8 +24,8 @@ COCO_MODEL_PATH = os.path.join(ROOT_DIR, "../../mask_rcnn_coco.h5")
 MODEL_DIR = os.path.join(ROOT_DIR, "logs")
 
 #topics
-IMAGE_TOPIC = ConfigSectionMap("TOPICS")['ValidatedImage']
-SEGMENTATION_TOPIC = ConfigSectionMap("TOPICS")['RCNNSegmentation']
+IMAGE_TOPIC = ConfigSectionMap("TOPICS")['ImageToSegmentation']
+SEGMENTATION_TOPIC = ConfigSectionMap("TOPICS")['ImageSegmentation']
 
 class RCNNSegmentation(ImageProcessor):
     '''RCNN segmentation wrapper of Mask_RCNN for use in guesswhat'''

@@ -15,14 +15,15 @@ from tf_pose.networks import get_graph_path
 import cv2
 
 from ros_image_processor import ImageProcessor, ROSImageProcessingWrapper
+from devine_config import ConfigSectionMap
 
 #paths
 ROOT_DIR = os.path.dirname(os.path.realpath(__file__))
 MODEL_DIR = os.path.join(ROOT_DIR, "../../mobilenet_thin.pb") # originally in './models/graph/mobilenet_thin/graph_opt.pb'
 
 #topics
-IMAGE_TOPIC = '/devine/image/body_tracking'
-PUBLISH_TOPIC = '/body_tracking'
+IMAGE_TOPIC = ConfigSectionMap("TOPICS")['ImageToBodyTracking']
+PUBLISH_TOPIC = ConfigSectionMap("TOPICS")['BodyTracking']
 
 class BodyTracking(ImageProcessor):
     '''Body Tracking wrapper of tf_pose for use in guesswhat'''

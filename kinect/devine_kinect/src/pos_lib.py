@@ -18,8 +18,8 @@ from devine_config import ConfigSectionMap
 
 #Topics
 IMAGE_DEPTH_TOPIC = ConfigSectionMap("TOPICS")['ImageDepth']
-OBJECT_POSITION_TOPIC = ConfigSectionMap("TOPICS")['ObjectFound']
-OBJECT_LOCATION_TOPIC = ConfigSectionMap("TOPICS")['ObjectLocation']
+OBJECT_POSITION_TOPIC = ConfigSectionMap("TOPICS")['ObjectGuess']
+OBJECT_LOCATION_TOPIC = ConfigSectionMap("TOPICS")['GuessLocation']
 
 ROS_PUBLISHER = rospy.Publisher(OBJECT_LOCATION_TOPIC, Float32MultiArray, queue_size=10)
 

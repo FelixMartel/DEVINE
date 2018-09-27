@@ -8,10 +8,10 @@ from std_msgs.msg import String, Float64MultiArray
 from guesswhat.models.guesser.guesser_wrapper import GuesserWrapper
 from devine_config import ConfigSectionMap
 
-ANSWER_TOPIC = ConfigSectionMap("TOPICS")['GuessWhatAnswer']
-QUESTION_TOPIC = ConfigSectionMap("TOPICS")['GuessWhatQuestion']
-CONFIDENCE_TOPIC = ConfigSectionMap("TOPICS")['GuessWhatConfidence']
-SELECTION_TOPIC = ConfigSectionMap("TOPICS")['ObjectFound']
+ANSWER_TOPIC = ConfigSectionMap("TOPICS")['Answer']
+QUESTION_TOPIC = ConfigSectionMap("TOPICS")['Question']
+CONFIDENCE_TOPIC = ConfigSectionMap("TOPICS")['ObjectsConfidence']
+SELECTION_TOPIC = ConfigSectionMap("TOPICS")['ObjectGuess']
 
 class GuesserROSWrapper(GuesserWrapper):
     '''Wraps the guesser model and publishes confidence levels'''

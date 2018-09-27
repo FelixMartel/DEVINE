@@ -4,9 +4,10 @@ import rospy
 
 from std_msgs.msg import Float32MultiArray
 from std_msgs.msg import Bool
+from devine_config import ConfigSectionMap
 
-TOPIC_GUESSWHAT_CONFIDENCE = '/confidence'
-TOPIC_GUESSWHAT_SUCCEED = '/is_guesswhat_succeed'
+TOPIC_GUESSWHAT_CONFIDENCE = ConfigSectionMap("TOPICS")['ObjectsConfidence']
+TOPIC_GUESSWHAT_SUCCEED = ConfigSectionMap("TOPICS")['GuessSuccess']
 
 class Movement(object):
     ''' According to game state, emote emotion with complex movement '''

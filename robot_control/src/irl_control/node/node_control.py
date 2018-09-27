@@ -9,15 +9,16 @@ from irl_control.movement import Movement
 from irl_control.controllers import TrajectoryClient
 from irl_control.gripper import Gripper
 import irl_control.ik as ik
+from devine_config import ConfigSectionMap
 
 ROBOT = 'jn0'
-TOPIC_OBJECT_LOCATION = '/object_location'
+TOPIC_OBJECT_LOCATION = ConfigSectionMap("TOPICS")['GuessLocation']
+TOPIC_GUESSWHAT_SUCCEED = ConfigSectionMap("TOPICS")['GuessSuccess']
 TOPIC_OBJECT_FRAME = '/object_frame'
 TOPIC_ROBOT_BASE = '/base_link'
 TOPIC_ROBOT_R_SHOULDER_FIXED_FRAME = '/R_shoulder_fixed_link'
 TOPIC_ROBOT_L_SHOULDER_FIXED_FRAME = '/L_shoulder_fixed_link'
 TOPIC_ROBOT_NECK_PAN_FRAME = '/neck_pan_link'
-TOPIC_GUESSWHAT_SUCCEED = '/is_guesswhat_succeed'
 
 class Controller(object):
     ''' Arms, head and gripper controller '''

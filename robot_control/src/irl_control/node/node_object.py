@@ -4,8 +4,9 @@
 
 import rospy
 from irl_control.objects import ObjectMaker, ObjectTf
+from devine_config import ConfigSectionMap
 
-TOPIC_OBJECT_LOCATION = '/object_location'
+TOPIC_OBJECT_LOCATION = ConfigSectionMap("TOPICS")['GuessLocation']
 TOPIC_OBJECT_FRAME = '/object_frame'
 TOPIC_ROBOT_BASE_FRAME = 'base_link'
 

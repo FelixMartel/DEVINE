@@ -33,12 +33,14 @@ QGEN_NTW_PATH = os.path.join(ROOT_DIR, '../data/qgen.ckpt')
 TOKENS_PATH = os.path.join(ROOT_DIR, '../data/tokens.json')
 
 #topics
-SEGMENTATION_TOPIC = ConfigSectionMap("TOPICS")['RCNNSegmentation']
-FEATURES_TOPIC = ConfigSectionMap("TOPICS")['VGG16Features']
-OBJECT_TOPIC = ConfigSectionMap("TOPICS")['ObjectFound']
+SEGMENTATION_TOPIC = ConfigSectionMap("TOPICS")['ImageSegmentation']
+FEATURES_TOPIC = ConfigSectionMap("TOPICS")['ImageFeatures']
+OBJECT_TOPIC = ConfigSectionMap("TOPICS")['ObjectGuess']
+CATEGORY_TOPIC = ConfigSectionMap("TOPICS")['GuessCategory']
+STATUS_TOPIC = ConfigSectionMap("TOPICS")['GuessWhatStatus']
 
-segmentations = Queue(2)
-features = Queue(2)
+segmentations = Queue(1)
+features = Queue(1)
 
 class ImgFeaturesLoader():
     '''Loads image from memory'''
@@ -77,6 +79,9 @@ def open_config(path):
 
 def segmentation_callback(data):
     '''Callback for the segmantion topic'''
+    if segmentations.full():
+        segmentations.get()
+
     try:
         segmentations.put(json.loads(data.data))
     except json.JSONDecodeError:
@@ -84,6 +89,9 @@ def segmentation_callback(data):
 
 def features_callback(data):
     '''Callback for the features topic'''
+    if features.full():
+        features.get()
+
     features.put(np.array(data.data))
 
 if __name__ == '__main__':
@@ -91,6 +99,8 @@ if __name__ == '__main__':
     rospy.Subscriber(SEGMENTATION_TOPIC, String, segmentation_callback)
     rospy.Subscriber(FEATURES_TOPIC, Float64MultiArray, features_callback)
     object_found = rospy.Publisher(OBJECT_TOPIC, Int32MultiArray, queue_size=1)
+    category = rospy.Publisher(CATEGORY_TOPIC, String, queue_size=1)
+    status = rospy.Publisher(STATUS_TOPIC, String, queue_size=1, latch=True)
 
     eval_config = open_config(EVAL_CONF_PATH)
     guesser_config = open_config(GUESS_CONF_PATH)
@@ -122,6 +132,7 @@ if __name__ == '__main__':
 
         batchifier = LooperBatchifier(tokenizer, generate_new_games=False)
 
+        status.publish('Waiting for image processing')
         while not rospy.is_shutdown():
             try:
                 seg = segmentations.get(timeout=1)
@@ -157,3 +168,6 @@ if __name__ == '__main__':
             object_found.publish(Int32MultiArray(data=[int(choice_bbox.x_center),
                                                        int(choice_bbox.y_center)]))
             rospy.loginfo('Game over')
+            category.publish(seg['objects'][choice_index]['category'])
+
+            status.publish('Waiting for image processing')
