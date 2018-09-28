@@ -3,10 +3,10 @@ from std_msgs.msg import String, Float64MultiArray
 import h5py
 import gzip
 import json
-from devine_config import ConfigSectionMap
+from devine_config import topicname
 
-SEGMENTATION_TOPIC = ConfigSectionMap("TOPICS")['ImageSegmentation']
-FEATURES_TOPIC = ConfigSectionMap("TOPICS")['ImageFeatures']
+SEGMENTATION_TOPIC = topicname('objects')
+FEATURES_TOPIC = topicname('image_features')
 
 rospy.init_node('guesswhat_example', anonymous=True)
 f = gzip.open('guesswhat.image.jsonl.gz')

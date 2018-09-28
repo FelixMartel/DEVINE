@@ -22,10 +22,10 @@ from shapely.geometry.polygon import Polygon
 
 from bson import json_util
 
-from devine_config import ConfigSectionMap
+from devine_config import topicname
 
-IMAGE_TOPIC = ConfigSectionMap["TOPICS"]['ImageToZoneDetection']
-ZONE_DETECTION_TOPIC = ConfigSectionMap("TOPICS")['ZoneDetection']
+IMAGE_TOPIC = topicname('zone_detection_image')
+ZONE_DETECTION_TOPIC = topicname('zone_detection')
 
 # Tracked colors
 class TrackingColor(Enum):

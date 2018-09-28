@@ -8,10 +8,10 @@ import rospy
 from std_msgs.msg import Bool
 from std_msgs.msg import Float32MultiArray
 
-from devine_config import ConfigSectionMap
+from devine_config import topicname
 
-TOPIC_GUESSWHAT_CONFIDENCE = ConfigSectionMap("TOPICS")['ObjectsConfidence']
-TOPIC_GUESSWHAT_SUCCEED = ConfigSectionMap("TOPICS")['GuessSuccess']
+TOPIC_GUESSWHAT_CONFIDENCE = topicname('objects_confidence')
+TOPIC_GUESSWHAT_SUCCEED = topicname('object_guess_success')
 
 def main(arguments):
     ''' Publish on GuessWhat?! confidence and success topic '''

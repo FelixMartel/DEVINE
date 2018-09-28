@@ -22,7 +22,7 @@ from guesswhat.data_provider.looper_batchifier import LooperBatchifier
 
 from modelwrappers import GuesserROSWrapper, OracleROSWrapper
 
-from devine_config import ConfigSectionMap
+from devine_config import topicname
 
 ROOT_DIR = os.path.dirname(os.path.realpath(__file__))
 EVAL_CONF_PATH = os.path.join(ROOT_DIR, '../config/eval.json')
@@ -33,11 +33,12 @@ QGEN_NTW_PATH = os.path.join(ROOT_DIR, '../data/qgen.ckpt')
 TOKENS_PATH = os.path.join(ROOT_DIR, '../data/tokens.json')
 
 #topics
-SEGMENTATION_TOPIC = ConfigSectionMap("TOPICS")['ImageSegmentation']
-FEATURES_TOPIC = ConfigSectionMap("TOPICS")['ImageFeatures']
-OBJECT_TOPIC = ConfigSectionMap("TOPICS")['ObjectGuess']
-CATEGORY_TOPIC = ConfigSectionMap("TOPICS")['GuessCategory']
-STATUS_TOPIC = ConfigSectionMap("TOPICS")['GuessWhatStatus']
+SEGMENTATION_TOPIC = topicname('objects')
+FEATURES_TOPIC = topicname('image_features')
+STATUS_TOPIC = topicname('guesswhat_status')
+# TODO merge these topics to one
+OBJECT_TOPIC = topicname('guess_location_image')
+CATEGORY_TOPIC = topicname('guess_category')
 
 segmentations = Queue(1)
 features = Queue(1)

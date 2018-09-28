@@ -3,10 +3,10 @@
 import rospy
 from std_msgs.msg import String
 from game_system import GameSystem
-from devine_config import ConfigSectionMap
+from devine_config import topicname
 
 #Topics
-GAME_SYSTEM_STATE = ConfigSectionMap("TOPICS")['GameSystemState']
+GAME_SYSTEM_STATE = topicname('game_system_state')
 
 if __name__ == "__main__":
 

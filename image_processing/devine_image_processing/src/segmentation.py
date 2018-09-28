@@ -14,7 +14,7 @@ from bson import json_util
 sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../../Mask_RCNN'))
 import coco
 import model as modellib
-from devine_config import ConfigSectionMap
+from devine_config import topicname
 
 from ros_image_processor import ImageProcessor, ROSImageProcessingWrapper
 
@@ -24,8 +24,8 @@ COCO_MODEL_PATH = os.path.join(ROOT_DIR, "../../mask_rcnn_coco.h5")
 MODEL_DIR = os.path.join(ROOT_DIR, "logs")
 
 #topics
-IMAGE_TOPIC = ConfigSectionMap("TOPICS")['ImageToSegmentation']
-SEGMENTATION_TOPIC = ConfigSectionMap("TOPICS")['ImageSegmentation']
+IMAGE_TOPIC = topicname('segmentation_image')
+SEGMENTATION_TOPIC = topicname('objects')
 
 class RCNNSegmentation(ImageProcessor):
     '''RCNN segmentation wrapper of Mask_RCNN for use in guesswhat'''

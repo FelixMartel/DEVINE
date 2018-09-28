@@ -10,7 +10,7 @@ import json
 import paho.mqtt.client as mqtt
 import rospy
 from std_msgs.msg import String
-from devine_config import ConfigSectionMap
+from devine_config import topicname
 
 # Snips settings
 SNIPS_HOST = "localhost"
@@ -19,8 +19,8 @@ SNIPS_TOPICS = ['hermes/intent/#'] # Wild card for every intents
 MQTT_CLIENT = mqtt.Client()
 
 #Topics
-SNIPS_ANSWER = ConfigSectionMap("TOPICS")['Answer']
-SNIPS_QUESTION = ConfigSectionMap("TOPICS")['Question']
+SNIPS_ANSWER = topicname('answer')
+SNIPS_QUESTION = topicname('question')
 
 # ROS
 ROS_PUBLISHER = rospy.Publisher(SNIPS_ANSWER, String, queue_size=10)
