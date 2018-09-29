@@ -94,6 +94,5 @@
     }
   },
   "constants": {
-    "blur_detection_threshold": 200
   }
 }
