@@ -3,4 +3,4 @@
 from devine_config import writetopics
 
 if __name__ == "__main__":
-    writetopics()
+    printtopics()

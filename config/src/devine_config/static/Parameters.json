@@ -88,13 +88,12 @@
       "name": "/devine/object_guess_success",
       "type": "std_msgs/Bool"
     },
-    "player": {
-      "name": "/devine/player",
+    "player_name": {
+      "name": "/devine/player_name",
       "type": "std_msgs/String"
     }
   },
   "constants": {
-    "blur_detection_threshold": 200,
-    "image_size": 224
+    "blur_detection_threshold": 200
   }
 }

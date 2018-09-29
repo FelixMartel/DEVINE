@@ -14,6 +14,6 @@ def constant(name):
     '''fetch a constant by name'''
     return config["constants"][name]
 
-def writetopics():
+def printtopics():
     '''write json topics to stdout'''
     print(json.dumps(config["topics"]))
