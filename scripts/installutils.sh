@@ -30,14 +30,12 @@ install_devine() {
   fi
 
   # TODO move pip installs to respective catkin package dep?
-  cd DEVINE/dashboard
-  python3 -m pip install --user -r requirements.txt
-  bash -ci 'npm install && npm run build'
-  cd ../guesswhat
+  cd DEVINE/src/guesswhat
   unzip "$datapath/weights.zip" -d devine_guesswhat/data
   cd ../image_processing
   python3 -m pip install --user Cython
   python3 -m pip install --user scikit-image bson pymongo pycocotools keras==2.1.6 catkin_pkg rospkg
+  python2 -m pip install --user imutils shapely
   ln -sf "$datapath/mask_rcnn_coco.h5" mask_rcnn_coco.h5
   tar xzf "$datapath/vgg_16_2016_08_28.tar.gz"
   git clone https://github.com/ildoonet/tf-pose-estimation.git
@@ -56,8 +54,13 @@ install_devine() {
   mkdir ~/.rviz
   cp launch/irl_point.rviz ~/.rviz/default.rviz
 
-  cd ../../..
+  cd ../../../..
   bash -ci catkin_make
+
+  cd src/DEVINE/src/dashboard
+  bash -ci 'rosrun devine_config devinetopics.py > src/devine_dashboard/js/vars/devine_topics.json'
+  python3 -m pip install --user -r requirements.txt
+  bash -ci 'npm install && npm run build'
 
   popd
 }
@@ -99,6 +102,7 @@ install_base() {
   ensure_line ". /opt/ros/kinetic/setup.sh" ~/.bashrc
   ensure_line "export \"ROS_PACKAGE_PATH=$(pwd):\$ROS_PACKAGE_PATH\"" ~/.bashrc
   cd ..
+  ensure_line "export \"PYTHONPATH=$(pwd)/devel/lib/python2.7/dist-packages:\$PYTHONPATH\"" ~/.bashrc
   if [ ! -d /etc/ros/rosdep ]
   then
     # can we prevent rosdep from sending sigstop?
