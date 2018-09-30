@@ -60,7 +60,7 @@ def on_snips_message(_client, _userdata, msg):
                       detected_intent)
 
         if (detected_intent == "na"):
-            output = "N/A"
+            output = "na"
 
         ROS_PUBLISHER.publish(output)
 
