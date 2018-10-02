@@ -8,12 +8,12 @@
   </group>
 
   <group if="$(arg control)">
-    <node name="control" pkg="irl_control" type="node_control.py" respawn="false" />
+    <node name="devine_irl_control" pkg="devine_irl_control" type="node_control.py" respawn="false" />
   </group>
   
   <group if="$(arg point)">
-      <node name="control_object" pkg="irl_control" type="node_object.py" respawn="true" />
-      <node name="control_error" pkg="irl_control" type="node_error.py" respawn="true" />
+      <node name="devine_irl_control_object" pkg="devine_irl_control" type="node_object.py" respawn="false" />
+      <node name="devine_irl_control_error" pkg="devine_irl_control" type="node_error.py" respawn="false" />
   </group>
   
 </launch>
