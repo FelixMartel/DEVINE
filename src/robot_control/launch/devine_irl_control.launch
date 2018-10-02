@@ -2,7 +2,7 @@
   <arg name="jn0" default="true"/>
   <arg name="control" default="true"/>
   <arg name="point" default="true"/>
-  <arg name="dev" default="true"/>
+  <arg name="dev" default="false"/>
 
   <group if="$(arg jn0)">
     <include file="$(find jn0_gazebo)/launch/jn0_empty_world.launch" />
