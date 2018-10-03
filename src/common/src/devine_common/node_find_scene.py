@@ -15,10 +15,11 @@ from control_msgs.msg import FollowJointTrajectoryResult
 from control_msgs.msg import FollowJointTrajectoryActionFeedback
 # http://docs.ros.org/fuerte/api/control_msgs/html/msg/
 
-from irl_control.irl_constant import ROBOT_CONTROLLER
+from devine_config import topicname
+from devine_irl_control.irl_constant import ROBOT_CONTROLLER
 
 NODE_NAME = 'SceneFinder'
-ZONE_DETECTION_TOPIC = '/zone_detection'
+ZONE_DETECTION_TOPIC = topicname('zone_detection')
 NECK_TRAJ_STATE_TOPIC = '/jn0/neck_controller/follow_joint_trajectory/feedback'
 NECK_CTRL_STATE_TOPIC = '/jn0/neck_controller/state'
 TOPIC_HEAD_JOINT_STATE = '/head_joint_traj_point'
@@ -36,6 +37,10 @@ class SceneFinder(object):
         self.time = time
         self.direction = -1
         self.current_status = 3 # SUCCEEDED
+        self.current_zone = {
+            "top_left_corner": [-1, -1],
+            "bottom_right_corner": [-1, -1]
+        }
 
         rospy.Subscriber(NECK_TRAJ_STATE_TOPIC, FollowJointTrajectoryActionFeedback,
                          self.traj_state_callback, queue_size=1)
@@ -59,8 +64,7 @@ class SceneFinder(object):
         #rospy.loginfo('self.current_joint_position' + str(self.current_joint_position))
 
     def zone_callback(self, data):
-        #rospy.loginfo(data)
-        self.current_zone = json.loads(data)
+        self.current_zone = json.loads(data.data)
 
     def update(self):
         #if self.current_status == 3: # SUCCEEDED
@@ -77,17 +81,16 @@ class SceneFinder(object):
             self.direction = -1
             delta_theta = self.theta * self.direction
 
-        #top_left = self.current_zone['top_left_corner']
-        #bottom_right = self.current_zone['bottom_right_corner']
-        #if top_left == [-1,-1] and bottom_right == [-1,-1]:
-            # continue sweeping in current direction if < max min>
-        self.new_joint_position[0] = self.current_joint_position[0] + delta_theta
-        #elif top_left == [-1,-1]:
-            #    pass
-        #elif bottom_right == [-1,-1]:
-            #    pass
-        #else:
-            #    pass
+        top_left = self.current_zone['top_left_corner']
+        bottom_right = self.current_zone['bottom_right_corner']
+        if top_left == [-1,-1] and bottom_right == [-1, -1]:
+            self.new_joint_position[0] = self.current_joint_position[0] + delta_theta
+        elif top_left == [-1, -1]:
+            self.new_joint_position[0] = self.current_joint_position[0] + delta_theta
+        elif bottom_right == [-1, -1]:
+            self.new_joint_position[0] = self.current_joint_position[0] - delta_theta
+        else:
+            pass # publish found scene, ready to take picture!
         #rospy.loginfo('self.new_joint_position' + str(self.new_joint_position))
         ros_packet = JointTrajectoryPoint(positions=self.new_joint_position,
                                             time_from_start=rospy.Duration(self.time))
