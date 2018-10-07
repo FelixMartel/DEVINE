@@ -19,7 +19,7 @@ NODE_NAME = 'SceneFinder'
 ZONE_DETECTION_TOPIC = topicname('zone_detection')
 NECK_TRAJ_STATE_TOPIC = '/jn0/neck_controller/follow_joint_trajectory/feedback'
 NECK_CTRL_STATE_TOPIC = '/jn0/neck_controller/state'
-TOPIC_HEAD_JOINT_STATE = '/head_joint_traj_point'
+TOPIC_HEAD_JOINT_STATE = topicname('robot_head_joint_traj_point')
 
 LIMITS = ROBOT_CONTROLLER['neck_controller']['joints_limit']
 
