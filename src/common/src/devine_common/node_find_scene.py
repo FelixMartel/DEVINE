@@ -100,7 +100,7 @@ class SceneFinder(object):
 def main():
     '''Entry point of this file'''
     TIME = 1
-    DELTA = 0.2
+    DELTA = 0.05
 
     rospy.init_node(NODE_NAME)
     scene_finder = SceneFinder(DELTA, TIME)
