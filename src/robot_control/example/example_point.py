@@ -12,7 +12,7 @@ from devine_config import topicname
 
 NODE_NAME = 'devine_irl_control_example_point'
 TOPIC_OBJECT_LOCATION = topicname('guess_location_world')
-TOPIC_HEAD_JOINT_STATE = '/head_joint_traj_point'
+TOPIC_HEAD_JOINT_STATE = topicname('robot_head_joint_traj_point')
 TIME = 2
 
 def main(args):
@@ -20,10 +20,10 @@ def main(args):
     # Parse arguments
     if args.point:
         point = [float(i) for i in args.point.split(',')]
-        rospy.loginfo('Running node \'' + NODE_NAME + '\' with object location at ' + str(point))
+        rospy.loginfo('Running \'' + NODE_NAME + '\' with object location at ' + str(point))
     elif args.head_joint_position:
         head_joint_pos = [float(i) for i in args.head_joint_position.split(',')]
-        rospy.loginfo('Running node \'' + NODE_NAME + '\' with head_joint_traj_point at ' + str(head_joint_pos))
+        rospy.loginfo('Running \'' + NODE_NAME + '\' with head_joint at ' + str(head_joint_pos))
     if args.time:
         time = int(args.time)
     else:
@@ -39,7 +39,6 @@ def main(args):
         elif args.head_joint_position:
             pub = rospy.Publisher(TOPIC_HEAD_JOINT_STATE, JointTrajectoryPoint, queue_size=1)
             ros_packet = JointTrajectoryPoint()
-            rospy.loginfo(head_joint_pos)
             ros_packet.positions = head_joint_pos
             ros_packet.time_from_start = rospy.Duration(time)
         else:
@@ -54,7 +53,8 @@ def parser():
     arg_parser = argparse.ArgumentParser(formatter_class=arg_fmt, description=main.__doc__)
     required = arg_parser.add_argument_group('required arguments')
     required.add_argument('-p', '--point', required=False, help='What 3D position to point?')
-    required.add_argument('-hjp', '--head_joint_position', required=False, help='What joint positions?')
+    required.add_argument('-hjp', '--head_joint_position',
+                          required=False, help='What joint positions?')
     required.add_argument('-t', '--time', required=False, help='Time to accomplish trajectory?')
     arguments = arg_parser.parse_args(rospy.myargv()[1:])
     return arguments
