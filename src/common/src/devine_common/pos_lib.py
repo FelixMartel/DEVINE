@@ -19,7 +19,7 @@ IMAGE_DEPTH_TOPIC = topicname('image_depth')
 OBJECT_IMAGE_LOCATION_TOPIC = topicname('guess_location_image')
 OBJECT_WORLD_LOCATION_TOPIC = topicname('guess_location_world')
 
-ROS_PUBLISHER = rospy.Publisher(OBJECT_IMAGE_LOCATION_TOPIC, Float32MultiArray, queue_size=10)
+ROS_PUBLISHER = rospy.Publisher(OBJECT_WORLD_LOCATION_TOPIC, Float32MultiArray, queue_size=10)
 
 
 class PosLib(object):
@@ -102,7 +102,7 @@ def deserialize(pcloud):
 def main():
     ''' Init node '''
     rospy.init_node('pos_lib')
-    PosLib(IMAGE_DEPTH_TOPIC, OBJECT_WORLD_LOCATION_TOPIC)
+    PosLib(IMAGE_DEPTH_TOPIC, OBJECT_IMAGE_LOCATION_TOPIC)
     rospy.loginfo("Node initialized")
     rospy.spin()
 
