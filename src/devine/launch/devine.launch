@@ -12,7 +12,7 @@
     <include file="$(find devine_irl_control)/launch/devine_irl_control.launch">
       <arg name="jn0" value="$(arg jn0)"/>
     </include>
-    <!-- <node name="pos_lib" pkg="devine_common" type="pos_lib.py" respawn="true" /> -->
+      <node name="pos_lib" pkg="devine_common" type="pos_lib.py" respawn="true" />
   </group>
   <group if="$(arg kinect)">
     <include file="$(find openni_launch)/launch/openni.launch" />
