@@ -2,9 +2,7 @@
 
 import math
 import matplotlib.pyplot as plt
-
-# https://math.stackexchange.com/questions/40164/how-do-you-rotate-a-vector-by-a-unit-quaternion
-
+from mpl_toolkits.mplot3d import Axes3D
 
 def quaternion_mult(q, r):
     '''Quaternion multiplication'''
@@ -16,6 +14,7 @@ def quaternion_mult(q, r):
 
 def point_rotation_by_quaternion(point, q):
     '''Point rotation by a quaternion'''
+    # https://math.stackexchange.com/questions/40164/how-do-you-rotate-a-vector-by-a-unit-quaternion
     [x, y, z] = point
     r = [0, x, -1*y, -1*z]
     q_conj = [q[0], 1*q[1], 1*q[2], 1*q[3]]
@@ -41,10 +40,8 @@ def calc_geometric_location(x_pixel, y_pixel, kinect_z,
     point = [kinect_z + transz, x + transx, y + transy]
     return point_rotation_by_quaternion(point, rot_kinect)
 
-def draw(points):
-    """
-    Draw an array of (x, y, z) tuples with matplotlib
-    """
+def plot_3d_matrix(points):
+    ''' Draw an array of (x, y, z) tuples with matplotlib '''
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     vects = zip(*points)
