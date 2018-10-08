@@ -1,7 +1,11 @@
 #!/usr/bin/env python2
 '''Image dispatching node'''
 
-from Queue import Queue, Empty
+try:
+    from queue import Queue, Empty
+except:
+    from Queue import Queue, Empty
+
 import rospy
 from std_msgs.msg import Bool
 from sensor_msgs.msg import CompressedImage
@@ -18,7 +22,7 @@ FEATURES_EXTRACTION_IMAGE_TOPIC = topicname('features_extraction_image')
 BODY_TRACKING_IMAGE_TOPIC = topicname('body_tracking_image')
 BLUR_DETECTION_TOPIC = topicname('blur_detection')
 
-TIMER_DELAY = 125
+TIMER_DELAY = 10
 
 def dispatch():
     '''Dipsatch frame to nodes'''
