@@ -14,6 +14,7 @@ from control_msgs.msg import FollowJointTrajectoryActionFeedback
 
 from devine_config import topicname
 from devine_irl_control.irl_constant import ROBOT_CONTROLLER
+from devine_common.actionlib_goal_status import ActionlibGoalStatus
 
 NODE_NAME = 'SceneFinder'
 ZONE_DETECTION_TOPIC = topicname('zone_detection')
@@ -23,8 +24,8 @@ TOPIC_HEAD_JOINT_STATE = topicname('robot_head_joint_traj_point')
 
 LIMITS = ROBOT_CONTROLLER['neck_controller']['joints_limit']
 
-DELTA_TIME = 1
-DELTA_POS = 0.05
+DELTA_TIME = 0.5
+DELTA_POS = 0.1
 
 class SceneFinder(object):
     ''' Find scene to play game '''
@@ -36,7 +37,7 @@ class SceneFinder(object):
         self.theta = theta
         self.time = time
         self.direction = -1
-        self.current_status = 3 # 3:SUCCEEDED, 0:PENDING
+        self.current_status = ActionlibGoalStatus.SUCCEEDED
         self.current_zone = {
             "top_left_corner": [-1, -1],
             "bottom_right_corner": [-1, -1]
@@ -53,51 +54,57 @@ class SceneFinder(object):
 
     def traj_state_callback(self, data):
         ''' Monitor neck trajectory state '''
-        self.current_status = data.status.status
+
+        self.current_status = ActionlibGoalStatus(data.status.status)
         self.current_joint_position = list(data.feedback.actual.positions)
 
     def joint_state_callback(self, data):
         ''' Get initial neck joint state at node launch '''
+
         self.current_joint_position = data.actual.positions
         self.sub_neck_ctrl.unregister()
 
     def zone_callback(self, data):
         ''' Listen to zone_detection '''
+
         self.current_zone = json.loads(data.data)
 
     def update(self):
         ''' Move head to find scene '''
-        delta_theta = self.theta * self.direction
 
-        if self.new_joint_position[0] + delta_theta < LIMITS[0][0]:
-            self.direction = 1
+        if self.current_status is ActionlibGoalStatus.SUCCEEDED:
+            # If joint position exceed limits, turn head in the other direction
+            temp_delta_theta = self.theta * self.direction
+            temp_joint_pos = self.new_joint_position[0] + temp_delta_theta
+            if temp_joint_pos <= LIMITS[0][0]:
+                self.direction = 1
+            elif temp_joint_pos > LIMITS[0][1]:
+                self.direction = -1
+
+            # Find scene depending on zone_dection
             delta_theta = self.theta * self.direction
-        if self.new_joint_position[0] + delta_theta > LIMITS[0][1]:
-            self.direction = -1
-            delta_theta = self.theta * self.direction
+            top_left = self.current_zone['top_left_corner']
+            bottom_right = self.current_zone['bottom_right_corner']
 
-        top_left = self.current_zone['top_left_corner']
-        bottom_right = self.current_zone['bottom_right_corner']
+            if top_left == [-1, -1] and bottom_right == [-1, -1]:
+                self.new_joint_position[0] = self.current_joint_position[0] + delta_theta
+            elif top_left == [-1, -1]:
+                self.new_joint_position[0] = self.current_joint_position[0] + delta_theta
+            elif bottom_right == [-1, -1]:
+                self.new_joint_position[0] = self.current_joint_position[0] - delta_theta
+            else:
+                pass # TODO publish found scene, ready to take picture!
 
-        if top_left == [-1, -1] and bottom_right == [-1, -1]:
-            self.new_joint_position[0] = self.current_joint_position[0] + delta_theta
-        elif top_left == [-1, -1]:
-            self.new_joint_position[0] = self.current_joint_position[0] + delta_theta
-        elif bottom_right == [-1, -1]:
-            self.new_joint_position[0] = self.current_joint_position[0] - delta_theta
-        else:
-            pass # publish found scene, ready to take picture!
-
-        ros_packet = JointTrajectoryPoint(positions=self.new_joint_position,
-                                          time_from_start=rospy.Duration(self.time))
-        self.pub_neck_ctrl.publish(ros_packet)
+            ros_packet = JointTrajectoryPoint(positions=self.new_joint_position,
+                                              time_from_start=rospy.Duration(self.time))
+            self.pub_neck_ctrl.publish(ros_packet)
 
 def main():
     '''Entry point of this file'''
 
     rospy.init_node(NODE_NAME)
     scene_finder = SceneFinder(DELTA_POS, DELTA_TIME)
-    rate = rospy.Rate(1/DELTA_TIME)
+    rate = rospy.Rate(5)
     while not rospy.is_shutdown():
         scene_finder.update()
         rate.sleep()
