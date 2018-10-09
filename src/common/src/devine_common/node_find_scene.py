@@ -7,6 +7,7 @@ import json
 
 import rospy
 from std_msgs.msg import String
+from std_msgs.msg import Bool
 from trajectory_msgs.msg import JointTrajectoryPoint
 from control_msgs.msg import JointTrajectoryControllerState
 from control_msgs.msg import FollowJointTrajectoryActionFeedback
@@ -21,11 +22,12 @@ ZONE_DETECTION_TOPIC = topicname('zone_detection')
 NECK_TRAJ_STATE_TOPIC = '/jn0/neck_controller/follow_joint_trajectory/feedback'
 NECK_CTRL_STATE_TOPIC = '/jn0/neck_controller/state'
 TOPIC_HEAD_JOINT_STATE = topicname('robot_head_joint_traj_point')
+TOPIC_SCENE_FOUND = topicname('scene_found')
 
 LIMITS = ROBOT_CONTROLLER['neck_controller']['joints_limit']
 
-DELTA_TIME = 0.5
-DELTA_POS = 0.1
+DELTA_TIME = 1
+DELTA_POS = 0.8
 
 class SceneFinder(object):
     ''' Find scene to play game '''
@@ -35,6 +37,7 @@ class SceneFinder(object):
         self.new_joint_position = [0, 0]
         self.current_error = [0, 0]
         self.theta = theta
+        self.scene_joint_position = None
         self.time = time
         self.direction = -1
         self.current_status = ActionlibGoalStatus.SUCCEEDED
@@ -42,15 +45,18 @@ class SceneFinder(object):
             "top_left_corner": [-1, -1],
             "bottom_right_corner": [-1, -1]
         }
-
+        initial_joint_position = rospy.wait_for_message(NECK_CTRL_STATE_TOPIC,
+                                                        JointTrajectoryControllerState)
+        self.current_joint_position = initial_joint_position.actual.positions
         rospy.Subscriber(NECK_TRAJ_STATE_TOPIC, FollowJointTrajectoryActionFeedback,
                          self.traj_state_callback, queue_size=1)
         rospy.Subscriber(ZONE_DETECTION_TOPIC, String,
                          self.zone_callback, queue_size=1)
-        self.sub_neck_ctrl = rospy.Subscriber(NECK_CTRL_STATE_TOPIC, JointTrajectoryControllerState,
-                                              self.joint_state_callback, queue_size=1)
+
         self.pub_neck_ctrl = rospy.Publisher(TOPIC_HEAD_JOINT_STATE,
                                              JointTrajectoryPoint, queue_size=1)
+        self.pub_scene_found = rospy.Publisher(TOPIC_SCENE_FOUND,
+                                               Bool, queue_size=1)
 
     def traj_state_callback(self, data):
         ''' Monitor neck trajectory state '''
@@ -58,16 +64,11 @@ class SceneFinder(object):
         self.current_status = ActionlibGoalStatus(data.status.status)
         self.current_joint_position = list(data.feedback.actual.positions)
 
-    def joint_state_callback(self, data):
-        ''' Get initial neck joint state at node launch '''
-
-        self.current_joint_position = data.actual.positions
-        self.sub_neck_ctrl.unregister()
-
     def zone_callback(self, data):
         ''' Listen to zone_detection '''
 
         self.current_zone = json.loads(data.data)
+        self.update()
 
     def update(self):
         ''' Move head to find scene '''
@@ -87,13 +88,18 @@ class SceneFinder(object):
             bottom_right = self.current_zone['bottom_right_corner']
 
             if top_left == [-1, -1] and bottom_right == [-1, -1]:
-                self.new_joint_position[0] = self.current_joint_position[0] + delta_theta
+                if self.scene_joint_position is None:
+                    self.new_joint_position[0] = self.current_joint_position[0] + delta_theta
+                else:
+                    self.new_joint_position = self.scene_joint_position
             elif top_left == [-1, -1]:
                 self.new_joint_position[0] = self.current_joint_position[0] + delta_theta
             elif bottom_right == [-1, -1]:
                 self.new_joint_position[0] = self.current_joint_position[0] - delta_theta
             else:
-                pass # TODO publish found scene, ready to take picture!
+                self.scene_joint_position = self.new_joint_position
+                ros_packet = Bool(True)
+                self.pub_scene_found.publish(ros_packet)
 
             ros_packet = JointTrajectoryPoint(positions=self.new_joint_position,
                                               time_from_start=rospy.Duration(self.time))
@@ -103,11 +109,8 @@ def main():
     '''Entry point of this file'''
 
     rospy.init_node(NODE_NAME)
-    scene_finder = SceneFinder(DELTA_POS, DELTA_TIME)
-    rate = rospy.Rate(5)
-    while not rospy.is_shutdown():
-        scene_finder.update()
-        rate.sleep()
+    SceneFinder(DELTA_POS, DELTA_TIME)
+    rospy.spin()
 
 if __name__ == '__main__':
     main()
