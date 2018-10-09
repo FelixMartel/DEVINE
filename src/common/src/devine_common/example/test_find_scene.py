@@ -35,7 +35,7 @@ def main():
         rospy.sleep(3)
 
         # Zone Dectection Not Found
-        rospy.loginfo('Zone Dectection Not Found: Head should move')
+        rospy.loginfo('Zone Dectection Not Found: Head should sweep')
         payload = "{\"top_left_corner\": [-1, -1], \"bottom_right_corner\": [-1, -1]}"
         ros_packet = String(payload)
         pub_zone_detection.publish(ros_packet)
@@ -65,7 +65,24 @@ def main():
         pub_zone_detection.publish(ros_packet)
 
         rospy.sleep(3)
-        rospy.loginfo('SHOULD BE DONE')
+
+        # Known zone is gone
+        rospy.loginfo('Known zone is gone: Head should sweep')
+        payload = "{\"top_left_corner\": [-1, -1], \"bottom_right_corner\": [-1, -1]}"
+        ros_packet = String(payload)
+        pub_zone_detection.publish(ros_packet)
+
+        rospy.sleep(3)
+
+         # Known zone is not found
+        rospy.loginfo('Known zone is not found: Head should sweep')
+        payload = "{\"top_left_corner\": [-1, -1], \"bottom_right_corner\": [-1, -1]}"
+        ros_packet = String(payload)
+        pub_zone_detection.publish(ros_packet)
+
+        rospy.sleep(3)
+
+        rospy.loginfo('Test done')
 
 if __name__ == '__main__':
     main()

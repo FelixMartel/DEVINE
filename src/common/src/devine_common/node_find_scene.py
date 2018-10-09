@@ -36,6 +36,7 @@ class SceneFinder(object):
         self.current_joint_position = [0, 0]
         self.new_joint_position = [0, 0]
         self.current_error = [0, 0]
+        self.is_scene_finder_moved = False
         self.theta = theta
         self.scene_joint_position = None
         self.time = time
@@ -63,6 +64,10 @@ class SceneFinder(object):
 
         self.current_status = ActionlibGoalStatus(data.status.status)
         self.current_joint_position = list(data.feedback.actual.positions)
+        if self.current_status is ActionlibGoalStatus.SUCCEEDED:
+            if self.is_scene_finder_moved is True:
+                self.pub_scene_found.publish(False)
+                self.is_scene_finder_moved = False
 
     def zone_callback(self, data):
         ''' Listen to zone_detection '''
@@ -73,37 +78,41 @@ class SceneFinder(object):
     def update(self):
         ''' Move head to find scene '''
 
-        if self.current_status is ActionlibGoalStatus.SUCCEEDED:
-            # If joint position exceed limits, turn head in the other direction
-            temp_delta_theta = self.theta * self.direction
-            temp_joint_pos = self.new_joint_position[0] + temp_delta_theta
-            if temp_joint_pos <= LIMITS[0][0]:
-                self.direction = 1
-            elif temp_joint_pos > LIMITS[0][1]:
-                self.direction = -1
+        # If joint position exceed limits, turn head in the other direction
+        temp_delta_theta = self.theta * self.direction
+        temp_joint_pos = self.new_joint_position[0] + temp_delta_theta
+        if temp_joint_pos <= LIMITS[0][0]:
+            self.direction = 1
+        elif temp_joint_pos > LIMITS[0][1]:
+            self.direction = -1
 
-            # Find scene depending on zone_dection
-            delta_theta = self.theta * self.direction
-            top_left = self.current_zone['top_left_corner']
-            bottom_right = self.current_zone['bottom_right_corner']
+        # Find scene depending on zone_dection
+        delta_theta = self.theta * self.direction
+        top_left = self.current_zone['top_left_corner']
+        bottom_right = self.current_zone['bottom_right_corner']
 
-            if top_left == [-1, -1] and bottom_right == [-1, -1]:
-                if self.scene_joint_position is None:
-                    self.new_joint_position[0] = self.current_joint_position[0] + delta_theta
-                else:
-                    self.new_joint_position = self.scene_joint_position
-            elif top_left == [-1, -1]:
+        if top_left == [-1, -1] and bottom_right == [-1, -1] or top_left == [-1, -1]:
+            if self.scene_joint_position is None:
                 self.new_joint_position[0] = self.current_joint_position[0] + delta_theta
-            elif bottom_right == [-1, -1]:
+            else:
+                self.new_joint_position = self.scene_joint_position
+                self.scene_joint_position = None
+        elif bottom_right == [-1, -1]:
+            if self.scene_joint_position is None:
                 self.new_joint_position[0] = self.current_joint_position[0] - delta_theta
             else:
-                self.scene_joint_position = self.new_joint_position
-                ros_packet = Bool(True)
-                self.pub_scene_found.publish(ros_packet)
+                self.new_joint_position = self.scene_joint_position
+                self.scene_joint_position = None
+        else:
+            self.scene_joint_position = self.new_joint_position
+            ros_packet = Bool(True)
+            self.pub_scene_found.publish(ros_packet)
 
+        if self.scene_joint_position is not self.new_joint_position:
             ros_packet = JointTrajectoryPoint(positions=self.new_joint_position,
                                               time_from_start=rospy.Duration(self.time))
             self.pub_neck_ctrl.publish(ros_packet)
+            self.is_scene_finder_moved = True
 
 def main():
     '''Entry point of this file'''
