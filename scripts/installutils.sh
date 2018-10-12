@@ -91,6 +91,13 @@ install_base() {
   then
     git clone --branch ctrl_import https://github.com/introlab/IRL-1.git
   fi
+
+  if [ ! -f apriltags2_ros ]
+  then
+    git clone https://github.com/dmalyuta/apriltags2_ros.git
+    #TODO: Copy tags
+  fi
+
   ensure_line ". /opt/ros/kinetic/setup.sh" ~/.bashrc
   ensure_line "export \"ROS_PACKAGE_PATH=$(pwd):\$ROS_PACKAGE_PATH\"" ~/.bashrc
   cd ..
