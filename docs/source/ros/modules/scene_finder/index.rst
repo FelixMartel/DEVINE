@@ -22,7 +22,7 @@ Installation
 
 Usage
 =====
-Using a kinect, place two 11cm by 11cm tag36h11 identified 0 and 1 in the botom right and top left corners of the scene you are trying to find.
+Using a kinect, place two 11cm by 11cm tag36h11 identified 0 and 1 in the top left and botom right corners of the scene you are trying to find.
 
 .. code-block:: bash
 

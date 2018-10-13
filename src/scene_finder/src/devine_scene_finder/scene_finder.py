@@ -17,7 +17,9 @@ from control_msgs.msg import (
     JointTrajectoryControllerState)
 
 from devine_config import topicname
-from devine_irl_control.irl_constant import ROBOT_CONTROLLER
+from devine_irl_control.irl_constant import ROBOT_CONTROLLER, ROBOT_NAME
+
+from devine_irl_control.controllers import TrajectoryClient
 
 ZONE_DETECTION_TOPIC = topicname('zone_detection')
 TOPIC_SCENE_FOUND = topicname('scene_found')
@@ -28,57 +30,39 @@ BOTTOM_RIGHT_TOPIC = "/bottom_right"
 DELTA_TIME = 0.4
 DELTA_POS = 0.4
 
-class JointCtrl(object):
-    '''Joint controller'''
-    def __init__(self, ctrl_name, ns="jn0"):
-        self.ctrl_name = ctrl_name
-        self.full_name = "/{0}/{1}".format(ns, ctrl_name)
-        joint_traj = self.full_name + "/follow_joint_trajectory"
-        self._jta = actionlib.SimpleActionClient(joint_traj, FollowJointTrajectoryAction)
-        self._jta.wait_for_server()
-
-    def move_joints(self, angles, blocking=True):
-        '''
-            Move joints to a specific position, with the possibility of blocking
-            until the end of the movement
-        '''
-        goal = FollowJointTrajectoryGoal()
-        goal.trajectory.joint_names = ROBOT_CONTROLLER[self.ctrl_name]['joints_name']
-        point = JointTrajectoryPoint(positions=angles) #TODO: Validate limits here ?
-        point.time_from_start = rospy.Duration(2)
-        goal.trajectory.points.append(point)
-        if blocking:
-            self._jta.send_goal_and_wait(goal)
-        else:
-            self._jta.send_goal(goal)
-
-    def get_position(self):
-        '''Return the current position of the joints'''
-        joint_state = self.full_name + "/state"
-        state = rospy.wait_for_message(joint_state, JointTrajectoryControllerState)
-        return state.actual.positions
-
 class SceneFinder(object):
     '''Scene finder based of april tags'''
     def __init__(self, neck_joint_ctrl):
         self.joint_ctrl = neck_joint_ctrl
-        self.limits = ROBOT_CONTROLLER[neck_joint_ctrl.ctrl_name]['joints_limit']
+        self.limits = ROBOT_CONTROLLER[neck_joint_ctrl.controller_name]['joints_limit']
         self.tf = tf.TransformListener()
         self.scene_position = None
         self.pub_scene_found = rospy.Publisher(TOPIC_SCENE_FOUND, Bool, queue_size=1)
         rospy.Subscriber(ZONE_DETECTION_TOPIC, String, self.find, queue_size=1)
 
+    def move_joints(self, positions):
+        '''Wrapper to move a joint and wait for the result'''
+        self.joint_ctrl.clear()
+        self.joint_ctrl.add_point(positions, 1)
+        self.joint_ctrl.start()
+        self.joint_ctrl.wait(30)
+        result = self.joint_ctrl.result()
+        success = result.error_code == 0
+        if not success:
+            rospy.logerr('Couldn\'t move the robot\'s head')
+        return success
+
     def find(self, *_):
         '''Iterate joint angles until a scene is found'''
         if self.scene_position: #If we had previously find a pos, start there
-            self.joint_ctrl.move_joints(self.scene_position)
+            self.move_joints(self.scene_position)
             self.scene_position = None
         rate = rospy.Rate(1/DELTA_TIME)
         not_in_bound_ctr = 0
         direction = 1
         while not rospy.is_shutdown():
             [pan, tilt] = self.joint_ctrl.get_position()
-            tilt = -0.17
+            tilt = -0.17 #Todo: Iterate over tilt too ?
             top_left_pos = self.look_up_tag_position(TOP_LEFT_TOPIC)
             bottom_right_pos = self.look_up_tag_position(BOTTOM_RIGHT_TOPIC)
             if top_left_pos and bottom_right_pos:
@@ -99,7 +83,8 @@ class SceneFinder(object):
                 direction *= -1
                 delta_pan = direction * DELTA_POS
 
-            self.joint_ctrl.move_joints([pan+delta_pan, tilt])
+            if not self.move_joints([pan+delta_pan, tilt]):
+                break
             rate.sleep()
 
         #Publish if the scene was found or not
@@ -125,7 +110,7 @@ class SceneFinder(object):
 def main():
     '''Entry point of this file'''
     rospy.init_node('devine_scene_finder')
-    neck_joint_ctrl = JointCtrl('neck_controller')
+    neck_joint_ctrl = TrajectoryClient(ROBOT_NAME, 'neck_controller')
     SceneFinder(neck_joint_ctrl)
     rospy.spin()
 
