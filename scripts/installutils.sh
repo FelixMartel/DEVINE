@@ -61,6 +61,7 @@ install_base() {
   as_su apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116 || exit 1
   as_su sh -c 'echo "deb https://debian.snips.ai/stretch stable main" > /etc/apt/sources.list.d/snips.list'
   as_su apt-key adv --keyserver hkp://pgp.mit.edu --recv-key F727C778CCB0A455 || exit 1
+  curl -L https://github.com/devineproject/static/releases/download/v0.0.1/snips.key | as_su apt-key add -
   as_su apt-get update
   as_su apt-get install gcc-4.9
   as_su apt-get upgrade libstdc++6
@@ -70,7 +71,7 @@ install_base() {
   as_su apt-get install -y ros-kinetic-rosbridge-server
   as_su apt-get install -y snips-platform-voice
   ensure_data https://github.com/projetdevine/static/releases/download/v0.0.1/assistant.zip
-  as_su unzip "$datapath/assistant.zip" -d /usr/share/snips
+  as_su unzip -o "$datapath/assistant.zip" -d /usr/share/snips
   python2 -m pip install --upgrade pip setuptools wheel pyopenssl cryptography
   python3 -m pip install --upgrade pip setuptools wheel pyopenssl cryptography
   python3 -m pip install --user $tensorflow_package
