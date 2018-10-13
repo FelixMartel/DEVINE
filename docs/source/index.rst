@@ -46,7 +46,7 @@ In this section you will find:
 
 .. toctree::
     :glob:
-    :maxdepth: 2
+    :maxdepth: 1
    
     ros/index
 
