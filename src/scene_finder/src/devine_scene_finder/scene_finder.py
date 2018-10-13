@@ -25,8 +25,8 @@ CAMERA_FRAME_TOPIC = "/openni_rgb_optical_frame"
 TOP_LEFT_TOPIC = "/top_left"
 BOTTOM_RIGHT_TOPIC = "/bottom_right"
 
-DELTA_TIME = 1
-DELTA_POS = 0.2
+DELTA_TIME = 0.4
+DELTA_POS = 0.4
 
 class JointCtrl(object):
     '''Joint controller'''
@@ -78,6 +78,7 @@ class SceneFinder(object):
         direction = 1
         while not rospy.is_shutdown():
             [pan, tilt] = self.joint_ctrl.get_position()
+            tilt = -0.17
             top_left_pos = self.look_up_tag_position(TOP_LEFT_TOPIC)
             bottom_right_pos = self.look_up_tag_position(BOTTOM_RIGHT_TOPIC)
             if top_left_pos and bottom_right_pos:
@@ -109,8 +110,7 @@ class SceneFinder(object):
         position = None
         try:
             time = self.tf.getLatestCommonTime(CAMERA_FRAME_TOPIC, topic)
-            print(abs(time.to_sec() - rospy.get_rostime().to_sec()))
-            if abs(time.to_sec() - rospy.get_rostime().to_sec()) < 0.5: #If it was found in the last 0.5 sec
+            if abs(time.to_sec() - rospy.get_rostime().to_sec()) < 4: #If it was found in the last 4 sec
                 position, _ = self.tf.lookupTransform(CAMERA_FRAME_TOPIC, topic, time)
         except tf.Exception as err:
             rospy.loginfo(err) #Sometime they are not yet initialized
