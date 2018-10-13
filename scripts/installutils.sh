@@ -29,7 +29,6 @@ install_devine() {
   cd ../image_processing
   python3 -m pip install --user Cython
   python3 -m pip install --user scikit-image bson pymongo pycocotools keras==2.1.6 catkin_pkg rospkg
-  python2 -m pip install --user shapely
   ln -sf "$datapath/mask_rcnn_coco.h5" mask_rcnn_coco.h5
   tar xzf "$datapath/vgg_16_2016_08_28.tar.gz"
   ln -sf "$(find /usr/local/lib/python3.?/dist-packages/ -name mobilenet_thin)/graph_opt.pb" mobilenet_thin.pb
@@ -37,6 +36,8 @@ install_devine() {
   cd ../robot_control
   mkdir ~/.rviz
   cp launch/irl_point.rviz ~/.rviz/default.rviz
+  cd ../scene_finder
+  cp -f apriltags2_config/* ../../../apriltags2_ros/apriltags2_ros/config
 
   cd ../../../..
   bash -ci catkin_make
@@ -95,7 +96,6 @@ install_base() {
   if [ ! -f apriltags2_ros ]
   then
     git clone https://github.com/dmalyuta/apriltags2_ros.git
-    #TODO: Copy tags
   fi
 
   ensure_line ". /opt/ros/kinetic/setup.sh" ~/.bashrc
