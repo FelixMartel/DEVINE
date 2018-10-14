@@ -12,4 +12,4 @@ WORKDIR /usr/src
 
 COPY scripts/installutils.sh .
 
-RUN bash -ci ". installutils.sh && install_base $(pwd) $tensorflow_package"
+RUN bash -c ". installutils.sh && install_base $(pwd) $tensorflow_package"
