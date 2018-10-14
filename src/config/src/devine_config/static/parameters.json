@@ -50,7 +50,11 @@
     },
     "guess_location_world": {
       "name": "/devine/guess_location/world",
-      "type": "std_msgs/Float32MultiArray"
+      "type": "geometry_msgs/PoseStamp"
+    },
+    "robot_look_at": {
+      "name": "/devine/robot/look_at",
+      "type": "geometry_msgs/PoseStamp"
     },
     "guess_category": {
       "name": "/devine/guess_category",
@@ -91,6 +95,14 @@
     "robot_head_joint_traj_point": {
       "name": "/devine/robot/head_joint_traj_point",
       "type": "trajectory_msgs/JointTrajectoryPoint"
+    },
+    "is_pointing_object": {
+      "name" : "/devine/robot/is_pointing",
+      "type" : "std_msgs/Bool"
+    },
+    "is_looking": {
+      "name" : "/devine/robot/is_looking",
+      "type" : "std_msgs/Bool"
     },
     "robot_facial_expression": {
       "name": "/devine/robot/facial_expression",
