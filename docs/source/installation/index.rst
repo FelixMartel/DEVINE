@@ -16,9 +16,7 @@ Fresh Ubuntu 16.04 LTS
 
 .. code-block:: bash
 
-    ./install.sh {Path/To/src} {Path/To/src/Repo} 
-
-You may have to manually run some commands from the ``/scripts/installutils.sh`` but the heavy lifting will be done.
+    ./install.sh {path/to/catkin/src} {path/to/devine/root}
 
 Docker
 ======

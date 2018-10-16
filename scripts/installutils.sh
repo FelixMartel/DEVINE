@@ -8,7 +8,7 @@ install() {
 
   confirm "This script was made for a fresh 16.04 Ubuntu desktop image and may harm your system, continue" || exit 1
 
-  install_base "$catkinsrc"
+  install_base "$catkinsrc" "$tensorflow_package"
   install_devine "$catkinsrc" "$devineroot"
 
   echo reload bash for $(whoami) to finish installation
@@ -38,17 +38,18 @@ install_devine() {
   cp launch/irl_point.rviz ~/.rviz/default.rviz
 
   cd ../../../..
-  bash -ci catkin_make
+  bash -c catkin_make
 
   cd src/DEVINE/src/dashboard
   as_su python3 -m pip install --user -r requirements.txt
-  bash -ci 'npm install && npm run build'
+  bash -c 'npm install && npm run build'
 
   popd
 }
 
 install_base() {
   local catkinsrc=$1
+  local tensorflow_package=$2
 
   pushd "$catkinsrc"
 
@@ -66,7 +67,7 @@ install_base() {
   as_su apt-get install -y snips-platform-voice
   as_su python2 -m pip install --upgrade pip setuptools wheel pyopenssl cryptography
   as_su python3 -m pip install --upgrade pip setuptools wheel pyopenssl cryptography
-  as_su python3 -m pip install --user --upgrade pip tensorflow
+  as_su python3 -m pip install --user --upgrade pip $tensorflow_package
   as_su python2 -m pip install --user --upgrade pip opencv-contrib-python
   as_su python3 -m pip install --user --upgrade pip opencv-contrib-python
   mkdir -p "$datapath"
@@ -76,7 +77,7 @@ install_base() {
   as_su rm -f /opt/ros/kinetic/lib/python2.7/dist-packages/cv2.so
   as_su python3 -m pip install --user 'git+https://github.com/ildoonet/tf-pose-estimation.git@b119759e8a41828c633bd39b5c883bf5a56a214f#egg=tf_pose'
   curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
-  bash -ci 'nvm install --lts'
+  bash -c 'nvm install --lts'
 
   if python3 -c "import guesswhat" 2>&1 | grep '^' > /dev/null
   then
@@ -91,17 +92,17 @@ install_base() {
   fi
   ensure_line ". /opt/ros/kinetic/setup.sh" ~/.bashrc
   ensure_line "export \"ROS_PACKAGE_PATH=$(pwd):\$ROS_PACKAGE_PATH\"" ~/.bashrc
-  ensure_line "export \"PYTHONPATH=/usr/lib/python2.7/dist-packages:\$PYTHONPATH\"" ~/.bashrc
+  #ensure_line "export \"PYTHONPATH=/usr/lib/python2.7/dist-packages:\$PYTHONPATH\"" ~/.bashrc
   cd ..
   ensure_line "export \"PYTHONPATH=$(pwd)/devel/lib/python2.7/dist-packages:\$PYTHONPATH\"" ~/.bashrc
   if [ ! -d /etc/ros/rosdep ]
   then
     # can we prevent rosdep from sending sigstop?
     trap 'echo send the "fg" command to resume this script' TSTP
-    as_su bash -ci "rosdep init" 2>&1 > /dev/null
+    as_su bash -c "rosdep init" 2>&1 > /dev/null
   fi
-  bash -ci "rosdep update"
-  bash -ci "catkin_make"
+  bash -c "rosdep update"
+  bash -c "catkin_make"
 
   popd
 }
