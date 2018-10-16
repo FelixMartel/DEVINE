@@ -13,7 +13,7 @@
       "type": "sensor_msgs/CompressedImage"
     },
     "zone_detection_image": {
-      "name": "/devine/image/zone_detection",
+      "name": "/tag_detections_image/compressed",
       "type": "sensor_msgs/CompressedImage"
     },
     "features_extraction_image": {
@@ -106,6 +106,10 @@
     },
     "is_looking": {
       "name" : "/devine/robot/is_looking",
+      "type" : "std_msgs/Bool"
+    },
+    "end_of_game": {
+      "name" : "/devine/end_of_game/",
       "type" : "std_msgs/Bool"
     },
     "robot_facial_expression": {
