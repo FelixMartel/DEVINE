@@ -30,6 +30,18 @@ Here you can see a couple of usefull ROS commands to help you out!
     * This will launch **ALL** Devine nodes.
     * You can also use this to launch specific nodes like so `roslaunch devine devine.launch launch_all:=false dashboard:=true` 
 
+* rosrun topic_tools throttle messages /camera/rgb/image_color/compressed 0.33 /devine/image/segmentation
+
+    * Segments every 30 seconds 
+
+* rosrun rqt_gui rqt_gui
+
+    * Starts a GUI with many usefull ROS development tools that enables you to subscribe and monitor ROS topics for example.
+
+* rosrun rqt_top rqt_top
+
+    * See the actually ressources consumed by your ROS environment.
+
 
 Modules
 =======

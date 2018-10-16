@@ -5,6 +5,7 @@ datapath=~/.devine/data
 install() {
   local catkinsrc=$1
   local devineroot=$2
+  local tensorflow_package=$3
 
   confirm "This script was made for a fresh \033[0;31m16.04 Ubuntu\033[0m desktop image and may \033[0;31mharm\033[0m your system. Installation will be effective for user \033[0;31m$(whoami)\033[0m, continue" || exit 1
 
