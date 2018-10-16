@@ -27,7 +27,7 @@ The DEVINE project can be installed in a virtual machine.
 To do so, make sure you have a VM with Ubuntu 16.04 installed, and follow the steps of installing `Fresh Ubuntu 16.04 LTS`_.
 
 Note about running the project in Virtual Box
---------------------------------------
+---------------------------------------------
 
 To allow the Xbox Kinect connected physically to the host to communicate with the VM, you must link your USB devices from the host to the client:
 
@@ -54,7 +54,7 @@ How to get started
 
 Navigate to the docker folder. Run `build.sh`. This will get the devine-base image and build the devine image. The devine-base image contains all of the projects dependencies and can be rebuilt if necessary. The devine image contains the code. This may seem inane, but speeds up future builds if you were to modify the code.
 
-Once the build is complete, you can validate by running ``sudo docker images``. One docker should be named DEVINE.
+Once the build is complete, you can validate by running ``sudo docker images``. One docker should be named devine.
 
 With an image in hand, run the command ``./run.sh``. This will launch an instance of your docker image. You will arive in a ubuntu like terminal which has the same layout as the code base. To exit, use ctrl+d. 
 
