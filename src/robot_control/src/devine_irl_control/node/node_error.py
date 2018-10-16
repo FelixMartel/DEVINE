@@ -26,7 +26,7 @@ class ErrorPoint(object):
         rospy.Subscriber(TOPIC_OBJECT_LOCATION, PoseStamped, self.pose_stamp_callback)
         self.pub_err_top = rospy.Publisher(TOPIC_POINT_ERR, Float64MultiArray, queue_size=1)
 
-    def compute_err(self, time):
+    def compute_err(self):
         ''' Compute and publish error '''
 
         if self.pose_stamp:
@@ -38,6 +38,7 @@ class ErrorPoint(object):
                 tf_pose_stamp = self.tf_listener.transformPose(
                     irl_constant.ROBOT_LINK['r_frame_tool'],
                     self.pose_stamp)
+                print(tf_pose_stamp)
                 tf_position = tf_pose_stamp.pose.position
 
                 err_top = angle(tf_position.x, tf_position.y)
@@ -61,7 +62,7 @@ class ErrorPoint(object):
 def angle(pos_x, pos_y):
     ''' Angle in degrees of 2D point '''
 
-    return math.sin(pos_y/pos_x) * 180 / math.pi
+    return math.degrees(math.asin(pos_y/pos_x))
 
 def main():
     ''' Start Node '''
@@ -71,7 +72,7 @@ def main():
     rospy.loginfo('Running node \'' + node_name + '\'')
     err = ErrorPoint()
     while not rospy.is_shutdown():
-        err.compute_err(rospy.get_rostime())
+        err.compute_err()
         rospy.sleep(rospy.Duration(0.5))
 
 if __name__ == '__main__':

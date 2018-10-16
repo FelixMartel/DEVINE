@@ -30,8 +30,4 @@
       <node name="devine_irl_control_error" pkg="devine_irl_control" type="node_error.py" respawn="$(arg prod)" />
   </group>
 
-  <group if="$(arg scene_finder)">
-      <node name="devine_common_find_scene" pkg="devine_common" type="node_find_scene.py" respawn="$(arg prod)" />
-  </group>
-  
 </launch>
