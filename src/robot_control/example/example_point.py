@@ -4,11 +4,11 @@
 
 import argparse
 import rospy
-import tf
 
 from trajectory_msgs.msg import JointTrajectoryPoint
-from devine_config import topicname
 from geometry_msgs.msg import PoseStamped
+from devine_config import topicname
+import devine_common.ros_utils as ros_utils
 
 
 NODE_NAME = 'devine_irl_control_example_point'
@@ -36,11 +36,11 @@ def main(args):
     while not rospy.is_shutdown():
         if args.point:
             pub_arm = rospy.Publisher(TOPIC_OBJECT_LOCATION, PoseStamped, queue_size=1)
-            pose_stamp_arm = pose_to_pose_stamped(point[0], point[1], point[2])
+            pose_stamp_arm = ros_utils.pose_stamped(point[0], point[1], point[2])
             pub_arm.publish(pose_stamp_arm)
         if args.look:
             pub_head = rospy.Publisher(TOPIC_HEAD_LOOK_AT, PoseStamped, queue_size=1)
-            pose_stamp_head = pose_to_pose_stamped(look[0], look[1], look[2])
+            pose_stamp_head = ros_utils.pose_stamped(look[0], look[1], look[2])
             pub_head.publish(pose_stamp_head)
         elif args.head_joint_position:
             pub = rospy.Publisher(TOPIC_HEAD_JOINT_STATE, JointTrajectoryPoint, queue_size=1)
@@ -54,23 +54,6 @@ def main(args):
             rospy.signal_shutdown('Missing arguments')
         else:
             rate.sleep()
-
-def pose_to_pose_stamped(x, y, z, roll=0, pitch=0, yaw=0):
-    ''' Convert x, y, z, roll, pitch, yaw to PoseStamp '''
-    pose = PoseStamped()
-    pose.header.stamp = rospy.Time.now()
-    pose.header.frame_id = 'base_link'
-    pose.pose.position.x = x
-    pose.pose.position.y = y
-    pose.pose.position.z = z
-
-    quaternion = tf.transformations.quaternion_from_euler(roll, pitch, yaw)
-    pose.pose.orientation.x = quaternion[0]
-    pose.pose.orientation.y = quaternion[1]
-    pose.pose.orientation.z = quaternion[2]
-    pose.pose.orientation.w = quaternion[3]
-
-    return pose
 
 def parser():
     ''' Command Line Parser'''

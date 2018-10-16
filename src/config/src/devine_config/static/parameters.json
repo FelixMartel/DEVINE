@@ -56,6 +56,10 @@
       "name": "/devine/robot/look_at",
       "type": "geometry_msgs/PoseStamp"
     },
+    "robot_err_pointing": {
+      "name": "/devine/robot/err_pointing",
+      "type": "std_msgs/Float64MultiArray"
+    },
     "guess_category": {
       "name": "/devine/guess_category",
       "type": "std_msgs/String"

@@ -1,11 +1,11 @@
 <launch>
-  <arg name="jn0" default="true"/>
+  <arg name="jn0" default="false"/>
+  <arg name="control" default="true"/>
   <arg name="head" default="true"/>
   <arg name="arms" default="true"/>
   <arg name="gripper" default="true"/>
-  <arg name="control" default="true"/>
   <arg name="facial_expression" default="true"/>
-  <arg name="point" default="true"/>
+  <arg name="point_detail" default="true"/>
   <arg name="scene_finder" default="true"/>
   <arg name="prod" default="true"/>
 
@@ -25,7 +25,7 @@
     <node name="devine_irl_control_facial_expression" pkg="devine_irl_control" type="node_facial_expression.py" respawn="$(arg prod)" />
   </group>
   
-  <group if="$(arg point)">
+  <group if="$(arg point_detail)">
       <node name="devine_irl_control_object" pkg="devine_irl_control" type="node_object.py" respawn="$(arg prod)" />
       <node name="devine_irl_control_error" pkg="devine_irl_control" type="node_error.py" respawn="$(arg prod)" />
   </group>
