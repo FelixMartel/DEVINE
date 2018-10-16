@@ -48,9 +48,12 @@ def main(args):
             ros_packet.positions = head_joint_pos
             ros_packet.time_from_start = rospy.Duration(time)
             pub.publish(ros_packet)
-        else:
+
+        if not args.point and not args.look and not args.head_joint_position:
+            rospy.logerr('Missing arguments')
             rospy.signal_shutdown('Missing arguments')
-        rate.sleep()
+        else:
+            rate.sleep()
 
 def pose_to_pose_stamped(x, y, z, roll=0, pitch=0, yaw=0):
     ''' Convert x, y, z, roll, pitch, yaw to PoseStamp '''
