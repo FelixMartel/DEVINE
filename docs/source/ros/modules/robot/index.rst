@@ -59,7 +59,7 @@ You can now execute any of the examples:
 
 .. code-block:: bash
 
-    rosrun devine_irl_control example_point.py -p 0.6,0.3,0.5 -l 0.5,-0.6,1
+    rosrun devine_irl_control example_point.py --point 0.6,0.3,0.5 --look 0.5,-0.6,1
     # Position is referenced from base_link
 
 * Do complex move (SIMULATION ONLY!!!)
