@@ -3,7 +3,7 @@ Installation
 
 DEVINE is a project with **many** dependencies such as ``ROS``. 
 
-We recommand you install it on a fresh Ubuntu installation. 
+We recommend you to install it on a fresh copy of Ubuntu 16.04 LTS. 
 
 Fresh Ubuntu 16.04 LTS
 ======================
@@ -17,6 +17,32 @@ Fresh Ubuntu 16.04 LTS
 .. code-block:: bash
 
     ./install.sh {path/to/catkin/src} {path/to/devine/root}
+
+
+Virtual Box
+===========
+
+The DEVINE project can be installed in a virtual machine.
+
+To do so, make sure you have a VM with Ubuntu 16.04 installed, and follow the steps of installing `Fresh Ubuntu 16.04 LTS`_.
+
+Note about running the project in Virtual Box
+--------------------------------------
+
+To allow the Xbox Kinect connected physically to the host to communicate with the VM, you must link your USB devices from the host to the client:
+
+.. image:: link-kinect-usb.png
+
+There should be three devices to select for the Kinect:
+
+* Microsoft Xbox NUI Motor
+* Microsoft Xbox NUI Camera
+* Microsoft Xbox NUI Audio
+
+If you get an error while linking the devices, it may be possible that the device is busy by another process. The simplest way to solve that is to restart the client and restart the host.
+
+You may also need to install `Oracle VM VirtualBox Extension Pack <https://www.virtualbox.org/wiki/Downloads>`_ in order to allow the use of **USB 2.0** in the settings of your VM.
+
 
 Docker
 ======
