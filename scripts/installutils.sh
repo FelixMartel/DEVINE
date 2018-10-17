@@ -100,10 +100,9 @@ install_base() {
   fi
 
   ensure_line ". /opt/ros/kinetic/setup.sh" ~/.bashrc
-  ensure_line ". $catkinsrc/devel/setup.sh" ~/.bashrc
   ensure_line "export \"ROS_PACKAGE_PATH=$(pwd):\$ROS_PACKAGE_PATH\"" ~/.bashrc
   cd ..
-  ensure_line "export \"PYTHONPATH=$(pwd)/devel/lib/python2.7/dist-packages:\$PYTHONPATH\"" ~/.bashrc
+  ensure_line ". $(pwd)/devel/setup.sh" ~/.bashrc
   if [ ! -d /etc/ros/rosdep ]
   then
     as_su rosdep -q init
