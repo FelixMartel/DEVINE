@@ -35,6 +35,18 @@ def list_diff(x1, x2):
     return [x1, x2]
 
 
+def image_file_to_ros_msg(image_path):
+    """ Convert an image file to a ros readable data message """
+    img = cv2.imread(get_fullpath(image_path), cv2.IMREAD_COLOR)
+
+    msg = CompressedImage()
+    msg.header.stamp = rospy.Time.now()
+    msg.format = "png"
+    msg.data = np.array(cv2.imencode('.png', img)[1]).tostring()
+
+    return msg
+
+
 def load_test_data(test_filepath):
     """ Loads test data and images"""
     imgs = []
@@ -45,7 +57,7 @@ def load_test_data(test_filepath):
     i = 0 # TODO: to be removed
     for test in test_data["tests"]:
         i += 1
-        imgs.append(cv2.imread(get_fullpath(test["imageName"]), cv2.IMREAD_COLOR))
+        imgs.append(image_file_to_ros_msg(test["imageName"]))
         data.append(test["refData"]["objects"])
         if i == 1:
             break
@@ -58,30 +70,27 @@ def flatten_json(data):
 
 
 def segmentation_call_back(data):
-    '''Callback for segmentation topic'''
+    """ Callback for segmentation topic """
     if seg_queue.full():
         seg_queue.get()
     try:
         seg_queue.put(flatten_json(json.loads(data.data)))
-    except Exception as e:
-        rospy.logerr(e)
+    except ValueError as exp:
+        rospy.logerr(exp)
 
 
-def run_test(image, ref_data):
+def run_test(image_msg, ref_data):
     """ Evaluates  segmentation rate for a single image """
     # send over node
-    segmentation_pub = rospy.Publisher(
-        IMAGE_TOPIC, CompressedImage, queue_size=1)
+    segmentation_pub = rospy.Publisher(IMAGE_TOPIC, CompressedImage, queue_size=1)
     rospy.Subscriber(SEGMENTATION_IMAGE_TOPIC, String, segmentation_call_back)
-    #is_blurry = is_image_blurry(image.data)
-    image_message = CvBridge().cv2_to_imgmsg(image)
-    ### Create CompressedIamge ####
-    msg = CompressedImage()
-    msg.header.stamp = rospy.Time.now()
-    msg.format = "png"
-    msg.data = np.array(cv2.imencode('.png', image)[1]).tostring()
+
+    # msg = CompressedImage()
+    # msg.header.stamp = rospy.Time.now()
+    # msg.format = "png"
+    # msg.data = np.array(cv2.imencode('.png', image)[1]).tostring()
     rospy.sleep(1)
-    segmentation_pub.publish(msg)
+    segmentation_pub.publish(image_msg)
     rospy.sleep(1)
     # receive data
     try:
@@ -95,8 +104,10 @@ def run_test(image, ref_data):
     # extract and comp dat
     return [missed_detection_count, false_detection_count]
 
+
 def get_fullpath(relative_file):
     return os.path.join(os.path.dirname(os.path.abspath(__file__)), relative_file)
+
 
 def main():
     '''Loads images and posts the corresponding segmentation rates'''
@@ -112,7 +123,7 @@ def main():
         [missed_detection_count, false_detection_count] = run_test(
             imgs[pos], data[pos])
         pos += 1
-        rospy.loginfo("Num missed detections" + str(missed_detection_count))
+        rospy.loginfo("Num missed detections: " + str(missed_detection_count))
         rospy.loginfo("Num false detections: " + str(false_detection_count))
         rate.sleep()
         print("Percentage of objects missed: " +

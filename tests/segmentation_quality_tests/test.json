@@ -3,7 +3,6 @@
 	   {
 		  "imageName":"images/kinect-640x480.jpg",
 		  "refData":{
-			 "timestamp":"Ignore",
 			 "image":{ "height":640, "width":480 },
 			 "objects":[ "carrot", "carrot", "carrot", "knife", "laptop", "glasses", "remote", "keyboard", "fork" ]
 		  }
@@ -11,7 +10,6 @@
 	   {
 		  "imageName":"images/S8-640x480.jpg",
 		  "refData":{
-			 "timestamp":"Ignore",
 			 "image":{ "height":640, "width":480 },
 			 "objects":[ "carrot", "carrot", "carrot", "knife", "laptop", "glasses", "remote", "keyboard", "fork" ]
 		  }
@@ -19,7 +17,6 @@
 	   {
 		  "imageName":"images/S8-720x540.jpg",
 		  "refData":{
-			 "timestamp":"Ignore",
 			 "image":{ "height":720, "width":540 },
 			 "objects":[ "carrot", "carrot", "carrot", "knife", "laptop", "glasses", "remote", "keyboard", "fork" ]
 		  }
@@ -27,7 +24,6 @@
 	   {
 		  "imageName":"images/S8-1920x1440.jpg",
 		  "refData":{
-			 "timestamp":"Ignore",
 			 "image":{ "height":1920, "width":1440 },
 			 "objects":[ "carrot", "carrot", "carrot", "knife", "laptop", "glasses", "remote", "keyboard", "fork" ]
 		  }
