@@ -38,7 +38,6 @@ class ErrorPoint(object):
                 tf_pose_stamp = self.tf_listener.transformPose(
                     irl_constant.ROBOT_LINK['r_frame_tool'],
                     self.pose_stamp)
-                print(tf_pose_stamp)
                 tf_position = tf_pose_stamp.pose.position
 
                 err_top = angle(tf_position.x, tf_position.y)
@@ -49,7 +48,7 @@ class ErrorPoint(object):
                 self.pub_err_top.publish(ros_packet)
 
                 rospy.loginfo('Orientation error in degree (top, side): %s, %s',
-                          round(err_top, 2), round(err_side, 2))
+                              round(err_top, 2), round(err_side, 2))
 
             except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException) as err:
                 rospy.logerr(err)
@@ -61,8 +60,10 @@ class ErrorPoint(object):
 
 def angle(pos_x, pos_y):
     ''' Angle in degrees of 2D point '''
+    angle_rad = math.atan(abs(pos_y/pos_x))
+    angle_degree = math.degrees(angle_rad)
 
-    return math.degrees(math.asin(pos_y/pos_x))
+    return angle_degree
 
 def main():
     ''' Start Node '''

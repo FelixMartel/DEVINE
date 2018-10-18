@@ -31,8 +31,8 @@ class Controller(object):
     ''' Arms, head and gripper controller '''
 
     def __init__(self, is_head_activated=True, is_arms_activated=True, is_gripper_activated=True):
-        self.arm_pose_stamp = None
-        self.head_pose_stamp = None
+        self.arm_data = None
+        self.head_data = None
         self.time = 3
         self.tf_listener = tf.TransformListener()
 
@@ -76,8 +76,8 @@ class Controller(object):
 
     def arm_pose_callback(self, msg):
         ''' On topic /object_location, compute and move joints '''
-        if self.arm_pose_stamp != msg:
-            self.arm_pose_stamp = msg
+        if self.arm_data != msg:
+            self.arm_data = msg
             if msg.pose.position != (0, 0, 0):
                 # TODO add decision left/right arms in ik.py
                 arm_decision = 'right'
@@ -91,8 +91,8 @@ class Controller(object):
 
     def head_pose_callback(self, msg):
         ''' On topic /look_at, compute and move joints '''
-        if self.head_pose_stamp != msg:
-            self.head_pose_stamp = msg
+        if self.head_data != msg:
+            self.head_data = msg
             if msg.pose.position != (0, 0, 0):
                 joints_position = self.calcul_head()
                 self.move({'head': joints_position},
@@ -113,7 +113,7 @@ class Controller(object):
 
         try:
             tf_pose_stamp = self.tf_listener.transformPose(topic_robot_shoulder_frame,
-                                                           self.arm_pose_stamp)
+                                                           self.arm_data)
             tf_position = tf_pose_stamp.pose.position
 
             arm_joints_position = ik.arms_pan_tilt(controller,
@@ -133,7 +133,7 @@ class Controller(object):
 
         try:
             tf_pose_stamp = self.tf_listener.transformPose(irl_constant.ROBOT_LINK['neck_pan'],
-                                                           self.head_pose_stamp)
+                                                           self.head_data)
             tf_position = tf_pose_stamp.pose.position
 
             head_joints_position = ik.head_pan_tilt(tf_position.x,
@@ -199,9 +199,12 @@ def main():
     is_arms_activated = rospy.get_param('/'.join(['', node_name, 'is_arms_activated']))
     is_grippers_activated = rospy.get_param('/'.join(['', node_name, 'is_grippers_activated']))
 
-    #TODO rospy.wait_for_service('spawn') # Wait for gazebo before loading controllers
+    # Wait for gazebo before initializing controllers
+    rospy.wait_for_service('gazebo/set_physics_properties')
+
     controller = Controller(is_head_activated, is_arms_activated, is_grippers_activated)
     Movement(controller)
+
     rospy.spin()
 
 if __name__ == '__main__':
