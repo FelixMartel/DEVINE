@@ -1,9 +1,11 @@
 .idea/
 .vscode/
 *.pyc
+.env
 /src/dashboard/node_modules/*
 /src/dashboard/dist/*
 /src/config/build/*
 /src/dialog/build/*
 /docs/build/
+/docs/source/_build/
 /docs/source/.doctrees/

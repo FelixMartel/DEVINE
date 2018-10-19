@@ -12,7 +12,11 @@
       "name": "/devine/image/segmentation",
       "type": "sensor_msgs/CompressedImage"
     },
-    "zone_detection_image": {
+    "zone_detection_image_out": {
+      "name": "/tag_detections_image/compressed",
+      "type": "sensor_msgs/CompressedImage"
+    },
+    "zone_detection_image_in": {
       "name": "/devine/image/zone_detection",
       "type": "sensor_msgs/CompressedImage"
     },
@@ -50,7 +54,15 @@
     },
     "guess_location_world": {
       "name": "/devine/guess_location/world",
-      "type": "std_msgs/Float32MultiArray"
+      "type": "geometry_msgs/PoseStamped"
+    },
+    "robot_look_at": {
+      "name": "/devine/robot/look_at",
+      "type": "geometry_msgs/PoseStamped"
+    },
+    "robot_err_pointing": {
+      "name": "/devine/robot/err_pointing",
+      "type": "std_msgs/Float64MultiArray"
     },
     "guess_category": {
       "name": "/devine/guess_category",
@@ -92,9 +104,25 @@
       "name": "/devine/robot/head_joint_traj_point",
       "type": "trajectory_msgs/JointTrajectoryPoint"
     },
+    "is_pointing_object": {
+      "name" : "/devine/robot/is_pointing",
+      "type" : "std_msgs/Bool"
+    },
+    "is_looking": {
+      "name" : "/devine/robot/is_looking",
+      "type" : "std_msgs/Bool"
+    },
+    "end_of_game": {
+      "name" : "/devine/end_of_game/",
+      "type" : "std_msgs/Bool"
+    },
     "robot_facial_expression": {
-      "name": "/devine/robot/facial_expression",
+      "name": "/jn0/emo_intensity",
       "type": "jn0_face_msgs/EmoIntensity"
+    },
+    "new_game": {
+      "name": "/devine/new_game",
+      "type": "std_msgs/Bool" 
     }
   },
   "constants": {
