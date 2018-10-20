@@ -57,14 +57,14 @@ install_base() {
 
   as_su apt-get update
   as_su apt-get install -y apt-transport-https git libffi-dev
-  as_su add-apt-repository ppa:ubuntu-toolchain-r/test
+  as_su add-apt-repository -y ppa:ubuntu-toolchain-r/test
   as_su sh -c 'echo "deb https://ftp.osuosl.org/pub/ros/packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
   as_su apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116 || exit 1
   as_su sh -c 'echo "deb https://debian.snips.ai/stretch stable main" > /etc/apt/sources.list.d/snips.list'
   as_su apt-key adv --keyserver hkp://pgp.mit.edu --recv-key F727C778CCB0A455 || exit 1
   curl -L https://github.com/devineproject/static/releases/download/v0.0.1/snips.key | as_su apt-key add -
   as_su apt-get update
-  as_su apt-get upgrade libstdc++6
+  as_su apt-get upgrade -y libstdc++6
   as_su apt-get install -y python3 python3-tk python3-pip python python-pip
   as_su apt-get install -y ros-kinetic-desktop-full ros-kinetic-ros-control ros-kinetic-ros-controllers ros-kinetic-gazebo-ros-control
   as_su apt-get install -y ros-kinetic-openni-launch ros-kinetic-openni-camera ros-kinetic-openni-description ros-kinetic-compressed-image-transport
