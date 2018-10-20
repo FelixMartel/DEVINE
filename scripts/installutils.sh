@@ -64,7 +64,6 @@ install_base() {
   as_su apt-key adv --keyserver hkp://pgp.mit.edu --recv-key F727C778CCB0A455 || exit 1
   curl -L https://github.com/devineproject/static/releases/download/v0.0.1/snips.key | as_su apt-key add -
   as_su apt-get update
-  as_su apt-get install gcc-4.9
   as_su apt-get upgrade libstdc++6
   as_su apt-get install -y python3 python3-tk python3-pip python python-pip
   as_su apt-get install -y ros-kinetic-desktop-full ros-kinetic-ros-control ros-kinetic-ros-controllers ros-kinetic-gazebo-ros-control
