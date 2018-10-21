@@ -19,9 +19,11 @@ In order to launch the devine unit tests, you can use the following commands:
 
 .. code-block:: bash
 
-    $ python DEVINE/tests/src/devine_tests/test_suite.py
+    $ python DEVINE/tests/src/devine_tests/test_suite.py --verbose
 
 *Make sure all the node have been fully initalized before running the tests*.
+
+The `--verbose` option will show all the logs from the tests using unittest directly.
 
 Launching only one test case
 ===========================
