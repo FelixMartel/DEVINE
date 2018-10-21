@@ -14,11 +14,11 @@ class TestSegmentationRate(unittest.TestCase):
         rospy.init_node("image_seg_test")
         test_images = helper.load_test_images(__file__, utils.get_fullpath(__file__, "test.json"))
 
-        pos = 0
-        while not rospy.is_shutdown() and pos < len(test_images):
-            rospy.loginfo("### Test image %d ###", pos + 1)
-            self.segmentation_should_find_most_of_the_objects(test_images[pos])
-            pos += 1
+        for image in test_images:
+            self.assertFalse(rospy.is_shutdown())
+
+            rospy.loginfo("### Test image %s ###", image[helper.FILENAME])
+            self.segmentation_should_find_most_of_the_objects(image)
 
     def segmentation_should_find_most_of_the_objects(self, test_image):
         """ Evaluates  segmentation rate for a single image """

@@ -1,27 +1,33 @@
-Testing the image quality
-#########################
+Running the unit tests suite
+############################
 
-Their is som simple tests in `/test` that allows to validate the quality of the image segmentation.
-In order to launch these tests, you can use the following commands:
+In order to launch the devine unit tests, you can use the following commands:
 
 
-* Launch the dashboard in order to see the segmentation (optional):
-
-.. code-block:: bash
-
-    $ roslaunch devine devine.launch launch_all:=false dashboard:=true
-
-If you don't launch the `devine` package, you will need to start a `roscore`.
-
-* Launch segmentation image processing:
+* To launch all the nodes used by the tests:
 
 .. code-block:: bash
 
-    $ rosrun devine_image_processing segmentation.py
+    $ roslaunch devine_tests default.test
 
-* Launch the test against the test.json file:
+* Launch the unit tests suite:
 
 .. code-block:: bash
 
-    tests/image_tests$ python2 image_segmentation.py -t test
+    $ python DEVINE/tests/test_suite.py
+
+*Make sure all the node have been fully initalized before running the tests*.
+
+Running the unit tests with catkin
+##################################
+
+A simpler way to run the tests would be to start them with catkin:
+
+.. code-block:: bash
+
+    $ catkin_make run_tests
+
+This will launch all the necessary nodes and run the tests.
+However, as `"there is no way to externally know when a node is fully initialized" <http://wiki.ros.org/roslaunch/XML/node>`_,
+the tests tend to fail using that method (*to be investigated*).
 

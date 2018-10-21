@@ -17,11 +17,11 @@ class TestSegmentationQuality(unittest.TestCase):
         expected_objects = test_images[0][helper.EXPECTED_OBJECTS]
 
         images_objects_found = []
-        pos = 0
-        while not rospy.is_shutdown() and pos < len(test_images):
-            rospy.loginfo("Loading objects from images %d...", pos + 1)
-            images_objects_found.append(self.get_objects_found(test_images[pos]))
-            pos += 1
+        for image in [test_images[1]]:
+            self.assertFalse(rospy.is_shutdown())
+
+            rospy.loginfo("Loading objects from images %d...", image[helper.FILENAME])
+            images_objects_found.append(self.get_objects_found(image))
 
         pass
 
