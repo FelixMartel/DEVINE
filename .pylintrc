@@ -1,8 +1,9 @@
 [pre-commit-hook]
-params=--load-plugins=pylint_quotes
+params=--load-plugins=pylint_quotes --disable=no-name-in-module  --disable=no-member --max-line-length=240
 limit=8.0
 
 [MASTER]
+
 
 # A comma-separated list of package or module names from where C extensions may
 # be loaded. Extensions are loading into the active Python interpreter and may
