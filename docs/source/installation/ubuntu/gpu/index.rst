@@ -1,13 +1,13 @@
 GPU Setup
 #########
 
-Following the steps shown at :ref:`fresh_ubuntu`, Tensorflow will use the CPU for all the computational problems. To make TensorFlow use your GPU, you need to do some installation.
+Following the steps shown at :ref:`fresh_ubuntu`, Tensorflow will use the CPU for all the computational problems. To make TensorFlow use your GPU, you need to do some more installation.
 
 There is **many** ways to install TensorFlow / CUDA. This guide is only one of them.
 
 As the writting of this documentation, `TensorFlow GPU`_ is officially supported for `CUDA`_ 9.0 with Nvidia drivers > 384.x and `cuDNN`_ >= 7.2
 
-After theses steps, you will have installed:
+After these steps, you will have installed:
 
 * CUDA 9.0 and it's dependencies
 * cuDNN 7.3.0 and it's dependencies
@@ -32,10 +32,12 @@ You need to make sure that you have nothing `Nvidia` or `CUDA` related installed
 
 You can follow theses steps if you want to uninstall `CUDA`, `Nvidia` and `Tensorflow` from your machine.
 
-.. WARNING::
-    **This will uninstall any Nvidia drivers installed**
+Do not worry, `Nvidia` drivers will be installed with `CUDA` later on.
 
 * Remove all `Nvidia` and `CUDA` related installation
+
+.. DANGER::
+    **Be careful, the following steps are destructive and will uninstall and remove any Nvidia drivers installed**
 
 .. code-block:: bash
 
@@ -71,7 +73,7 @@ You can follow theses steps if you want to uninstall `CUDA`, `Nvidia` and `Tenso
 Step 1 - Install CUDA 
 ^^^^^^^^^^^^^^^^^^^^^
 
-You can download CUDA from Nvidia website and manually install it, but it is preferable to use their repository and install it using Ubuntu's package manager.
+You can download CUDA from `Nvidia` website and manually install it, but it is preferable to use their repository and install it using `Ubuntu`'s package manager.
 
 * Download and install CUDA 9.0
 
@@ -113,7 +115,9 @@ If you do not pass any verification steps, go back to :ref:`step_1`.
 Step 2 - Install cuDNN 
 ^^^^^^^^^^^^^^^^^^^^^^
 
-Download cuDNN 7.3.0 for CUDA 9.0 from Nvidia's `cuDNN archive`_
+Download `cuDNN` 7.3.0 for `CUDA` 9.0 from `Nvidia`'s `cuDNN archive`_. 
+
+You may need to create a account if you do not have one yet.
 
 * Download and install
 
@@ -124,7 +128,9 @@ Download cuDNN 7.3.0 for CUDA 9.0 from Nvidia's `cuDNN archive`_
     sudo cp cuda/lib64/libcudnn* /usr/local/cuda/lib64
     sudo chmod a+r /usr/local/cuda/include/cudnn.h /usr/local/cuda/lib64/libcudnn*
 
-* Update your bashrc. In the case you have different CUDA version installed, change the folder to the version you want.
+* Update your bashrc. 
+
+In the case you have different `CUDA` version installed, change the folder to the `CUDA` version you want.
 
 .. code-block:: bash
 
