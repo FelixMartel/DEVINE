@@ -23,6 +23,10 @@ install_devine() {
   
   pushd "$catkinsrc"
 
+  python2 -m pip install pylint --user
+  python2 -m pip install pylint-quotes --user
+  python2 -m pip install git-pylint-commit-hook --user
+
   cd DEVINE/src/guesswhat
   python3 -m pip install --user -r requirements.txt
   unzip -o "$datapath/weights.zip" -d data
