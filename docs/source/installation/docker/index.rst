@@ -33,4 +33,3 @@ Useful commands
     sudo docker container ls                                       # Lists all containers currently running
     sudo docker exec -it {containerId} bash                        # starts another bash in a given docker container
     docker cp {path/to/filename} {containerId}:{Destination/Path/} # copy a file into a specific docker image
-
