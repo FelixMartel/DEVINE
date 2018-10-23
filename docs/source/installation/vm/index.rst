@@ -6,7 +6,7 @@ The DEVINE project can be installed in a virtual machine.
 To do so, make sure you have a VM with Ubuntu 16.04 installed, and follow the steps of installing :ref:`fresh_ubuntu`.
 
 Note about running the project in Virtual Box
----------------------------------------------
+=============================================
 
 To allow the Xbox Kinect connected physically to the host to communicate with the VM, you must link your USB devices from the host to the client:
 

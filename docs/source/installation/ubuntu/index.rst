@@ -17,14 +17,14 @@ The following steps will install all the dependencies for the DEVINE project.
 
     ./install.sh {path/to/catkin/src} {path/to/devine/root}
 
-GPU - Optional
-==============
+GPU Usage - Optional
+====================
 
 If you want to use your GPU instead of your CPU for the computation, follow the GPU setup bellow.
 
 .. toctree::
     :glob:
-    :maxdepth: 2
+    :maxdepth: 1
    
     gpu/index
 

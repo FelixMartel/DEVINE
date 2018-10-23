@@ -14,7 +14,7 @@ After these steps, you will have installed:
 * TensorFlow with GPU support and it's dependencies
 
 Step 0 - Dependencies
-^^^^^^^^^^^^^^^^^^^^^
+=====================
 
 You should have most of theses already.
 
@@ -26,7 +26,7 @@ You should have most of theses already.
 .. _step_1:
 
 Step 1 - Cleanup
-^^^^^^^^^^^^^^^^
+================
 
 You need to make sure that you have nothing `Nvidia` or `CUDA` related installed on your machine.
 
@@ -71,7 +71,7 @@ Do not worry, `Nvidia` drivers will be installed with `CUDA` later on.
     sudo reboot
 
 Step 1 - Install CUDA 
-^^^^^^^^^^^^^^^^^^^^^
+=====================
 
 You can download CUDA from `Nvidia` website and manually install it, but it is preferable to use their repository and install it using `Ubuntu`'s package manager.
 
@@ -113,7 +113,7 @@ You can download CUDA from `Nvidia` website and manually install it, but it is p
 If you do not pass any verification steps, go back to :ref:`step_1`.
 
 Step 2 - Install cuDNN 
-^^^^^^^^^^^^^^^^^^^^^^
+======================
 
 Download `cuDNN` 7.3.0 for `CUDA` 9.0 from `Nvidia`'s `cuDNN archive`_. 
 
@@ -140,7 +140,7 @@ In the case you have different `CUDA` version installed, change the folder to th
     . ~/.bashrc
 
 Step 3 - Install TensorFlow GPU 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+===============================
 
 * Uninstall TensorFlow
 
@@ -170,7 +170,7 @@ Step 3 - Install TensorFlow GPU
 If you do not pass any verification steps, go back to :ref:`step_1`.
 
 Step 5 - Profit
-^^^^^^^^^^^^^^^
+===============
 
 Have fun!
 
