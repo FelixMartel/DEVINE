@@ -5,6 +5,8 @@ DEVINE is a project with **many** dependencies such as ``ROS``.
 
 We recommend you to install it on a fresh copy of Ubuntu 16.04 LTS. 
 
+.. _fresh_ubuntu:
+
 Fresh Ubuntu 16.04 LTS
 ======================
 
@@ -18,13 +20,21 @@ Fresh Ubuntu 16.04 LTS
 
     ./install.sh {path/to/catkin/src} {path/to/devine/root}
 
+GPU Setup - Optional
+====================
+
+.. toctree::
+    :glob:
+    :maxdepth: 2
+   
+    gpu/index
 
 Virtual Box
 ===========
 
 The DEVINE project can be installed in a virtual machine.
 
-To do so, make sure you have a VM with Ubuntu 16.04 installed, and follow the steps of installing `Fresh Ubuntu 16.04 LTS`_.
+To do so, make sure you have a VM with Ubuntu 16.04 installed, and follow the steps of installing :ref:`fresh_ubuntu`.
 
 Note about running the project in Virtual Box
 ---------------------------------------------
@@ -42,7 +52,6 @@ There should be three devices to select for the Kinect:
 If you get an error while linking the devices, it may be possible that the device is busy by another process. The simplest way to solve that is to restart the client and restart the host.
 
 You may also need to install `Oracle VM VirtualBox Extension Pack <https://www.virtualbox.org/wiki/Downloads>`_ in order to allow the use of **USB 2.0** in the settings of your VM.
-
 
 Docker
 ======
