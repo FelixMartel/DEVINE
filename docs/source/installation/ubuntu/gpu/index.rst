@@ -49,14 +49,6 @@ Do not worry, `Nvidia` drivers will be installed with `CUDA` later on.
     sudo apt-get autoclean
     sudo rm -rf /usr/local/cuda*
 
-* Verify and remove any old CUDA repository key. 
-
-.. code-block:: bash
-
-    apt-key list        # to get the list
-    apt-key del {keyid} # to delete it
-    sudo {yourFavoriteTextEditor} /etc/apt/sources.list.d 
-
 * Uninstall any TensorFlow installation
 
 .. code-block:: bash
@@ -142,13 +134,13 @@ In the case you have different `CUDA` version installed, change the folder to th
 Step 3 - Install TensorFlow GPU 
 ===============================
 
-* Uninstall TensorFlow
+* Uninstall `TensorFlow`
 
 .. code-block:: bash
 
     pip uninstall tensorflow
 
-* Install TensorFlow with GPU support under `python3`
+* Install `TensorFlow` with GPU support under `python3`
 
 .. code-block:: bash
 
