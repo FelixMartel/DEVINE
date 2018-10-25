@@ -19,6 +19,7 @@ class RobotExpression(Enum):
     JOY = "Joy"
 
 OBJECT_CONFIDENCE_TOPIC = topicname('objects_confidence')
+GAME_SUCCESS_TOPIC = topicname('object_guess_success')
 ROBOT_EXPRESSION_TOPIC = topicname('robot_facial_expression')
 
 class FacialExpression():
@@ -28,21 +29,30 @@ class FacialExpression():
     SHOWING_EMOTION = False
 
     def __init__(self):
+        self.confidence = 0
         self.robot_expression_publisher = rospy.Publisher(ROBOT_EXPRESSION_TOPIC,
                                                           EmoIntensity, queue_size=1)
 
         rospy.Subscriber(OBJECT_CONFIDENCE_TOPIC, Float64MultiArray,
                          self.on_new_object_confidence)
 
+        rospy.Subscriber(GAME_SUCCESS_TOPIC, Float64MultiArray,
+                         self.on_new_object_confidence)
+
     def on_new_object_confidence(self, objects_confidence):
-        ''' callback on new object confidence. Publishes a facial expression for a specific duration '''
+        """ callback on new object confidence. Updates max confidence """
 
-        max_confidence = max(objects_confidence.data)
-        expression = self.get_expression(max_confidence)
+        confidence = max(objects_confidence.data)
+ 
 
-        if not self.SHOWING_EMOTION:
+    def on_game_success(self, game_success):
+        """ callback on end game. Shows emotion depending on success and confidence """
+
+        expression = self.get_expression(confidence, game_success.data)
+
+         if not self.SHOWING_EMOTION:
             self.show_expression_for(expression, self.EXPRESSION_DURATION)
-        
+
     def show_expression_for(self, expression, duration):
         value = 1 # default value
         self.SHOWING_EMOTION = True
@@ -61,7 +71,7 @@ class FacialExpression():
         self.robot_expression_publisher.publish(face_expression)
         self.SHOWING_EMOTION = false
 
-    def get_expression(self, confidence):
+    def get_expression(self, confidence, success):
         '''
         returns the wanted expression depending on the received confidence.
         Defaults to ANGER
@@ -69,14 +79,18 @@ class FacialExpression():
 
         expression = RobotExpression.ANGER
 
-        if 0 <= confidence < .6:
-            expression = RobotExpression.ANGER
-        elif .3 <= confidence < .8:
-            expression = RobotExpression.SURPRISE
-        elif .7
-            expression = RobotExpression.SAD
-        elif confidence >= .8:
-            expression = RobotExpression.JOY
+        # Devine Won
+        if game_success:
+            if 0 <= confidence < .3:
+                expression = RobotExpression.SURPRISE
+            else 
+                expression = RobotExpression.JOY
+        # Devine Lost
+        else
+            if 0 <= confidence < .6:
+                expression = RobotExpression.SAD
+            else
+                expression = RobotExpression.ANGER
 
         return expression.value
         
