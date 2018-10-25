@@ -83,23 +83,23 @@ class FacialExpression():
         returns the wanted expression depending on the received confidence.
         Defaults to ANGER
         """
-        if(self.confidence)
-        expression = RobotExpression.ANGER
+        if self.confidence is not None:
+            expression = RobotExpression.ANGER
 
-        # Devine Won
-        if success:
-            if 0 <= confidence < .3:
-                expression = RobotExpression.SURPRISE
+            # Devine Won
+            if success:
+                if 0 <= confidence < .3:
+                    expression = RobotExpression.SURPRISE
+                else:
+                    expression = RobotExpression.JOY
+            # Devine Lost
             else:
-                expression = RobotExpression.JOY
-        # Devine Lost
-        else:
-            if 0 <= confidence < .6:
-                expression = RobotExpression.SAD
-            else:
-                expression = RobotExpression.ANGER
+                if 0 <= confidence < .6:
+                    expression = RobotExpression.SAD
+                else:
+                    expression = RobotExpression.ANGER
 
-        return expression
+            return expression
 
 if __name__ == '__main__':
     rospy.init_node('facial_expression')
