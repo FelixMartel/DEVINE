@@ -30,8 +30,7 @@ class FacialExpression():
 
 
     def __init__(self):
-        self.confidence = None
-        self.showing_emotion = False
+        self.initialize_for_new_game()
         self.robot_expression_publisher = rospy.Publisher(ROBOT_EXPRESSION_TOPIC,
                                                           EmoIntensity, queue_size=1)
 
@@ -52,7 +51,7 @@ class FacialExpression():
 
         expression = self.get_expression(self.confidence, game_success.data)
 
-        if not self.showing_emotion:
+        if expression is not None or not self.showing_emotion:
             self.show_expression_for(expression, self.EXPRESSION_DURATION)
 
     def show_expression_for(self, expression, duration):
@@ -75,6 +74,7 @@ class FacialExpression():
         self.initialize_for_new_game()
 
     def initialize_for_new_game(self):
+        """ Init vars """
         self.showing_emotion = False
         self.confidence = None
 
@@ -83,6 +83,8 @@ class FacialExpression():
         returns the wanted expression depending on the received confidence.
         Defaults to ANGER
         """
+        expression = None
+        
         if self.confidence is not None:
             expression = RobotExpression.ANGER
 
@@ -99,7 +101,7 @@ class FacialExpression():
                 else:
                     expression = RobotExpression.ANGER
 
-            return expression
+        return expression
 
 if __name__ == '__main__':
     rospy.init_node('facial_expression')
