@@ -1,8 +1,8 @@
 #!/usr/bin/env python2
-'''
+"""
 Simple ROS node that subscribes to objects_confidence
 and publishes to robot_facial_expression to show facial emotions
-'''
+"""
 
 from enum import Enum
 import rospy
@@ -11,7 +11,7 @@ from std_msgs.msg import Float64MultiArray
 from devine_config import topicname
 
 class RobotExpression(Enum):
-    ''' Valid expressions '''
+    """ Valid expressions """
 
     SURPRISE = "Surprise"
     SAD = "Sad"
@@ -23,13 +23,14 @@ GAME_SUCCESS_TOPIC = topicname('object_guess_success')
 ROBOT_EXPRESSION_TOPIC = topicname('robot_facial_expression')
 
 class FacialExpression():
-    ''' Subscribes to object confidence and publishes facial expression for a specific duration '''
+    """ Subscribes to object confidence and publishes facial expression for a specific duration """
 
     EXPRESSION_DURATION = 10
-    SHOWING_EMOTION = False
+
 
     def __init__(self):
         self.confidence = 0
+        self.showing_emotion = False
         self.robot_expression_publisher = rospy.Publisher(ROBOT_EXPRESSION_TOPIC,
                                                           EmoIntensity, queue_size=1)
 
@@ -37,25 +38,26 @@ class FacialExpression():
                          self.on_new_object_confidence)
 
         rospy.Subscriber(GAME_SUCCESS_TOPIC, Float64MultiArray,
-                         self.on_new_object_confidence)
+                         self.on_game_success)
 
     def on_new_object_confidence(self, objects_confidence):
         """ callback on new object confidence. Updates max confidence """
 
-        confidence = max(objects_confidence.data)
- 
+        self.confidence = max(objects_confidence.data)
+
 
     def on_game_success(self, game_success):
         """ callback on end game. Shows emotion depending on success and confidence """
 
-        expression = self.get_expression(confidence, game_success.data)
+        expression = self.get_expression(self.confidence, game_success.data)
 
-         if not self.SHOWING_EMOTION:
+        if not self.showing_emotion:
             self.show_expression_for(expression, self.EXPRESSION_DURATION)
 
     def show_expression_for(self, expression, duration):
+        """ Publishes the expression for a specific duration"""
         value = 1 # default value
-        self.SHOWING_EMOTION = True
+        self.showing_emotion = True
 
         # Special case for anger which is a bit too intense
         if expression == RobotExpression.ANGER:
@@ -69,31 +71,31 @@ class FacialExpression():
 
         face_expression = EmoIntensity(name=expression, value=0)
         self.robot_expression_publisher.publish(face_expression)
-        self.SHOWING_EMOTION = false
+        self.showing_emotion = False
 
     def get_expression(self, confidence, success):
-        '''
+        """
         returns the wanted expression depending on the received confidence.
         Defaults to ANGER
-        '''
+        """
 
         expression = RobotExpression.ANGER
 
         # Devine Won
-        if game_success:
+        if success:
             if 0 <= confidence < .3:
                 expression = RobotExpression.SURPRISE
-            else 
+            else:
                 expression = RobotExpression.JOY
         # Devine Lost
-        else
+        else:
             if 0 <= confidence < .6:
                 expression = RobotExpression.SAD
-            else
+            else:
                 expression = RobotExpression.ANGER
 
         return expression.value
-        
+
 if __name__ == '__main__':
     rospy.init_node('facial_expression')
     FacialExpression()
