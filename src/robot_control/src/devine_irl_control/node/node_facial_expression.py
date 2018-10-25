@@ -51,7 +51,7 @@ class FacialExpression():
 
         expression = self.get_expression(self.confidence, game_success.data)
 
-        if expression is not None or not self.showing_emotion:
+        if expression is not None and not self.showing_emotion:
             self.show_expression_for(expression, self.EXPRESSION_DURATION)
 
     def show_expression_for(self, expression, duration):
@@ -84,7 +84,7 @@ class FacialExpression():
         Defaults to ANGER
         """
         expression = None
-        
+
         if self.confidence is not None:
             expression = RobotExpression.ANGER
 
