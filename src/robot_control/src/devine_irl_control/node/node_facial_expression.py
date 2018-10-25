@@ -6,8 +6,9 @@ and publishes to robot_facial_expression to show facial emotions
 
 from enum import Enum
 import rospy
-from jn0_face_msgs.msg import EmoIntensity
+from std_msgs.msg import Bool
 from std_msgs.msg import Float64MultiArray
+from jn0_face_msgs.msg import EmoIntensity
 from devine_config import topicname
 
 class RobotExpression(Enum):
@@ -37,7 +38,7 @@ class FacialExpression():
         rospy.Subscriber(OBJECT_CONFIDENCE_TOPIC, Float64MultiArray,
                          self.on_new_object_confidence)
 
-        rospy.Subscriber(GAME_SUCCESS_TOPIC, Float64MultiArray,
+        rospy.Subscriber(GAME_SUCCESS_TOPIC, Bool,
                          self.on_game_success)
 
     def on_new_object_confidence(self, objects_confidence):
