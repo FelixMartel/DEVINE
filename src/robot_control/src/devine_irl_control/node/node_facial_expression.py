@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 """
-Simple ROS node that subscribes to objects_confidence
+Simple ROS node that subscribes to objects_confidence and object_guess_success
 and publishes to robot_facial_expression to show facial emotions
 """
 
@@ -90,7 +90,7 @@ class FacialExpression():
 
             # Devine Won
             if success:
-                if 0 <= confidence < .3:
+                if 0 <= confidence < .6:
                     expression = RobotExpression.SURPRISE
                 else:
                     expression = RobotExpression.JOY
