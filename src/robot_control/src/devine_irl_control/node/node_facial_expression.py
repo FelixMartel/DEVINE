@@ -14,6 +14,7 @@ class RobotExpression(Enum):
     ''' Valid expressions '''
 
     SURPRISE = "Surprise"
+    SAD = "Sad"
     ANGER = "Anger"
     JOY = "Joy"
 
@@ -24,6 +25,7 @@ class FacialExpression():
     ''' Subscribes to object confidence and publishes facial expression for a specific duration '''
 
     EXPRESSION_DURATION = 10
+    SHOWING_EMOTION = False
 
     def __init__(self):
         self.robot_expression_publisher = rospy.Publisher(ROBOT_EXPRESSION_TOPIC,
@@ -38,10 +40,18 @@ class FacialExpression():
         max_confidence = max(objects_confidence.data)
         expression = self.get_expression(max_confidence)
 
-        self.show_expression_for(expression, self.EXPRESSION_DURATION)
+        if not self.SHOWING_EMOTION:
+            self.show_expression_for(expression, self.EXPRESSION_DURATION)
         
     def show_expression_for(self, expression, duration):
-        face_expression = EmoIntensity(name=expression, value=1)
+        value = 1 # default value
+        self.SHOWING_EMOTION = True
+
+        # Special case for anger which is a bit too intense
+        if expression == RobotExpression.ANGER:
+            value = 0.5
+
+        face_expression = EmoIntensity(name=expression, value=value)
         self.robot_expression_publisher.publish(face_expression)
 
         d = rospy.Duration(duration, 0)
@@ -49,6 +59,7 @@ class FacialExpression():
 
         face_expression = EmoIntensity(name=expression, value=0)
         self.robot_expression_publisher.publish(face_expression)
+        self.SHOWING_EMOTION = false
 
     def get_expression(self, confidence):
         '''
@@ -60,8 +71,10 @@ class FacialExpression():
 
         if 0 <= confidence < .6:
             expression = RobotExpression.ANGER
-        elif .6 <= confidence < .8:
+        elif .3 <= confidence < .8:
             expression = RobotExpression.SURPRISE
+        elif .7
+            expression = RobotExpression.SAD
         elif confidence >= .8:
             expression = RobotExpression.JOY
 
