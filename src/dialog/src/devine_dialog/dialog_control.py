@@ -15,6 +15,7 @@ from devine_dialog import TTSAnswerType, send_speech
 HUMAN_READY_DETECTED_TOPIC = topicname('body_tracking')
 IS_POINTING_OBJECT_TOPIC = topicname('is_pointing_object')
 OBJECT_CATEGORY_TOPIC = topicname('guess_category')
+EXPRESSION_DONE_TOPIC = topicname('robot_facial_expression_completed')
 
 #OUT topics
 TTS_PUBLISHER = rospy.Publisher(topicname('tts_query'), TtsQuery, queue_size=10)
@@ -71,14 +72,14 @@ class DialogControl():
             
             READY_TO_PLAY_PUBLISHER.publish(player_name)
 
-            object_cat_name = rospy.wait_for_message(OBJECT_CATEGORY_TOPIC, String)
+            object_cat_name = rospy.wait_for_message(OBJECT_CATEGORY_TOPIC, String).data
             rospy.wait_for_message(IS_POINTING_OBJECT_TOPIC, Bool)
 
             answer = self.send_sentence('ask_got_it_right', TTSAnswerType.YES_NO, object_name=object_cat_name)
             
             GUESS_SUCCEEDED.publish(answer == 'yes')
 
-            rospy.sleep(10) #TODO: WAIT FOR EMOTION CALLBACK TOPIC
+            rospy.wait_for_message(EXPRESSION_DONE_TOPIC, Bool)
             
             answer = self.send_sentence('ask_play_again', TTSAnswerType.YES_NO)
 
