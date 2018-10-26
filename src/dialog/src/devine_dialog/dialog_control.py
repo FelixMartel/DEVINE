@@ -63,7 +63,7 @@ class DialogControl():
             if not answer == "yes":
                 raise DialogControl.HumanDialogInterrupted()
 
-            player_name = self.send_sentence('asking_the_name', TTSAnswerType.PLAYER_NAME) TODO: Implement in the assistant and snips.py
+            player_name = self.send_sentence('asking_the_name', TTSAnswerType.PLAYER_NAME)
 
             self.send_sentence('instructions', TTSAnswerType.NO_ANSWER)
             if not self.wait_for_player('ready', player_name=player_name):
