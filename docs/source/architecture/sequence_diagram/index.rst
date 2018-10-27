@@ -40,7 +40,7 @@ Start Game
         participant scene_finder
         participant snips
     end box
-    box "Robot Embedded System" #LightBlue
+    box "Robot Embedded" #LightBlue
         participant irl1
     end box
 
@@ -110,8 +110,6 @@ Play Game
         participant image_dispatcher
         participant snips
     end box
-    box "Robot Embedded System" #LightBlue
-    end box
 
     'UML'
     title Play Game
@@ -170,7 +168,7 @@ End of Game
         participant robot_control
         participant dialog_control
     end box
-    box "Robot Embedded System" #LightBlue
+    box "Robot Embedded" #LightBlue
         participant irl1
     end box
 
