@@ -5,7 +5,7 @@ import tf
 from geometry_msgs.msg import PoseStamped
 
 def pose_stamped(x, y, z, roll=0, pitch=0, yaw=0):
-    ''' Convert x, y, z, roll, pitch, yaw to PoseStamp '''
+    ''' Convert x, y, z, roll, pitch, yaw to PoseStamped '''
     pose = PoseStamped()
     pose.header.stamp = rospy.Time.now()
     pose.header.frame_id = 'base_link'

@@ -1,4 +1,4 @@
-Sequence Diagram UML
+UML Sequence Diagram
 ####################
 
 Start Game
@@ -180,7 +180,7 @@ End of Game
     guesswhat -> dialog_control : /devine/guess_category (String)
     guesswhat -> pos_lib : /devine/guess_location/image (Int32MultiArray)
     openni -> pos_lib: /camera/depth/points (PointCloud2)
-    pos_lib -> robot_control : /devine/guess_location/world (PoseStamp)
+    pos_lib -> robot_control : /devine/guess_location/world (PoseStamped)
     note left: referenced from 'base_link'
     robot_control -> irl1 : /jn0/<left/right>_arm_controller/follow_joint_trajectory (JointTrajectoryPoint)
     robot_control -> dialog_control : /devine/robot/is_pointing (Bool)
