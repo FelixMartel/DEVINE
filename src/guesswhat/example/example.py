@@ -6,7 +6,6 @@ __version__ = "1.0.0"
 __email__ = "devine.gegi-request@listes.usherbrooke.ca"
 __status__ = "Production"
 
-
 import rospy
 from std_msgs.msg import String, Float64MultiArray
 import h5py

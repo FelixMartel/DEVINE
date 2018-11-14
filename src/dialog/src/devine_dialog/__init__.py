@@ -6,7 +6,6 @@ __version__ = "1.0.0"
 __email__ = "devine.gegi-request@listes.usherbrooke.ca"
 __status__ = "Production"
 
-
 import random
 import uuid
 from enum import Enum
