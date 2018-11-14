@@ -14,9 +14,9 @@ Here you can see a couple of usefull ROS commands to help you out!
 
     * Starts the ros core node, you need this before starting any other node.
 
-* :bash:`$ rosrun {rosPackageName} {pythonFileContainingTheRosNode}`
+* :bash:`$ rosrun {rosPackageName} {pythonFileContainingTheRosNode} [__ns:=namespace]`
 
-    * Example: :bash:`$ rosrun devine_irl_control node_facial_expression.py`
+    * Example: :bash:`$ rosrun devine_irl_control node_facial_expression.py __ns:=devine`
     * This will start the node specified inside the `node_facial_expression.py`
 
 * :bash:`$ rostopic pub {/topic_name} std_msgs/{dataType} {Payload}`
@@ -34,7 +34,7 @@ Here you can see a couple of usefull ROS commands to help you out!
     * This will launch **ALL** Devine nodes.
     * You can also use this to launch specific nodes like so :bash:`$ roslaunch devine devine.launch launch_all:=false dashboard:=true` 
 
-* :bash:`$ rosrun topic_tools throttle messages /camera/rgb/image_color/compressed 0.33 /devine/image/segmentation`
+* :bash:`$ rosrun topic_tools throttle messages /openni/rgb/image_color/compressed 0.33 /devine/image/segmentation`
 
     * Segments every 30 seconds 
 

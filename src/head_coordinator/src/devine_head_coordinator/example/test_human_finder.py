@@ -16,8 +16,9 @@ from devine_head_coordinator.msg import LookAtHumanAction, LookAtHumanGoal
 
 def get_result():
     """ Call the human finder actionlib and get the result """
-    client = actionlib.SimpleActionClient('devine_human_finder', LookAtHumanAction)
-
+    client = actionlib.SimpleActionClient('human_finder', LookAtHumanAction)
+    
+    rospy.loginfo('Waiting for server...')
     client.wait_for_server()
 
     rospy.loginfo('Sending goal')

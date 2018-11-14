@@ -28,7 +28,7 @@ class ImageProcessor(object):
         """ Return the processor's name """
         return self.__class__.__name__
 
-    def process(self, image):
+    def process(self, image, image_payload):
         """ Callback when a new image is received and ready to be processed """
         raise NotImplementedError()
 
@@ -69,7 +69,7 @@ class ROSImageProcessingWrapper(object):
                 if process_callback:
                     process_callback(output)
             except Empty:
-                time.sleep(0.5)
+                time.sleep(0.1)
             finally:
                 if rospy.is_shutdown() or killable_loop.kill_now:
                     break

@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 """ ROS module for body tracking """
 __author__ = "Jordan Prince Tremblay, Ismael Balafrej, Felix Labelle, Félix Martel-Denis, Eric Matte, Adam Letourneau, Julien Chouinard-Beaupré, Antoine Mercier-Nicol"
 __copyright__ = "Copyright 2018, DEVINE Project"
@@ -35,7 +35,7 @@ class BodyTracking(ImageProcessor):
     ]
 
     def __init__(self):
-        config = tf.ConfigProto(log_device_placement=True)
+        config = tf.ConfigProto(log_device_placement=False)
         config.gpu_options.allow_growth = True
         set_session(tf.Session(config=config))
         self.estimator = TfPoseEstimator(MODEL_DIR, target_size=(432, 368))  # downscale image

@@ -1,6 +1,18 @@
 {
   "topics": {
-    "raw_image": {
+    "image": {
+      "name": "/openni/rgb/image_rect_color",
+      "type": "sensor_msgs/Image"
+    },
+    "camera_info": {
+      "name": "/openni/rgb/camera_info",
+      "type": "sensor_msgs/CameraInfo"
+    },
+    "depth": {
+      "name": "/openni/depth/image_rect",
+      "type": "sensor_msgs/Image"
+    },
+    "compressed_image": {
       "name": "/openni/rgb/image_rect_color/compressed",
       "type": "sensor_msgs/CompressedImage"
     },
@@ -20,6 +32,14 @@
       "name": "image/zone_detection",
       "type": "sensor_msgs/CompressedImage"
     },
+    "start_scene_detection": {
+      "name": "start_scene_detection",
+      "type": "std_msgs/Bool"
+    },
+    "masked_image": {
+      "name": "image/masked_image",
+      "type": "sensor_msgs/CompressedImage"
+    },
     "features_extraction_image": {
       "name": "image/features_extraction",
       "type": "sensor_msgs/CompressedImage"
@@ -30,7 +50,7 @@
     },
     "objects": {
       "name": "objects",
-      "type": "std_msgs/String"
+      "type": "devine_image_processing/SegmentedImage"
     },
     "zone_detection": {
       "name": "zone_detection",
@@ -127,6 +147,10 @@
     "new_game": {
       "name": "new_game",
       "type": "std_msgs/Bool"
+    },
+    "eyes": {
+      "name": "/jn0/eyes_target",
+      "type": "geometry_msgs/Point"
     }
   },
   "constants": {
