@@ -17,24 +17,20 @@ class RobotFacialExpression(Enum):
     """ Valid facial expressions """
 
     SURPRISE = 'Surprise'
+    SUPRISE_MOUTH = 'Surprise-mouth'
     SAD = 'Sad'
     ANGER = 'Anger'
     JOY = 'Joy'
 
-class RobotTalkingExpression(Enum):
-    """ Valid talking expressions """
-
-    TALKING_1 = 'Talking_1'
-    TALKING_2 = 'Talking_2'
-
 OBJECT_CONFIDENCE_TOPIC = topicname('objects_confidence')
 GAME_SUCCESS_TOPIC = topicname('object_guess_success')
+ROBOT_TALKING_EXPRESSION_TOPIC = topicname('robot_talking_expression')
 ROBOT_FACIAL_EXPRESSION_TOPIC = topicname('robot_facial_expression')
 FACIAL_EXPRESSION_COMPLETED = topicname('robot_facial_expression_completed')
 TTS_QUERY_TOPIC = topicname('tts_query')
 
 NODE_NAME = 'facial_expression'
-
+TALKING_EXPRESSION_DURATION = 0.2
 
 class FacialExpression(object):
     """ Subscribes to object confidence and publishes facial expressions for a specific duration """
@@ -51,7 +47,7 @@ class FacialExpression(object):
         self.expression_completed_pub = rospy.Publisher(FACIAL_EXPRESSION_COMPLETED,
                                                         Bool, queue_size=1)
 
-        self.robot_talking_expression_publisher = rospy.Publisher(ROBOT_FACIAL_EXPRESSION_TOPIC,
+        self.robot_talking_expression_publisher = rospy.Publisher(ROBOT_TALKING_EXPRESSION_TOPIC,
                                                                   EmoPulse, queue_size=1)
 
         rospy.Subscriber(TTS_QUERY_TOPIC, TtsQuery, self.on_tts_query)
@@ -64,35 +60,29 @@ class FacialExpression(object):
 
     def on_tts_query(self, query):
         """ Callback on new tts query. Shows talking expression to robot """
-        rospy.loginfo('%s received: %s', rospy.get_name(), query.text)
-        length = len(query.text)
-        total_duration = round(length) # TODO find a better way
-
-        # send random emopulse
+        total_duration = round(2*len(query.text)/3) # TODO find a better way
         self.show_talking_expression_for(total_duration)
 
     def show_talking_expression_for(self, duration):
-        """ Sends a series of random talking emotion """
+        """ Sends the suprise-mouth emotion with a random intensity """
         self.showing_emotion = True
         while duration > 0:
-            expression = random.choice(list(RobotTalkingExpression)).value
             self.robot_talking_expression_publisher.publish(
-                emo_type=expression,
-                intensity=1,
-                duration=0.2
+                emo_type=RobotFacialExpression.SUPRISE_MOUTH.value,
+                intensity=random.random(),
+                duration=rospy.Duration.from_sec(TALKING_EXPRESSION_DURATION)
                 )
+            rospy.sleep(.1)
             duration -= 1
 
         self.showing_emotion = False
 
     def on_object_confidence(self, objects_confidence):
         """ Callback on new object confidence. Updates max confidence """
-        rospy.loginfo('%s received: %s', rospy.get_name(), objects_confidence.data)
         self.confidence = max(objects_confidence.data)
 
     def on_game_success(self, game_success):
         """ Callback on end game. Shows emotion depending on success and confidence """
-        rospy.loginfo('%s received: %s', rospy.get_name(), game_success.data)
         expression = self.get_facial_expression(self.confidence, game_success.data)
         if expression is not None and not self.showing_emotion:
             self.show_facial_expression_for(expression, self.FACIAL_EXPRESSION_DURATION)
@@ -104,7 +94,7 @@ class FacialExpression(object):
 
         # Special case for anger which is a bit too intense
         if expression == RobotFacialExpression.ANGER:
-            value = 0.5
+            value = 0.7
 
         face_expression = EmoIntensity(name=expression.value, value=value)
         self.robot_expression_publisher.publish(face_expression)
@@ -144,7 +134,6 @@ class FacialExpression(object):
                     expression = RobotFacialExpression.ANGER
 
         return expression
-
 
 if __name__ == '__main__':
     rospy.init_node(NODE_NAME)
