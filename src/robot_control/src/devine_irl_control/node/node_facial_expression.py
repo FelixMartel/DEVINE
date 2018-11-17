@@ -5,11 +5,11 @@ and publishes to robot_facial_expression to show facial emotions
 """
 
 from enum import Enum
+import random
 import rospy
 from std_msgs.msg import Bool
 from std_msgs.msg import Float64MultiArray
-from jn0_face_msgs.msg import EmoIntensity
-from jn0_face_msgs.msg import EmoPulse
+from jn0_face_msgs.msg import EmoIntensity, EmoPulse
 from devine_dialog.msg import TtsQuery
 from devine_config import topicname
 
@@ -65,8 +65,25 @@ class FacialExpression(object):
     def on_tts_query(self, query):
         """ Callback on new tts query. Shows talking expression to robot """
         rospy.loginfo('%s received: %s', rospy.get_name(), query.text)
-        print 'New Query!: '
-        print query.text
+        length = len(query.text)
+        total_duration = round(length) # TODO find a better way
+
+        # send random emopulse
+        self.show_talking_expression_for(total_duration)
+
+    def show_talking_expression_for(self, duration):
+        """ Sends a series of random talking emotion """
+        self.showing_emotion = True
+        while duration > 0:
+            expression = random.choice(list(RobotTalkingExpression)).value
+            self.robot_talking_expression_publisher.publish(
+                emo_type=expression,
+                intensity=1,
+                duration=0.2
+                )
+            duration -= 1
+
+        self.showing_emotion = False
 
     def on_object_confidence(self, objects_confidence):
         """ Callback on new object confidence. Updates max confidence """
@@ -77,7 +94,6 @@ class FacialExpression(object):
         """ Callback on end game. Shows emotion depending on success and confidence """
         rospy.loginfo('%s received: %s', rospy.get_name(), game_success.data)
         expression = self.get_facial_expression(self.confidence, game_success.data)
-
         if expression is not None and not self.showing_emotion:
             self.show_facial_expression_for(expression, self.FACIAL_EXPRESSION_DURATION)
 
