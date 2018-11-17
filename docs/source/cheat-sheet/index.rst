@@ -1,8 +1,5 @@
-ROS
-###
-
-CheatSheet
-==========
+ROS Cheat Sheet
+###############
 
 .. role:: bash(code)
    :language: bash
@@ -14,9 +11,9 @@ Here you can see a couple of usefull ROS commands to help you out!
 
     * Starts the ros core node, you need this before starting any other node.
 
-* :bash:`$ rosrun {rosPackageName} {pythonFileContainingTheRosNode}`
+* :bash:`$ rosrun {rosPackageName} {pythonFileContainingTheRosNode} [__ns:=namespace]`
 
-    * Example: :bash:`$ rosrun devine_irl_control node_facial_expression.py`
+    * Example: :bash:`$ rosrun devine_irl_control node_facial_expression.py __ns:=devine`
     * This will start the node specified inside the `node_facial_expression.py`
 
 * :bash:`$ rostopic pub {/topic_name} std_msgs/{dataType} {Payload}`
@@ -45,24 +42,3 @@ Here you can see a couple of usefull ROS commands to help you out!
 * :bash:`$ rosrun rqt_top rqt_top`
 
     * See the actually ressources consumed by your ROS environment.
-
-Modules
-=======
-
-All DEVINE modules:
-
-.. toctree::
-    :glob:
-    :maxdepth: 1
-   
-    modules/*/index
-
-
-Tests
-=====
-
-.. toctree::
-    :glob:
-    :maxdepth: 1
-   
-    tests/index
