@@ -13,10 +13,6 @@ from queue import Queue, Empty
 from io import BytesIO
 from PIL import Image
 from std_msgs.msg import Float64MultiArray
-from sensor_msgs.msg import CompressedImage
-from devine_config import topicname
-from devine_common import ros_utils
-from tensorflow.contrib.slim.python.slim.nets import vgg
 import cv2
 import tensorflow as tf
 import numpy as np
