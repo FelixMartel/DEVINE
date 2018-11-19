@@ -94,7 +94,7 @@ class Controller(object):
                 else:
                     self.move_init(10)
 
-            self.pub_is_pointing.publish(True)
+        self.pub_is_pointing.publish(True)
 
     def head_pose_callback(self, msg):
         """ On topic /look_at, compute and move joints """
@@ -107,7 +107,7 @@ class Controller(object):
             else:
                 self.move_init(10)
 
-            self.pub_is_looking.publish(True)
+        self.pub_is_looking.publish(True)
 
     def calcul_arm(self, controller):
         """ Get arm translation from TF and apply inverse kinematic """
