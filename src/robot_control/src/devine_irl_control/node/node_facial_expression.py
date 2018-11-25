@@ -22,7 +22,7 @@ from devine_config import topicname
 class RobotExpression(Enum):
     """ Valid expressions """
 
-    SURPRISE = 'Surprise'
+    SURPRISE = 'Surprise' 
     SAD = 'Sad'
     ANGER = 'Anger'
     JOY = 'Joy'
