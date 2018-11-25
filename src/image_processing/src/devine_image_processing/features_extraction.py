@@ -9,10 +9,6 @@ __version__ = "1.0.0"
 __email__ = "devine.gegi-request@listes.usherbrooke.ca"
 __status__ = "Production"
 
-from queue import Queue, Empty
-from io import BytesIO
-from PIL import Image
-from std_msgs.msg import Float64MultiArray
 import cv2
 import tensorflow as tf
 import numpy as np
