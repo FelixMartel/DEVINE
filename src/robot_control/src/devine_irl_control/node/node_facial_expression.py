@@ -72,7 +72,7 @@ class FacialExpression(object):
                 intensity=random.random(),
                 duration=rospy.Duration.from_sec(TALKING_EXPRESSION_DURATION)
                 )
-            rospy.sleep(TALKING_EXPRESSION_DURATION)
+            rospy.sleep(TALKING_EXPRESSION_DURATION/2)
             duration -= 1
 
         self.showing_emotion = False
