@@ -5,7 +5,7 @@
   <arg name="kinect" default="$(arg launch_all)"/>
   <arg name="dialog" default="$(arg launch_all)"/>
   <arg name="dashboard" default="$(arg launch_all)" />
-  <arg name="guesswhat" default="$(arg launch_all)" required=true />
+  <arg name="guesswhat" default="$(arg launch_all)" />
   <arg name="image_processing" default="$(arg launch_all)" />
   <arg name="head_coordinator" default="$(arg launch_all)" />
 
@@ -79,7 +79,7 @@
     </group>
 
     <group if="$(arg guesswhat)">
-      <node name="guesswhat" pkg="devine_guesswhat" type="guesswhat_node.py" respawn="true" />
+      <node name="guesswhat" pkg="devine_guesswhat" type="guesswhat_node.py" required="true" />
     </group>
   </group>
 </launch>
