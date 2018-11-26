@@ -228,7 +228,6 @@ def main():
     rospy.init_node('guesswhat')
     node = GuessWhatNode()
     node.start_session()
-    node.start_session()
 
 if __name__ == '__main__':
     main()
