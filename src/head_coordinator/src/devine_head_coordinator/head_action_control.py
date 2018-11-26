@@ -109,7 +109,7 @@ class HeadActionCtrl(object):
         self.current_tilt = positions[1]
         result = self.joint_ctrl.result()
         success = result and result.error_code == 0
-        if not success and result.error_string:
+        if not success and result and result.error_string:
             rospy.logerr('Failed to move joint: %s', result.error_string)
             return False
         return True
