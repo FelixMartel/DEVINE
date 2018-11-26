@@ -32,6 +32,11 @@
         "Now, {player_name}, are you ready to start?",
         "Ready to play?"
     ],
+    "did_not_understand": [
+       "I am sorry I did not undertand what you said. Say again.",
+       "I didn't catch that last one right. Can you repeat please?",
+       "I didn't quite get that. What did you say?"
+    ],
     "ask_got_it_right": [
         "Is it the {object_name}?",
         "Hmmm, I think it's the {object_name}. Did I get it right?"

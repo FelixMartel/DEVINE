@@ -15,6 +15,9 @@ from devine_config import topicname
 from devine_dialog.msg import TtsQuery, TtsAnswer
 
 TTS_ANSWER_TOPIC = topicname('tts_answer')
+CONST_FILE = ros_utils.get_fullpath(__file__, 'dialogs.json')
+DIALOGs_FILE = open(CONST_FILE)
+DIALOGS = json.loads(DIALOGs_FILE.read())
 
 class TTSAnswerType(Enum):
     NO_ANSWER = 0
@@ -38,7 +41,6 @@ def send_speech(tts_publisher, message, answer_type):
     if answer_type != TTSAnswerType.NO_ANSWER:
         answer = wait_for_answer(answer_type, msg.uid)
         if answer is None:
-            repeat_query = 'I\'m sorry, I didn\'t understand. '
-            return send_speech(tts_publisher, repeat_query + message.replace(repeat_query, ""), answer_type)
+            return send_speech(tts_publisher, random.choice(DIALOGS['did_not_understand']), answer_type)
         return answer
     return None
