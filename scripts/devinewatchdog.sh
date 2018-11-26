@@ -1,1 +1,1 @@
-while True; do roslaunch devine devine.launch; done
+while true; do roslaunch devine devine.launch; done
