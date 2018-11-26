@@ -165,7 +165,6 @@ class GuessWhatNode(object):
 
             objects = list(map(self.segmented_image_to_img_obj,
                                enumerate(seg.objects)))
-
             game = Game(id=0,
                         object_id=0,
                         objects=objects,
@@ -228,13 +227,8 @@ def main():
     """ Entry point of this file """
     rospy.init_node('guesswhat')
     node = GuessWhatNode()
-    try:
-        node.start_session()
-    except Exception as exception:
-        rospy.logwarn("Exception %s occured during GuessWhat loop, restarting a new loop...",
-                      type(exception))
-        node.start_session()
-
+    node.start_session()
+    node.start_session()
 
 if __name__ == '__main__':
     main()
