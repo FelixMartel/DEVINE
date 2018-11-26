@@ -17,8 +17,8 @@ from devine_dialog.msg import TtsQuery, TtsAnswer
 
 TTS_ANSWER_TOPIC = topicname('tts_answer')
 CONST_FILE = ros_utils.get_fullpath(__file__, 'dialogs.json')
-DIALOGs_FILE = open(CONST_FILE)
-DIALOGS = json.loads(DIALOGs_FILE.read())
+DIALOGS_FILE = open(CONST_FILE)
+DIALOGS = json.loads(DIALOGS_FILE.read())
 
 class TTSAnswerType(Enum):
     NO_ANSWER = 0
