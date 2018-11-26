@@ -33,8 +33,8 @@
         "Ready to play?"
     ],
     "did_not_understand": [
-       "I am sorry I did not undertand what you said. Say againt ",
-       "I didn't catch that last one right. Can you repeat please?",
+       "I am sorry I did not undertand what you said. Say again.",
+       "I didn't catch that last thing you said. Can you please repeat that?",
        "I didn't quite get that. What did you say?"
     ],
     "ask_got_it_right": [
