@@ -46,6 +46,8 @@ class Controller(object):
         self.tf_listener = tf.TransformListener()
         self.is_arms_activated = is_arms_activated
         self.admittance_service = Admittance()
+        self.admittance_service.set_admittance(
+            'left', [2, 2, 2, 2])
 
         rospy.loginfo('Waiting for controllers')
 
