@@ -26,7 +26,7 @@ if IS_PYTHON2:
 
         pose = PoseStamped()
         new_time = rospy.Time.now()
-        if new_time.to_sec() != 0:
+        if new_time.to_sec() > 0.1:
             new_time = new_time - rospy.rostime.Duration(0.1)
 
         pose.header.stamp = stamp or new_time
