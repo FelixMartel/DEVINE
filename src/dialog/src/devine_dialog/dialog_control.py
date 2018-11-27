@@ -15,8 +15,7 @@ import random
 from std_msgs.msg import String, Bool
 import rospy
 from devine_dialog.msg import TtsQuery
-from devine_dialog.load_dialogs import load_dialogs
-from devine_dialog import TTSAnswerType, send_speech
+from devine_dialog import TTSAnswerType, send_speech, load_dialogs
 from devine_config import topicname
 from devine_common import ros_utils
 from devine_head_coordinator.look import Look
@@ -90,6 +89,7 @@ class DialogControl():
                 object_found = object_category_blocker.wait_for_message().data
                 is_pointing_blocker.wait_for_message()
 
+                self._look.at_human()
                 answer = self.send_sentence('ask_got_it_right', 
                                             TTSAnswerType.YES_NO, object_name=object_found)
 
