@@ -38,7 +38,7 @@ class Admittance():
             for service in services:
                 rospy.wait_for_service(service, timeout=10)
         except rospy.ROSException:
-            print('Services timed out after 10 sec.')
+            rospy.loginfo('Services timed out after 10 sec.')
             exit(1)
 
         # Create the proxies
@@ -47,5 +47,5 @@ class Admittance():
 
         # Set the admittance for each motors
         for i, service_proxy in enumerate(service_proxies):
-            print("Sending to service '{0}' m=0, b=0, k={1}".format(services[i], values[i]))
+            rospy.loginfo("Sending to service '{0}' m=0, b=0, k={1}".format(services[i], values[i]))
             service_proxy(0, 0, values[i])
