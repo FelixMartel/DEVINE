@@ -123,7 +123,7 @@ class Controller(object):
                         self.arm_joints_position[1] = 0
 
                     diff_arm_joints_position = max(abs(self.arm_joints_position[0]), abs(previous_arm_joints_position[0]), abs(self.arm_joints_position[1]), abs(previous_arm_joints_position[1]))
-                    diff_time = diff_arm_joints_position * 5
+                    diff_time = diff_arm_joints_position * 3
 
                     self.move({'arm_' + arm_decision: self.arm_joints_position},
                               diff_time)
