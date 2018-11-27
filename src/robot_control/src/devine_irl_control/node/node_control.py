@@ -22,13 +22,14 @@ from devine_irl_control.movement import Movement
 from devine_irl_control.controllers import TrajectoryClient
 from devine_irl_control.gripper import Gripper
 from devine_irl_control import ik
-
+from devine_irl_control.admittance import Admittance
 ROBOT_NAME = irl_constant.ROBOT_NAME
 
 # IN
 TOPIC_OBJECT_LOCATION = topicname('guess_location_world')
 TOPIC_HEAD_LOOK_AT = topicname('robot_look_at')
 TOPIC_HEAD_JOINT_STATE = topicname('robot_head_joint_traj_point')
+GUESS_SUCCESS = topicname('object_guess_success')
 
 # OUT
 TOPIC_IS_POINTING = topicname('is_pointing_object')
@@ -44,6 +45,7 @@ class Controller(object):
         self.time = 1 #TODO: Calc speed
         self.tf_listener = tf.TransformListener()
         self.is_arms_activated = is_arms_activated
+        self.admittance_service = Admittance()
 
         rospy.loginfo('Waiting for controllers')
 
@@ -65,6 +67,8 @@ class Controller(object):
             rospy.signal_shutdown(err)
 
         rospy.Subscriber(TOPIC_OBJECT_LOCATION, PoseStamped, self.arm_pose_callback)
+        rospy.Subscriber(GUESS_SUCCESS, Bool, self.on_guess_success_callback)
+
         self.pub_is_pointing = rospy.Publisher(TOPIC_IS_POINTING,
                                                Bool, queue_size=1)
         if is_head_activated:
@@ -74,6 +78,10 @@ class Controller(object):
                              self.head_joint_traj_point_callback)
             self.pub_is_looking = rospy.Publisher(TOPIC_IS_LOOKING,
                                                   Bool, queue_size=1)
+    
+    def on_guess_success_callback(self, _msg):
+        """ Callback when the robot knows if he points the right or wrong object """
+        self.move_init(2)
 
     def head_joint_traj_point_callback(self, msg):
         """ On topic /head_joint_traj_point, move head """
@@ -166,12 +174,18 @@ class Controller(object):
 
         times = get_joints_time(controller_joints_positions, time)
 
+        self.admittance_service.set_admittance(
+            controller_joints_positions.arm_decision, [15, 15, 15, 15])
+
         for key in controller_joints_positions:
             getattr(self, key).clear()
             getattr(self, key).add_point(controller_joints_positions[key], times[key])
             getattr(self, key).start()
         for key in controller_joints_positions:
             getattr(self, key).wait(times[key])
+
+        self.admittance_service.set_admittance(
+            controller_joints_positions.arm_decision, [2, 2, 2, 2])
 
         if move_gripper:
             i = 0
