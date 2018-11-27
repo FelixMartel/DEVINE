@@ -34,8 +34,8 @@ class Admittance():
 
         services = list(map(lambda motor: \
             "/{0}/{1}/{2}/{3}" \
-            .format(self.namespace, self.package, self.service_name, \
-            self.motors)))
+            .format(self.namespace, self.package, self.service_name, motor),\
+            self.motors))
             # Wait for the services
 
         try:
