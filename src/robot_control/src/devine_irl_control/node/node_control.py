@@ -43,13 +43,16 @@ class Controller(object):
         self.arm_data = None
         self.head_data = None
         self.time = 10 #TODO: Calc speed
+        self.admittance_service = None
         self.tf_listener = tf.TransformListener()
         self.is_arms_activated = is_arms_activated
-        self.admittance_service = Admittance()
-        self.admittance_service.set_admittance(
-            'left', [2, 2, 2, 2])
-
+        self.is_sim = rospy.get_param('~is_sim')
         rospy.loginfo('Waiting for controllers')
+
+        if not self.is_sim:
+            self.admittance_service = Admittance()
+            self.admittance_service.set_admittance(
+                'left', [2, 2, 2, 2])
 
         if is_gripper_activated:
             self.gripper_right = Gripper(ROBOT_NAME, 'right')
@@ -175,9 +178,9 @@ class Controller(object):
         move_gripper = False
 
         times = get_joints_time(controller_joints_positions, time)
-
-        self.admittance_service.set_admittance(
-            controller_joints_positions.arm_decision, [15, 15, 15, 15])
+        if not self.is_sim:
+            self.admittance_service.set_admittance(
+                controller_joints_positions.arm_decision, [15, 15, 15, 15])
 
         for key in controller_joints_positions:
             getattr(self, key).clear()
@@ -186,8 +189,9 @@ class Controller(object):
         for key in controller_joints_positions:
             getattr(self, key).wait(times[key])
 
-        self.admittance_service.set_admittance(
-            controller_joints_positions.arm_decision, [2, 2, 2, 2])
+        if not self.is_sim:
+            self.admittance_service.set_admittance(
+                controller_joints_positions.arm_decision, [2, 2, 2, 2])
 
         if move_gripper:
             i = 0

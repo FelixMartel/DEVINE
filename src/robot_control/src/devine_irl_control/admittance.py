@@ -17,10 +17,6 @@ class Admittance():
         self.namespace = "jn0"
         self.package = "jn0_driver"
         self.service_name = "set_admittance"
-        #self.sides = {
-        #    'left': 'L',
-        #    'right': 'R'
-        #}
         self.motors = None
 
     def set_admittance(self, side, values):
@@ -34,7 +30,7 @@ class Admittance():
 
         services = list(map(lambda motor: \
             "/{0}/{1}/{2}/{3}" \
-            .format(self.namespace, self.package, self.service_name, motor),\
+            .format(self.namespace, self.package, motor, self.service_name), \
             self.motors))
             # Wait for the services
 
