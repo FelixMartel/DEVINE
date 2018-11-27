@@ -22,18 +22,21 @@ from devine_irl_control.movement import Movement
 from devine_irl_control.controllers import TrajectoryClient
 from devine_irl_control.gripper import Gripper
 from devine_irl_control import ik
+from devine_irl_control.admittance import Admittance
 
 ROBOT_NAME = irl_constant.ROBOT_NAME
+LOW_ADMITTANCE = 3
+HIGH_ADMITTANCE = 15
 
 # IN
 TOPIC_OBJECT_LOCATION = topicname('guess_location_world')
 TOPIC_HEAD_LOOK_AT = topicname('robot_look_at')
 TOPIC_HEAD_JOINT_STATE = topicname('robot_head_joint_traj_point')
+GUESS_SUCCESS = topicname('object_guess_success')
 
 # OUT
 TOPIC_IS_POINTING = topicname('is_pointing_object')
 TOPIC_IS_LOOKING = topicname('is_looking')
-
 
 class Controller(object):
     """ Arms, head and gripper controller """
@@ -42,11 +45,17 @@ class Controller(object):
         self.arm_data = None
         self.head_data = None
         self.arm_joints_position = [0,0,0,0]
-        self.time = 1
+        self.time = 10
+        self.admittance_service = None
         self.tf_listener = tf.TransformListener()
         self.is_arms_activated = is_arms_activated
-
+        self.is_sim = rospy.get_param('~is_sim')
         rospy.loginfo('Waiting for controllers')
+
+        if not self.is_sim:
+            self.admittance_service = Admittance()
+            self.admittance_service.set_admittance(
+                'L', [LOW_ADMITTANCE, LOW_ADMITTANCE, LOW_ADMITTANCE, LOW_ADMITTANCE])
 
         if is_gripper_activated:
             self.gripper_right = Gripper(ROBOT_NAME, 'right')
@@ -66,6 +75,8 @@ class Controller(object):
             rospy.signal_shutdown(err)
 
         rospy.Subscriber(TOPIC_OBJECT_LOCATION, PoseStamped, self.arm_pose_callback)
+        rospy.Subscriber(GUESS_SUCCESS, Bool, self.on_guess_success_callback)
+
         self.pub_is_pointing = rospy.Publisher(TOPIC_IS_POINTING,
                                                Bool, queue_size=1)
         if is_head_activated:
@@ -75,6 +86,13 @@ class Controller(object):
                              self.head_joint_traj_point_callback)
             self.pub_is_looking = rospy.Publisher(TOPIC_IS_LOOKING,
                                                   Bool, queue_size=1)
+    
+    def on_guess_success_callback(self, _msg):
+        """ Callback when the robot knows if he points the right or wrong object """
+        self.move_init(10)
+        if not self.is_sim:
+            self.admittance_service.set_admittance(
+                'L', [LOW_ADMITTANCE, LOW_ADMITTANCE, LOW_ADMITTANCE, LOW_ADMITTANCE])
 
     def head_joint_traj_point_callback(self, msg):
         """ On topic /head_joint_traj_point, move head """
@@ -184,6 +202,9 @@ class Controller(object):
         move_gripper = False
 
         times = get_joints_time(controller_joints_positions, time)
+        if not self.is_sim:
+            self.admittance_service.set_admittance(
+                'L', [HIGH_ADMITTANCE, HIGH_ADMITTANCE, HIGH_ADMITTANCE, HIGH_ADMITTANCE])
 
         for key in controller_joints_positions:
             getattr(self, key).clear()
