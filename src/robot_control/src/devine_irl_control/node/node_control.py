@@ -23,7 +23,10 @@ from devine_irl_control.controllers import TrajectoryClient
 from devine_irl_control.gripper import Gripper
 from devine_irl_control import ik
 from devine_irl_control.admittance import Admittance
+
 ROBOT_NAME = irl_constant.ROBOT_NAME
+LOW_ADMITTANCE = 3
+HIGH_ADMITTANCE = 15
 
 # IN
 TOPIC_OBJECT_LOCATION = topicname('guess_location_world')
@@ -34,9 +37,6 @@ GUESS_SUCCESS = topicname('object_guess_success')
 # OUT
 TOPIC_IS_POINTING = topicname('is_pointing_object')
 TOPIC_IS_LOOKING = topicname('is_looking')
-
-LOW_ADMITTANCE = 3
-HIGH_ADMITTANCE = 15
 
 class Controller(object):
     """ Arms, head and gripper controller """
