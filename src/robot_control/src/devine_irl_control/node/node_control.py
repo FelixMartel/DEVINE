@@ -42,7 +42,7 @@ class Controller(object):
     def __init__(self, is_head_activated=True, is_arms_activated=True, is_gripper_activated=True):
         self.arm_data = None
         self.head_data = None
-        self.time = 1 #TODO: Calc speed
+        self.time = 10 #TODO: Calc speed
         self.tf_listener = tf.TransformListener()
         self.is_arms_activated = is_arms_activated
         self.admittance_service = Admittance()
@@ -81,7 +81,7 @@ class Controller(object):
     
     def on_guess_success_callback(self, _msg):
         """ Callback when the robot knows if he points the right or wrong object """
-        self.move_init(2)
+        self.move_init(10)
 
     def head_joint_traj_point_callback(self, msg):
         """ On topic /head_joint_traj_point, move head """
