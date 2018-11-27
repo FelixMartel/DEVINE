@@ -52,7 +52,7 @@ class Controller(object):
         if not self.is_sim:
             self.admittance_service = Admittance()
             self.admittance_service.set_admittance(
-                'left', [2, 2, 2, 2])
+                'L', [2, 2, 2, 2])
 
         if is_gripper_activated:
             self.gripper_right = Gripper(ROBOT_NAME, 'right')
@@ -180,7 +180,7 @@ class Controller(object):
         times = get_joints_time(controller_joints_positions, time)
         if not self.is_sim:
             self.admittance_service.set_admittance(
-                controller_joints_positions.arm_decision, [15, 15, 15, 15])
+                'L', [15, 15, 15, 15])
 
         for key in controller_joints_positions:
             getattr(self, key).clear()
@@ -191,7 +191,7 @@ class Controller(object):
 
         if not self.is_sim:
             self.admittance_service.set_admittance(
-                controller_joints_positions.arm_decision, [2, 2, 2, 2])
+                'L', [2, 2, 2, 2])
 
         if move_gripper:
             i = 0
