@@ -87,6 +87,9 @@ class Controller(object):
     def on_guess_success_callback(self, _msg):
         """ Callback when the robot knows if he points the right or wrong object """
         self.move_init(10)
+        if not self.is_sim:
+            self.admittance_service.set_admittance(
+                'L', [2, 2, 2, 2])
 
     def head_joint_traj_point_callback(self, msg):
         """ On topic /head_joint_traj_point, move head """
@@ -188,10 +191,6 @@ class Controller(object):
             getattr(self, key).start()
         for key in controller_joints_positions:
             getattr(self, key).wait(times[key])
-
-        if not self.is_sim:
-            self.admittance_service.set_admittance(
-                'L', [2, 2, 2, 2])
 
         if move_gripper:
             i = 0

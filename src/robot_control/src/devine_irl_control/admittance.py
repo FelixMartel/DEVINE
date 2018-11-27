@@ -8,7 +8,7 @@ class Admittance():
     This script set the admittance of the arm motors
     of jn0 by calling the set_admittance services.
     Usage: set_admittance.py [--side {left,right}] [--values 0 0 0 0]
-    Where values are the admittance values of 
+    Where values are the admittance values of
         [elbow_tilt_motor, shoulder_pan_motor, shoulder_roll_motor, shoulder_tilt_motor]
     """
 
@@ -38,7 +38,7 @@ class Admittance():
             for service in services:
                 rospy.wait_for_service(service, timeout=10)
         except rospy.ROSException:
-            rospy.loginfo('Services timed out after 10 sec.')
+            rospy.logwarn('Services timed out after 10 sec.')
             exit(1)
 
         # Create the proxies
