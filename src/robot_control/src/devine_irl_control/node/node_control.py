@@ -35,6 +35,8 @@ GUESS_SUCCESS = topicname('object_guess_success')
 TOPIC_IS_POINTING = topicname('is_pointing_object')
 TOPIC_IS_LOOKING = topicname('is_looking')
 
+LOW_ADMITTANCE = 3
+HIGH_ADMITTANCE = 15
 
 class Controller(object):
     """ Arms, head and gripper controller """
@@ -52,7 +54,7 @@ class Controller(object):
         if not self.is_sim:
             self.admittance_service = Admittance()
             self.admittance_service.set_admittance(
-                'L', [2, 2, 2, 2])
+                'L', [LOW_ADMITTANCE, LOW_ADMITTANCE, LOW_ADMITTANCE, LOW_ADMITTANCE])
 
         if is_gripper_activated:
             self.gripper_right = Gripper(ROBOT_NAME, 'right')
@@ -89,7 +91,7 @@ class Controller(object):
         self.move_init(10)
         if not self.is_sim:
             self.admittance_service.set_admittance(
-                'L', [2, 2, 2, 2])
+                'L', [LOW_ADMITTANCE, LOW_ADMITTANCE, LOW_ADMITTANCE, LOW_ADMITTANCE])
 
     def head_joint_traj_point_callback(self, msg):
         """ On topic /head_joint_traj_point, move head """
@@ -183,7 +185,7 @@ class Controller(object):
         times = get_joints_time(controller_joints_positions, time)
         if not self.is_sim:
             self.admittance_service.set_admittance(
-                'L', [15, 15, 15, 15])
+                'L', [HIGH_ADMITTANCE, HIGH_ADMITTANCE, HIGH_ADMITTANCE, HIGH_ADMITTANCE])
 
         for key in controller_joints_positions:
             getattr(self, key).clear()
