@@ -5,9 +5,9 @@ from irl_can_ros_ctrl.srv import SetAdmittance
 
 class Admittance():
     """
-    This script set the admittance of the arm motors
+    This utility class set the admittance of the arm motors
     of jn0 by calling the set_admittance services.
-    Usage: set_admittance.py [--side {left,right}] [--values 0 0 0 0]
+    Usage: call the set_admittance function with the wanted side and values
     Where values are the admittance values of
         [elbow_tilt_motor, shoulder_pan_motor, shoulder_roll_motor, shoulder_tilt_motor]
     """
