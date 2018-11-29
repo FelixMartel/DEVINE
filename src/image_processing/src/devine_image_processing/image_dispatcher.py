@@ -119,7 +119,7 @@ class ImageDispatcher(ImageProcessor):
             SmartImagePublisher(ZONE_DETECTION_IMAGE_TOPIC, zone_detection_validator, throttle_rate=0.5),
             SmartImagePublisher(SEGMENTATION_IMAGE_TOPIC, seg_validator),
             SmartImagePublisher(FEATURES_EXTRACTION_IMAGE_TOPIC, features_validator),
-            SmartImagePublisher(None, restart_validator),
+            SmartImagePublisher(BODY_TRACKING_IMAGE_TOPIC, restart_validator, throttle_rate=1)
         ]
 
         self.pub_index = 0
