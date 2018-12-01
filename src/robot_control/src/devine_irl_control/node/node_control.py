@@ -124,16 +124,12 @@ class Controller(object):
 
                     diff_arm_joints_position = max(abs(self.arm_joints_position[0]), abs(previous_arm_joints_position[0]), abs(self.arm_joints_position[1]), abs(previous_arm_joints_position[1]))
                     diff_time = diff_arm_joints_position * 3
-                    rospy.logerr(diff_arm_joints_position)
-                    rospy.logerr(diff_time)
 
                     self.move({'arm_' + arm_decision: self.arm_joints_position},
                               diff_time)
                 else:
                     diff_arm_joints_position = max(abs(self.arm_joints_position[0]), abs(self.arm_joints_position[1]))
                     diff_time = diff_arm_joints_position * 3
-                    rospy.logerr(diff_arm_joints_position)
-                    rospy.logerr(diff_time)
                     self.move_init(diff_time)
 
         self.pub_is_pointing.publish(True)
